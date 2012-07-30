@@ -17,6 +17,7 @@
 		var _animChainID = 1; //Allows me to invalidate a loop and restart (eg resizing on fly)
 		var _resizeTimer;
 		var _rootID = "iplTicker";
+		var _ajaxURL = "dummy_ajax.json";
 
 		var _fontSize;
 		var _height;
@@ -144,7 +145,7 @@
 
 			_ajaxRequests.push(
 				$.ajax({
-				url: "dummy_ajax.json",
+				url: _ajaxURL,
 					dataType: "json",
 					type: "GET",
 					cache: false,
