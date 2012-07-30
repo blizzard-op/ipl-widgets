@@ -17,7 +17,7 @@
 		var _animChainID = 1; //Allows me to invalidate a loop and restart (eg resizing on fly)
 		var _resizeTimer;
 		var _rootID = "iplTicker";
-		var _ajaxURL = "dummy_ajax.json";
+		var _styleSheetURL = "css/style.css";
 
 		var _fontSize;
 		var _height;
@@ -87,10 +87,19 @@
 			lol_result: function(data) {
 
 			}
-		}
+		};
 
-		//When DOM ready, fire
-		$(function() {
+		//Inject CSS
+		(function() {
+			var css = ce("link");
+			css.setAttribute("rel","stylesheet");
+			css.setAttribute("type","text/css");
+			css.setAttribute("href", _styleSheetURL);
+			$('head').append(css);
+		})();
+
+		//When all assets have loaded, fire (We rely on CSS);
+		$(window).load(function() {
 
 			var root = document.getElementById(_rootID);
 			if(!root) return;
@@ -145,7 +154,7 @@
 
 			_ajaxRequests.push(
 				$.ajax({
-				url: _ajaxURL,
+				url: "dummy_ajax.json",
 					dataType: "json",
 					type: "GET",
 					cache: false,
@@ -209,11 +218,12 @@
 			(function animloop(now) {
 
 				var f = window.requestAnimationFrame(animloop);
-				//_animTimer = setTimeout(animloop, 16.66);
+				//var f = setTimeout(animloop, 16.66);
 
 				//Is the animation complete?
 				if(now > end || id !== _animChainID) {
 					window.cancelAnimationFrame(f);
+					//clearTimeout(f);
 					$(textSlider).remove();
 					return;
 				}
