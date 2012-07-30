@@ -1,0 +1,101 @@
+
+/* JAMES BURROUGHS 2012 Code-Foo */
+
+@import url(http://fonts.googleapis.com/css?family=Exo);
+
+
+#ticker-bar {
+  font-family:"Exo", sans-serif;
+  position:relative;
+  background:url(../img/bar_tile.png) top repeat-x #000;
+  width:100%;
+  overflow:hidden;
+  height:40px;
+}
+
+.ticker-textSlider {
+  visibility:hidden;
+  white-space:nowrap;
+  position:absolute;
+  top:0;
+  left:0;
+  height:40px;
+  line-height:38px;
+  font-size:18px;
+}
+
+#ticker-bar .ticker-textSlider {
+  visibility:visible;
+  left:100%;
+}
+
+.ticker-textBlock {
+  display:inline-block;
+  color:#FFF;
+  vertical-align:middle;
+  padding:0 40px 0 40px;
+  /*text-shadow:3px 3px 3px rgba(0,0,0,0.5);*/
+}
+
+.ticker-textBlock + .ticker-textBlock, .ticker-textSlider + .ticker-textSlider {
+  border-left:2px dotted #333;
+}
+
+.ticker-headline {
+  color:red;
+  font-weight:bold;
+  margin-right:15px;
+  text-transform: uppercase;
+  /*text-shadow:3px 3px 3px rgba(0,0,0,0.5);*/
+}
+
+.ticker-text {
+  margin-left:15px;
+}
+
+.ticker-player {
+  background-position:left middle;
+  background-repeat: no-repeat;
+  margin-left:15px;
+}
+
+.ticker-terran {
+  background-image:url(../img/ico_terran.png);
+  padding-left:30px;
+}
+
+.ticker-protoss {
+  background-image:url(../img/ico_protoss.png);
+  padding-left:28px;
+}
+
+.ticker-zerg {
+  background-image:url(../img/ico_zerg.png);
+  padding-left:35px;
+}
+
+.ticker-def_vs {
+  margin-left:15px;
+  color:#999;
+  font-size:18px;
+  text-transform: uppercase;
+}
+
+.ticker-team {
+  text-transform: uppercase;
+  font-size:16px;
+  color:#e7d76a;
+}
+
+.ticker-score {
+  font-weight:bold;
+  font-size:18px;
+  margin-left:10px;
+  padding:0 5px 0 5px;
+  border:2px solid #555;
+
+  border-radius:5px;
+}
+
+
+

@@ -1,0 +1,56 @@
+[
+	{
+		"type": "sc_match",
+		"player1": {
+			"nick": "Marine King",
+			"team": "PRIME",
+			"race": "terran"
+		},
+		"player2": {
+			"nick": "DRG",
+			"team": "MVP",
+			"race": "zerg"
+		},
+		"headline": "Coming Up!",
+		"text": "Biggest showdown of the year!"
+		
+	},
+	{
+		"type": "plaintext",
+		"headline": "Help IPL!",
+		"text": "Hashtag us on Twitter (#ipl)."
+	},
+	{
+		"type": "sc_result",
+		"winner": {
+			"nick": "Seed",
+			"team": "IM",
+			"race": "protoss",
+			"score": "4"
+		},
+		"loser": {
+			"nick": "MC",
+			"team": "SK",
+			"race": "protoss",
+			"score": "1"
+		},
+		"headline": "GSL Code S:",
+		"text": ""
+		
+	},
+	{
+		"type": "plaintext",
+		"headline": "Plaintext2",
+		"text": "This is some very plain text!"
+	},
+	{
+		"type": "plaintext",
+		"headline": "Plaintext",
+		"text": "This is some very plain text!"
+	},
+	{
+		"type": "plaintext",
+		"headline": "Plaintext",
+		"text": "This is some very plain text!"
+	}
+]

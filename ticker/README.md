@@ -1,2 +1,0 @@
-IPL Ticker Widget
-================
