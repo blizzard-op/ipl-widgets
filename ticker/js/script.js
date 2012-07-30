@@ -121,7 +121,7 @@
 
 			//Bind onfocus event so animation properly resumes from being in background
 			$(window).focus(function() {
-				//resetAnimation();
+				resetAnimation();
 			});
 
 			//Start it off!
