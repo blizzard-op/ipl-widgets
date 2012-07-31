@@ -233,7 +233,8 @@
 				var slug = d.metadata && d.metadata.franchise && d.metadata.franchise.slug || "";
 
 				//Skip if following conditions are met
-				if(!d.title || slug !== _gameFilter) continue;
+				if(!d.title) continue;
+				else if (_gameFilter && _gameFilter !== slug) continue;
 
 				var textBlock = ce("a","ticker-textBlock");
 				if(_spacing) {
