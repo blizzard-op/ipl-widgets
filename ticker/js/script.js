@@ -18,76 +18,11 @@
 		var _resizeTimer;
 		var _rootID = "iplTicker";
 		var _styleSheetURL = "css/style.css";
+		var _pause = false;
 
 		var _fontSize;
 		var _height;
 		var _width;
-
-		var textBlockMap = {
-			plaintext: function(data) {
-				var frag = document.createDocumentFragment();
-
-				var headline = ce("span","ticker-headline", "", data.headline);
-				var text = ce("span","ticker-text","",data.text);
-				
-				frag.appendChild(headline);
-				frag.appendChild(text);
-
-				return frag;
-			},
-			breaking: function(data) {
-
-			},
-			sc_player: function(data) {
-				var frag = document.createDocumentFragment();
-
-				frag.appendChild(ce("span", "ticker-player" + " " + data.race, "", data.nick));
-				if(data.team) frag.appendChild(ce("span","ticker-team","", "." + data.team));
-
-				return frag;
-			},
-			sc_result: function(data) {
-				var frag = document.createDocumentFragment();
-
-				var headline = ce("span","ticker-headline", "", data.headline);
-				var winnerScore = ce("span", "ticker-score","", data.winner.score);
-				var loserScore = ce("span", "ticker-score","", data.loser.score);
-				var winner = this.sc_player(data.winner);
-				var loser = this.sc_player(data.loser);
-				var def = ce("span","ticker-def_vs","","def.");
-				var text = ce("span","ticker-text","",data.text);
-
-				frag.appendChild(headline);			
-				frag.appendChild(winner);
-				frag.appendChild(winnerScore);
-				frag.appendChild(def);				
-				frag.appendChild(loser);
-				frag.appendChild(loserScore);
-				frag.appendChild(text);
-
-				return frag;
-			},
-			sc_match: function(data) {
-				var frag = document.createDocumentFragment();
-
-				var headline = ce("span","ticker-headline", "", data.headline);
-				var player1 = this.sc_player(data.player1);
-				var player2 = this.sc_player(data.player2);
-				var vs = ce("span","ticker-def_vs","","vs.");
-				var text = ce("span","ticker-text","",data.text);
-
-				frag.appendChild(headline);			
-				frag.appendChild(player1);
-				frag.appendChild(vs);			
-				frag.appendChild(player2);
-				frag.appendChild(text);
-
-				return frag;
-			},
-			lol_result: function(data) {
-
-			}
-		};
 
 		//Inject CSS
 		(function() {
@@ -105,6 +40,14 @@
 			if(!root) return;
 
 			_bar = ce("div","","ticker-bar");
+
+			$(_bar).mouseenter(function() {
+				_pause = true;
+			});
+
+			$(_bar).mouseleave(function() {
+				_pause = false;
+			});
 
 			//Get config if available
 			var setup = window.iplTickerConfig || {};
@@ -155,9 +98,10 @@
 			_ajaxRequests.push(
 				$.ajax({
 				url: "dummy_ajax.json",
-					dataType: "json",
+					dataType: "jsonp",
 					type: "GET",
 					cache: false,
+					jsonpCallback: "poop",
 
 					success: function(data) {
 						_data = data;
@@ -210,15 +154,32 @@
 			var duration = _marqueeSpeed * multi;
 			var start = new Date().getTime();
 			var end = start + duration;
+			var pause = _pause;
+			var pausedAt;
 
 			//Start next animation
 			var startedNext = false;
 			var startNextAt = start + (textSliderWidth / distanceToTravel) * duration;
 
+
 			(function animloop(now) {
 
 				var f = window.requestAnimationFrame(animloop);
 				//var f = setTimeout(animloop, 16.66);
+
+				if(_pause || pause) {
+					if(!pause) {
+						pause = true;
+						pausedAt = (now-start)/duration;
+					}
+					if(!_pause) {
+						start = now - pausedAt * duration;
+						end = start + duration;
+						startNextAt = start + (textSliderWidth / distanceToTravel) * duration;
+						pause = false;
+					}
+					return;
+				}
 
 				//Is the animation complete?
 				if(now > end || id !== _animChainID) {
@@ -253,15 +214,31 @@
 			if(_height) wrapper.style.lineHeight = _height;
 
 			for(var i = 0, len = data.length; i < len; i++) {
-				var textBlock = ce("div","ticker-textBlock");
-				var contents = textBlockMap[data[i].type] && textBlockMap[data[i].type](data[i]) || null;
-				if(contents) textBlock.appendChild(contents);
-				else continue;
+				var textBlock = ce("a","ticker-textBlock");
+				if(data[i].url) textBlock.setAttribute("href", data[i].url);
+				var contents = data[i].text ? processText(data[i].text) : "";
+				textBlock.innerHTML = contents;
 
 				wrapper.appendChild(textBlock);
 			}
 
 			return wrapper;
+		}
+
+		function processText(text) {
+			var textFormat = "<span class='ticker-$1'>$2</span>";
+			var iconFormat = "<span class='ticker-icon ticker-$1'></span>";
+
+			//First replace open/close brackets
+			var string = text.replace(/\[([A-Z][A-Z0-9]*)\b[^\]]*\](.*?)\[\/\1\]/gi, textFormat);
+
+			//Next, replace image tags
+			string = string.replace(/\[(zerg|protoss|terran)\]/gi, iconFormat);
+
+			//Now replace open only brackets
+			string = string.replace(/\[([A-Z][A-Z0-9]*)\b[^\]]*\]([\w\d\.]*)/gi, textFormat);
+
+			return string;
 		}
 
 
