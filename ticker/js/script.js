@@ -6,6 +6,8 @@
 	//============================ TICKER NAMESPACE =============================//
 	(function() {
 
+		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "/addons/ipl-widgets/ticker/";
+
 		var _bar;
 		var _width;
 		var _pollSpeed = 5*1000; //How often the API is called
@@ -17,7 +19,7 @@
 		var _animChainID = 1; //Allows me to invalidate a loop and restart (eg resizing on fly)
 		var _resizeTimer;
 		var _rootID = "iplTicker";
-		var _styleSheetURL = "css/style.css";
+		var _styleSheetURL = _docRoot + "css/style.css";
 		var _ajaxURL = "http://esports.ign.com/news.json";
 		//var _ajaxURL = "dummy_ajax.json";
 		var _pause = false;

@@ -94,6 +94,16 @@
   width:21px;
 }
 
+.ticker-lol {
+  background-image:url(../img/ico_lol.png);
+  width:22px;
+}
+
+.ticker-sc {
+  background-image:url(../img/ico_sc.png);
+  width:22px;
+}
+
 .ticker-gray {
   margin-right:15px;
   margin-left:15px;
