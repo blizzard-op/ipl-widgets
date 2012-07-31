@@ -22,20 +22,19 @@ var IPLBracketApp;
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
 				$(this.$appContainer).css({'-webkit-perspective':1500, '-webkit-transform-origin':'50%'});
-				this.$bracketLayer.css({'translateZ':-1000, '-webkit-backface-visibility':'hidden'});
+				this.$bracketLayer.css({'translateZ':-1000, '-webkit-backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-			var a = new Bracket(64);
+			//var a = new Bracket(64);
+			var a = new DoubleElimBracket(16);
 			
 			a.render(this.$bracketLayer);
-			a.alignMatches();
 			this.windowManager.centerObject(this.$bracketLayer);
 			this.setupTools(this.$toolbar);
 			setInterval(function(){that.update()}, 1000/this.fps);
-			
 		},
 		update:function(){
-
+			//stick drag code here
 		},
 		setupTools:function($Layer){
 			var that = this;
@@ -45,7 +44,7 @@ var IPLBracketApp;
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("+").css('translateZ',4000).click(function(){
 				that.changeZoom.apply(that);
 			});
-			$('<div><label>Hide Spoilers</label><input type="checkbox" checked="checked"></div>').appendTo($Layer);
+			$('<div><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>').appendTo($Layer);
 		},
 		onWheel:function(DeltaY){
 			this.changeZoom(DeltaY*250);
@@ -61,6 +60,30 @@ var IPLBracketApp;
 		}
 	});
 
+var DoubleElimBracket = Class.extend({
+	winnersBracket:null,
+	losersBracket:null,
+	championshipMatch:null,
+	init:function(NumPlayers){
+		this.winnersBracket = new Bracket(NumPlayers);
+		this.losersBracket = new LoserBracket(NumPlayers);
+		this.championshipMatch = new Match(null,0);
+		this.championshipMatch.childMatches[0] = this.$winnersBracket;
+		this.championshipMatch.childMatches[0] = this.$losersBracket;
+	},
+	render:function($Layer){
+		
+		var $win=$('<div class="winLayer clearfix">').appendTo($Layer);
+		
+		var $loss=$('<div class="lossLayer clearfix">').appendTo($Layer);
+		var $champ=$('<div class="champLayer">').appendTo($Layer);
+		this.winnersBracket.render($win);
+		this.losersBracket.render($loss);
+		console.log(parseInt($win.height()+$loss.height()));
+		$('<div class="bracket-match clearfix">').appendTo($champ).css({'margin-right':-700, 'margin-top':-.5*($win.height()+$loss.height())});
+	}
+}); 
+
 	// Keeps track of matches and renders the graph 
 	var Bracket = Class.extend({
 		championshipMatch:null,
@@ -74,7 +97,6 @@ var IPLBracketApp;
 			this.matchDepth = Math.ceil(Math.log(NumPlayers)/Math.log(2));
 			this.championshipMatch = new Match(null, 0);
 			this.buildGraph();
-			
 		},
 		//builds a graph to hold all matches
 		buildGraph:function(){
@@ -94,6 +116,7 @@ var IPLBracketApp;
 					}
 				}
 			}
+			//console.log(this.matches);
 		},
 		render:function($Layer){
 			var $round;
@@ -102,20 +125,13 @@ var IPLBracketApp;
 				$round = $('<div class="bracket-round matches-'+this.matches[i].length+'">').appendTo($Layer);
 				for(var j=0;j<this.matches[i].length;++j){
 					this.matches[i][j].$element =$('<div class="bracket-match">').appendTo($round).css({'background-color':'#000'});
-					
-					//$('<div><h1>Let the games begin</h1></div>').appendTo(to).css({'translateZ':-2000});
+					//$('<div style="-webkit-transform:translate3d(0,0,100px)"><h1>Let the games begin</h1></div>').appendTo(this.matches[i][j].$element).css({'color':'#fff'});
+
 				}
 				bracketWidth += $round.width() + parseInt($round.css('margin-right')); 
 			}
 			$Layer.width(bracketWidth);
-		},
-		//populates a specific match with actual data
-		populate:function(data){
-
-		},
-		//
-		getMatchesAtRound:function(){
-
+			this.alignMatches();
 		},
 		alignMatches:function(){
 			for(var i=this.matches.length-2;i>=0;--i){
@@ -130,19 +146,58 @@ var IPLBracketApp;
 					}else{
 						el.$element.css({'margin-top': (lastmargin*2)+(el.$element.height()*.5)-(parseInt(el.$element.css('margin'))*.5)});
 					}
-
-
 				}
 			}
+		},
+
+		createLine:function($Layer,x1,y1, x2,y2){
+    		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  			var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+  			var transform = 'rotate('+angle+'deg)';
+
+    		var line = $('<div>')
+        	.appendTo($Layer)
+        	.addClass('line')
+        	.css({
+        	  'position': 'absolute',
+        	  'transform': transform
+        	})
+        	.width(length)
+        	.offset({left: x1, top: y1});
+
+    		return line;
 		}
+
+
 	});
 
-	var DoubleElimBracket = Bracket.extend({
-		init:function(){
-			this._super();
+	var LoserBracket = Bracket.extend({
+		init:function(NumPlayers){
+			this.totalCompetitors = NumPlayers;
+			this.matchDepth = (Math.ceil(Math.log(NumPlayers)/Math.log(2))-1)*2;
+			this.championshipMatch = new LoserMatch(null, 0);
+			this.buildGraph();
 		},
 		buildGraph:function(){
-
+			this._super();
+		},
+		alignMatches:function(){
+			for(var i=this.matches.length-2;i>=0;--i){
+				for(var j=0;j<this.matches[i].length;++j){
+					var el = this.matches[i][j];
+					var thisInd = el.childMatches[0].$element.index();
+					var lastmargin = parseInt(el.childMatches[0].$element.css('margin-top'));
+					var lastChildren = el.childMatches;
+					if(i%2>0){
+						if(thisInd>0){
+							el.$element.css({'margin-top': lastChildren[0].$element.height() + lastmargin*2});
+						}else{
+							el.$element.css({'margin-top': (lastmargin*2)+(el.$element.height()*.5)-(parseInt(el.$element.css('margin'))*.5)});
+						//console.log(lastmargin);
+						}
+					}
+				}
+			}
 		}
 
 	});
@@ -174,25 +229,16 @@ var IPLBracketApp;
 		init:function(ParentNode, Depth){
 			this._super(ParentNode, Depth);
 		},
+
 		addBranch:function(){
 			if(this.depth%2>0){
-				_super.addBranch();
+				this.childMatches = [new LoserMatch(this,this.depth+1),new LoserMatch(this,this.depth+1)];
 			}else{
-				this.childMatches = [null, new LoserMatch(this,this.depth+1)];
+				this.childMatches = [new LoserMatch(this,this.depth+1)];
 			}
 			return this.childMatches;
 		}
 	});
-
-	var DoubleElimChampionship = Match.extend({
-		init:function(ParentNode, Depth){
-			this._super(ParentNode, Depth);
-		},
-		addBranch:function(){
-			this.childMatches = [new Match(this,this.depth+1), new LoserMatch(this,this.depth+1)];
-			return this.childMatches;
-		}
-	})
 
 	// Contains information about an individual game within a match
 	var Game = Class.extend({

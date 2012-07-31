@@ -26,18 +26,48 @@
 	height:auto;
 }
 
-.bracket-match{
+div.line{
+  transform-origin: 0 100%;
+  height: 3px;
+  background: #000;
+}
+
+div.bracket-match{
 	margin:20px;
 	width:200px;
-	height:64px;
+	height:100px;
 	border-radius: 4px;
+	-webkit-transform-style: preserve-3d;
+	background-color: #000;
+}
+
+div.winLayer{
+	margin-left:45px;
+}
+
+div.champLayer{
+	float:right;
+}
+
+.lossLayer .bracket-round{
+	display: block;
+	float:left;
+	margin-right: 32px;
 }
 
 .bracket-round{
 	display: block;
 	float:left;
-	margin-right: 64px;
+	margin-right: 200px;
 }
+
+.bracket-round.loser{
+	display: block;
+	float:left;
+	margin-right: 48px;
+}
+
+
 
 .matches-4 .bracket-match{
 	
