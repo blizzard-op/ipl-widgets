@@ -1,56 +1,15 @@
-[
+poop([
 	{
-		"type": "sc_match",
-		"player1": {
-			"nick": "Marine King",
-			"team": "PRIME",
-			"race": "terran"
-		},
-		"player2": {
-			"nick": "DRG",
-			"team": "MVP",
-			"race": "zerg"
-		},
-		"headline": "Coming Up!",
-		"text": "Biggest showdown of the year!"
-		
+		"url": "www.google.com",
+		"text": "[label]Coming Up on IPL:[/label]The State of the Game, [italic]with Tasteless and Artosis.[/italic]"
 	},
 	{
-		"type": "plaintext",
-		"headline": "Help IPL!",
-		"text": "Hashtag us on Twitter (#ipl)."
+		"url": "www.google.com",
+		"text": "[label]On Demand:[/label][terran][player]MarineKing[team]PRIME[gray]Vs.[protoss][team]MVP[player]Genius"
 	},
 	{
-		"type": "sc_result",
-		"winner": {
-			"nick": "Seed",
-			"team": "IM",
-			"race": "protoss",
-			"score": "4"
-		},
-		"loser": {
-			"nick": "MC",
-			"team": "SK",
-			"race": "protoss",
-			"score": "1"
-		},
-		"headline": "GSL Code S:",
-		"text": ""
-		
+		"url": "www.google.com",
+		"text": "[label]Last Night:[/label][zerg][team]iM[player]Nestea[gray]def.[protoss][team]SK[player]MC[score]3 - 4[/score]  \"An absolute nailbiter!\" - [italic]Total Biscuit[/italic]"
 	},
-	{
-		"type": "plaintext",
-		"headline": "Plaintext2",
-		"text": "This is some very plain text!"
-	},
-	{
-		"type": "plaintext",
-		"headline": "Plaintext",
-		"text": "This is some very plain text!"
-	},
-	{
-		"type": "plaintext",
-		"headline": "Plaintext",
-		"text": "This is some very plain text!"
-	}
-]
+
+])
