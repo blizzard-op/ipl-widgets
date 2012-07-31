@@ -10,8 +10,8 @@
   width:100%;
   overflow:hidden;
   height:26px;
-  border-top:2px solid #666;
-  border-bottom:2px solid #666;
+  border-top:1px solid #666;
+  border-bottom:1px solid #666;
 }
 
 .ticker-textSlider {
@@ -38,6 +38,10 @@
   padding:0 40px 0 40px;
   text-decoration: none;
   /*text-shadow:3px 3px 3px rgba(0,0,0,0.5);*/
+}
+
+.ticker-textBlock:hover {
+  background-color:#333;
 }
 
 .ticker-textBlock + .ticker-textBlock, .ticker-textSlider + .ticker-textSlider {

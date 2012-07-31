@@ -20,9 +20,11 @@
 		var _styleSheetURL = "css/style.css";
 		var _pause = false;
 
+		//Style params from optional setup obj - iplTickerConfig
 		var _fontSize;
 		var _height;
 		var _width;
+		var _spacing;
 
 		//Inject CSS
 		(function() {
@@ -66,6 +68,7 @@
 				if(speed !== NaN) _marqueeSpeed = speed * 1000;
 			}
 			if(setup.fontSize) _fontSize = setup.fontSize;
+			if(setup.spacing) _spacing = setup.spacing;
 
 			root.appendChild(_bar);
 
@@ -215,8 +218,12 @@
 
 			for(var i = 0, len = data.length; i < len; i++) {
 				var textBlock = ce("a","ticker-textBlock");
+				if(_spacing) {
+					textBlock.style.paddingLeft = _spacing;
+					textBlock.style.paddingRight = _spacing;
+				}
 				if(data[i].url) textBlock.setAttribute("href", data[i].url);
-				var contents = data[i].text ? processText(data[i].text) : "";
+				var contents = data[i].title ? processText(data[i].title) : "";
 				textBlock.innerHTML = contents;
 
 				wrapper.appendChild(textBlock);
