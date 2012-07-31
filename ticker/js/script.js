@@ -18,6 +18,8 @@
 		var _resizeTimer;
 		var _rootID = "iplTicker";
 		var _styleSheetURL = "css/style.css";
+		var _ajaxURL = "http://esports.ign.com/news.json";
+		//var _ajaxURL = "dummy_ajax.json";
 		var _pause = false;
 
 		//Style params from optional setup obj - iplTickerConfig
@@ -25,6 +27,8 @@
 		var _height;
 		var _width;
 		var _spacing;
+		var _gameFilter = "";
+
 
 		//Inject CSS
 		(function() {
@@ -37,6 +41,9 @@
 
 		//When all assets have loaded, fire (We rely on CSS);
 		$(window).load(function() {
+
+			//If fires more than once...
+			if(_bar) return;
 
 			var root = document.getElementById(_rootID);
 			if(!root) return;
@@ -69,6 +76,7 @@
 			}
 			if(setup.fontSize) _fontSize = setup.fontSize;
 			if(setup.spacing) _spacing = setup.spacing;
+			if(setup.gameSlug) _gameFilter = setup.gameSlug;
 
 			root.appendChild(_bar);
 
@@ -100,11 +108,11 @@
 
 			_ajaxRequests.push(
 				$.ajax({
-				url: "dummy_ajax.json",
+					url: _ajaxURL,
 					dataType: "jsonp",
 					type: "GET",
-					cache: false,
-					jsonpCallback: "poop",
+					cache: true,
+					jsonpCallback: "getCached",
 
 					success: function(data) {
 						_data = data;
@@ -217,13 +225,21 @@
 			if(_height) wrapper.style.lineHeight = _height;
 
 			for(var i = 0, len = data.length; i < len; i++) {
+
+				//Verify that the data is for the correct game
+				var d = data[i];
+				var slug = d.metadata && d.metadata.franchise && d.metadata.franchise.slug || "";
+
+				//Skip if following conditions are met
+				if(!d.title || slug !== _gameFilter) continue;
+
 				var textBlock = ce("a","ticker-textBlock");
 				if(_spacing) {
 					textBlock.style.paddingLeft = _spacing;
 					textBlock.style.paddingRight = _spacing;
 				}
-				if(data[i].url) textBlock.setAttribute("href", data[i].url);
-				var contents = data[i].title ? processText(data[i].title) : "";
+				if(d.url) textBlock.setAttribute("href", d.url);
+				var contents = d.title ? processText(d.title) : "";
 				textBlock.innerHTML = contents;
 
 				wrapper.appendChild(textBlock);
