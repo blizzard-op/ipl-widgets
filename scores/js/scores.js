@@ -1,5 +1,5 @@
 (function($) {
-
+	var basepath = "/addons/ipl-widgets/scores/";
 	var ipl = {
 		init: function(config) {
 			this.loadStyleSheet();
@@ -111,7 +111,7 @@
 		loadStyleSheet: function() {
 		   var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/ removing link nodes
 		       link = document.createElement( 'link' );           // create the link node
-		   link.setAttribute( 'href', 'css/style.css' );
+		   link.setAttribute( 'href', basepath + 'css/style.css' );
 		   link.setAttribute( 'rel', 'stylesheet' );
 		   head.appendChild(link);  // insert the link node into the DOM and start loading the style sheet
 		},
@@ -161,7 +161,7 @@
 
 		// loadBox: function() {
 		//    var box = document.getElementByID( 'box-scores' )[0], // reference to document.head for appending/ removing link nodes
-		//    script = document.createElement( 'script' );           // create the link node
+		//        script = document.createElement( 'script' );           // create the link node
 		//    script.setAttribute( 'src', 'box.js' );
 		//    script.setAttribute( 'id', 'ipl-box-scores-template');
 		//    script.setAttribute( 'type', 'ipl/template');
