@@ -1,0 +1,193 @@
+		body {
+			font-size: 10px;
+			font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			color: #2f2f2f;
+			/*text-shadow: 0px 1px 0px #c4c4c4;*/
+			background: black;
+		}
+
+		a {
+			text-decoration: none;
+			color: #2f2f2f;
+			font-weight: bold;
+		}
+
+		.controls {
+			width: 952px;
+			height: 77px;
+			margin: auto;
+		}
+
+		.container {
+			width: 912px;
+			height: 77px;
+			float: left;
+			overflow: hidden;
+		}
+
+		.box-scores {
+			width: 1540px;
+			overflow: hidden;
+		}
+
+		.match {
+			width: 150px;
+			height: 77px;
+			margin: 0 1px;
+			float: left;
+			overflow: hidden;
+		}
+
+		.date-container {
+			font-size: 10px;
+			line-height: 15px;
+			text-align: center;
+			font-weight: bold;
+			height: 15px;
+			width: 150px;
+			border-bottom: 1px solid #000;
+			background: #efefef;
+			/*background: -webkit-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -moz-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -o-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -ms-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: linear-gradient(top, #efefef 0%,#d6d6d6 100%);*/
+		}
+
+		.title {
+			text-transform: uppercase;
+			height: 15px;
+			width: 150px;
+			line-height: 15px;
+			/*text-shadow: 0px 1px 0px #d6d6d6;*/
+			font-weight: bold;
+			text-align: center;
+			background: #aaa;
+			/*background: -webkit-linear-gradient(top, #c4c4c4 %,##aaa 100%);
+		  	background: -moz-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: -o-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: -ms-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: linear-gradient(top, #c4c4c4 0%,##aaa 100%);*/
+		}
+
+		.team-top {
+			height: 15px;
+			width: 150px;
+			line-height: 15px;
+			border-bottom: 1px solid #fff;
+			background: #efefef;
+			/*background: -webkit-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -moz-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -o-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -ms-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: linear-gradient(top, #efefef 0%,#d6d6d6 100%);*/
+		}
+
+		.team-bottom {
+			height: 15px;
+			width: 150px;
+			line-height: 15px;
+			background: #efefef;
+			/*background: -webkit-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -moz-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -o-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: -ms-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+		  	background: linear-gradient(top, #efefef 0%,#d6d6d6 100%);*/
+		}
+
+		.status-container {
+			height: 15px;
+			width: 150px;
+			line-height: 15px;
+			background: #aaa;
+			/*background: -webkit-linear-gradient(top, #c4c4c4 %,##aaa 100%);
+		  	background: -moz-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: -o-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: -ms-linear-gradient(top, #c4c4c4 0%,##aaa 100%);
+		  	background: linear-gradient(top, #c4c4c4 0%,##aaa 100%);*/
+		}
+
+		.team-name {
+			float: left;
+			margin: 0 5px;
+		}
+
+		.score {
+			float: right;
+			margin: 0 5px;
+		}
+
+		.date {
+			margin: 0 5px;
+		}
+
+		.winner {
+			font-weight: bold;
+		}
+
+		.loser {
+			color: #555;
+		}
+
+		.draw {
+
+		}
+
+		.left-control {
+			width: 20px;
+			height: 75px;
+			float: left;
+			overflow: hidden;
+		}
+
+		.right-control {
+			width: 20px;
+			height: 75px;
+			float: left;
+			overflow: hidden;
+		}
+
+		.left-button {
+			display: none;
+			cursor: pointer;
+			margin: 25.5px 0;
+			margin-left: 5px;
+		}
+
+		.right-button {
+			display: none;
+			cursor: pointer;
+			margin: 25.5px 0;
+			margin-left: -5px;
+		}
+
+		.vod-image {
+			float: left;
+			margin: 1px 5px;
+		}
+
+		.WATCH {
+			color: #efefef;
+			/*text-shadow: 0px 1px 0px #777;*/
+			background: #ee3124; 
+  			/*background: -webkit-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -moz-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -o-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -ms-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: linear-gradient(top, #ee3124 0%,#d42c20 100%);*/
+		}
+
+		.LIVE {
+			color: #efefef;
+			/*text-shadow: 0px 1px 0px #777;*/
+			background: #ee3124; 
+  			/*background: -webkit-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -moz-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -o-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: -ms-linear-gradient(top, #ee3124 0%,#d42c20 100%);
+		  	background: linear-gradient(top, #ee3124 0%,#d42c20 100%);*/
+		}
+
+		.COMING {
+       		/*text-shadow: 0px 1px 0px #d6d6d6;*/
+		}

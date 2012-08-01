@@ -1,0 +1,193 @@
+<!doctype html>
+<html>
+<head>
+	<title>IPL Box Scores Demo</title>
+	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+
+<body>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+	<script src="http://cloud.github.com/downloads/wycats/handlebars.js/handlebars-1.0.0.beta.6.js"></script>
+	<script src ="https://raw.github.com/timrwood/moment/1.7.0/min/moment.min.js"></script>
+
+	<div class="controls">
+		<div class='left-control'><img src='images/left.png' class='left-button' /></div>
+		<div class='container'>
+			<div class='box-scores'>
+				<script id='ipl-box-scores-template' type='ipl/template'>
+					{{#each this}}
+					<div class='match'>
+						<div class='date-container'><div class='date'>{{date}}</div></div>
+						<div class='title'>{{title}}</div>
+						<div class='team-top'><div class='team-name {{{team1Class}}}'>{{username1}}</div><div class='score {{{team1Class}}}'>{{points1}}</div></div>
+						<div class='team-bottom'><div class='team-name {{{team2Class}}}'>{{username2}}</div><div class='score {{{team2Class}}}'>{{points2}}</div></div>
+						<div class='status-container'><a href='{{{url}}}'><div class='vod-image'><img src='images/video.png' /></div><div class='status {{{status}}}'>{{status}}</div></a></div>
+					</div>
+					{{/each}}
+				</script>
+			</div>
+		</div>
+		<div class='right-control'><img src='images/right.png' class='right-button' /></div>
+	</div>
+
+	<script>
+	(function($) {
+
+		var ipl = {
+			init: function(config) {
+				this.url = 'http://esports.ign.com/scores.json';
+				this.template = config.template;
+				this.container = config.container;
+				this.fetch();
+			},
+
+			attachTemplate: function() {
+				var template = Handlebars.compile(this.template);
+				this.container.append(template(this.matchUps));
+			},
+
+			fetch: function() {
+				var self = this;
+				$.ajax({
+				    type: 'GET',
+				    url: this.url,
+				    dataType: "jsonp",
+				    success: function(data) {
+				        self.matchUps = [];
+				        $.map(data, function(data, date) {
+					        $.map(data, function(match) {
+					        	var game = {
+					        		date: moment(date, "YYYY-MM-DD").format("MMM D, YYYY"),
+					        		title: (function (title) {
+					        			if(title == "") {
+					        				return " ";
+						        		} else {
+						        			return title;
+						        		}
+						        	})(match.match_score.title),
+					        		status: (function(status) {
+					        			switch (status)
+										{
+										case 'finished':
+										  	return "WATCH VOD";
+										  	break;
+										case 'underway':
+											return "LIVE NOW";
+											break;
+										case 'ready':
+											return "COMING SOON";
+										default:
+										  	return "FINISHED";
+										}
+					        		})(match.match_score.match.status),
+					        		url: (function(url) {
+					        			console.log(url);
+					        			switch (url)
+										{
+										case null:
+										  	return '#';
+										  	break;
+										default:
+										  	return 'http://ign.com/' + url;
+										}
+					        		})(match.match_score.match.url)
+					        	};
+					        	var i = 1;
+					        	var team1Score,
+					        		team2Score,
+					        		team1Class,
+					        		team2Class;
+					        	$.map(match.match_score.card, function(teamScore) {
+					        		if (i == 1) team1Score = teamScore.points;
+					        		if (i == 2) team2Score = teamScore.points;
+					        		i++;
+					        	});
+					        	if (team1Score > team2Score) {
+					        		team1Class = 'winner';
+					        		team2Class = 'loser';
+					        	} else if (team1Score < team2Score) {
+					        		team2Class = 'winner';
+					        		team1Class = 'loser';
+					        	} else {
+					        		team1Class = 'draw';
+					        		team2Class = 'draw';
+					        	}
+					        	i = 1;	
+					        	$.map(match.match_score.card, function(teamScore) {
+					        		game['username' + i] = teamScore.username;
+					        		game['points' + i] = teamScore.points;
+					        		if (i == 1) game.team1Class = team1Class;
+					        		if (i == 2) game.team2Class = team2Class;
+					        		i++;
+					        	});
+
+					        	self.matchUps.push(game);
+					        });
+						});
+						self.attachTemplate();
+				    },
+				    error: function(jqXHR, textStatus, errorThrown) {
+				        data = {
+				            error: true,
+				            jqXHR: jqXHR,
+				            textStatus: textStatus,
+				            errorThrown: errorThrown
+				        };
+				        callback.call(this, data)
+				    }
+				});
+			}
+		};
+
+		ipl.init({
+			template: $('#ipl-box-scores-template').html(),
+			container: $('div.box-scores'),
+		});
+
+		
+			$('.left-button').on('mouseenter', function() {
+				$(this).animate({'margin-left': '-=5'}, 300);
+			}).on('mouseleave', function() {
+				$(this).animate({'margin-left': '+=5'}, 300);
+			});
+
+			$('.right-button').on('mouseenter', function() {
+				$(this).animate({'margin-left': '+=5'}, 300);
+			}).on('mouseleave', function() {
+				$(this).animate({'margin-left': '-=5'}, 300);
+			});
+				 
+		var i = 1;
+
+		$('.right-button').on('click', function() {
+			if(i == 5) {
+				console.log(i);
+				$('.box-scores').css('margin-left', '-760');
+			} else {
+				$('.box-scores').animate({'margin-left': '-=152'}, 500);
+				i++;
+			};
+		});
+
+		$('.left-button').on('click', function() {
+			if(i == 1) {
+				$('.box-scores').css('margin-left', '0');
+			} else {
+				$('.box-scores').animate({'margin-left': '+=152'}, 500);
+				i--;
+			};
+		});
+		// $('document').ready(function(){
+		// 	$('.left-button').toggle();
+		// 	$('.right-button').toggle();
+		// });
+		$('.left-button').fadeToggle(2000);
+		$('.right-button').fadeToggle(2000);
+
+	})(jQuery);
+	</script>
+
+</body>
+</html>
