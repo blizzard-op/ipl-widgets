@@ -6,6 +6,8 @@
 	//============================ TICKER NAMESPACE =============================//
 	(function() {
 
+		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "/addons/ipl-widgets/ticker/";
+
 		var _bar;
 		var _width;
 		var _pollSpeed = 5*1000; //How often the API is called
@@ -17,12 +19,18 @@
 		var _animChainID = 1; //Allows me to invalidate a loop and restart (eg resizing on fly)
 		var _resizeTimer;
 		var _rootID = "iplTicker";
-		var _styleSheetURL = "css/style.css";
+		var _styleSheetURL = _docRoot + "css/style.css";
+		var _ajaxURL = "http://esports.ign.com/news.json";
+		//var _ajaxURL = "dummy_ajax.json";
 		var _pause = false;
 
+		//Style params from optional setup obj - iplTickerConfig
 		var _fontSize;
 		var _height;
 		var _width;
+		var _spacing;
+		var _gameFilter = "";
+
 
 		//Inject CSS
 		(function() {
@@ -35,6 +43,9 @@
 
 		//When all assets have loaded, fire (We rely on CSS);
 		$(window).load(function() {
+
+			//If fires more than once...
+			if(_bar) return;
 
 			var root = document.getElementById(_rootID);
 			if(!root) return;
@@ -66,6 +77,8 @@
 				if(speed !== NaN) _marqueeSpeed = speed * 1000;
 			}
 			if(setup.fontSize) _fontSize = setup.fontSize;
+			if(setup.spacing) _spacing = setup.spacing;
+			if(setup.gameSlug) _gameFilter = setup.gameSlug;
 
 			root.appendChild(_bar);
 
@@ -73,9 +86,9 @@
 			$(window).resize(resizeBar);
 
 			//Bind onfocus event so animation properly resumes from being in background
-			$(window).focus(function() {
-				resetAnimation();
-			});
+			//$(window).focus(function() {
+			//	resetAnimation();
+			//});
 
 			//Start it off!
 			resizeBar();
@@ -97,17 +110,16 @@
 
 			_ajaxRequests.push(
 				$.ajax({
-				url: "dummy_ajax.json",
+					url: _ajaxURL,
 					dataType: "jsonp",
 					type: "GET",
-					cache: false,
-					jsonpCallback: "poop",
+					cache: true,
+					jsonpCallback: "getCached",
 
 					success: function(data) {
 						_data = data;
 						if(!_animStarted) {
 							animate(_animChainID);
-							_animStarted = true;
 						}
 						_pollTimer = setTimeout(function() {
 							poll(); //Poll again!!!
@@ -152,10 +164,17 @@
 			var distanceToTravel = textSliderWidth + _width;
 			var multi = distanceToTravel / _width; //Also start next anim at this point
 			var duration = _marqueeSpeed * multi;
-			var start = new Date().getTime();
-			var end = start + duration;
 			var pause = _pause;
 			var pausedAt;
+
+			var start = new Date().getTime();
+
+			//I want the animation to start as full as possible
+			if(!_animStarted) {
+				start -= (Math.min(textSliderWidth, _width) / distanceToTravel) * duration;
+			}
+
+			var end = start + duration;
 
 			//Start next animation
 			var startedNext = false;
@@ -205,6 +224,8 @@
 
 			})();
 
+			_animStarted = true;
+
 		}
 
 		function createTextSlider(data) {
@@ -214,9 +235,22 @@
 			if(_height) wrapper.style.lineHeight = _height;
 
 			for(var i = 0, len = data.length; i < len; i++) {
+
+				//Verify that the data is for the correct game
+				var d = data[i];
+				var slug = d.metadata && d.metadata.franchise && d.metadata.franchise.slug || "";
+
+				//Skip if following conditions are met
+				if(!d.title) continue;
+				else if (_gameFilter && _gameFilter !== slug) continue;
+
 				var textBlock = ce("a","ticker-textBlock");
-				if(data[i].url) textBlock.setAttribute("href", data[i].url);
-				var contents = data[i].text ? processText(data[i].text) : "";
+				if(_spacing) {
+					textBlock.style.paddingLeft = _spacing;
+					textBlock.style.paddingRight = _spacing;
+				}
+				if(d.url) textBlock.setAttribute("href", d.url);
+				var contents = d.title ? processText(d.title) : "";
 				textBlock.innerHTML = contents;
 
 				wrapper.appendChild(textBlock);
