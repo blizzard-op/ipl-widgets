@@ -10,7 +10,7 @@
 
 		var _bar;
 		var _width;
-		var _pollSpeed = 60*1000; //How often the API is called
+		var _pollSpeed = 5*60*1000; //How often the API is called
 		var _marqueeSpeed = 20*1000; //The time it will take for text to move from one side to the other
 		var _data;
 		var _ajaxRequests = [];
