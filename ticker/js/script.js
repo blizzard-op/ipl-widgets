@@ -6,7 +6,7 @@
 	//============================ TICKER NAMESPACE =============================//
 	(function() {
 
-		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "/addons/ipl-widgets/ticker/";
+		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "http://esports.ign.com/addons/ipl-widgets/ticker/";
 
 		var _bar;
 		var _width;
@@ -84,11 +84,6 @@
 
 			//Bind onresize
 			$(window).resize(resizeBar);
-
-			//Bind onfocus event so animation properly resumes from being in background
-			//$(window).focus(function() {
-			//	resetAnimation();
-			//});
 
 			//Start it off!
 			resizeBar();
@@ -183,8 +178,10 @@
 
 			(function animloop(now) {
 
-				var f = window.requestAnimationFrame(animloop);
-				//var f = setTimeout(animloop, 16.66);
+				//var f = window.requestAnimationFrame(animloop);
+				var f = setTimeout(animloop, 16.66);
+
+				var now = new Date().getTime();
 
 				if(_pause || pause) {
 					if(!pause) {
@@ -202,8 +199,8 @@
 
 				//Is the animation complete?
 				if(now > end || id !== _animChainID) {
-					window.cancelAnimationFrame(f);
-					//clearTimeout(f);
+					//window.cancelAnimationFrame(f);
+					clearTimeout(f);
 					$(textSlider).remove();
 					return;
 				}
@@ -278,32 +275,6 @@
 
 	})();
 
-
-	//Request Animation Frame Polyfill
-	(function() {
-	    var lastTime = 0;
-	    var vendors = ['ms', 'moz', 'webkit', 'o'];
-	    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-	        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-	        window.cancelAnimationFrame = 
-	          window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
-	    }
-	 
-	    if (!window.requestAnimationFrame)
-	        window.requestAnimationFrame = function(callback, element) {
-	            var currTime = new Date().getTime();
-	            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-	            var id = window.setTimeout(function() { callback(currTime + timeToCall); }, 
-	              timeToCall);
-	            lastTime = currTime + timeToCall;
-	            return id;
-	        };
-	 
-	    if (!window.cancelAnimationFrame)
-	        window.cancelAnimationFrame = function(id) {
-	            clearTimeout(id);
-	    };
-	}());
 
 	//DOM object creator helper
 	function ce(tag,c,id,text) {
