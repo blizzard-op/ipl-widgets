@@ -6,7 +6,7 @@
 	//============================ TICKER NAMESPACE =============================//
 	(function() {
 
-		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "/addons/ipl-widgets/ticker/";
+		var _docRoot = (typeof jb_localDev !== "undefined") ? "" : "http://esports.ign.com/addons/ipl-widgets/ticker/";
 
 		var _bar;
 		var _width;
