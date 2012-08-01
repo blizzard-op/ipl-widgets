@@ -74,8 +74,7 @@
 			}
 			if(setup.speed) {
 				var speed = Number(setup.speed);
-				if(speed !== NaN) {
-					_marqueeSpeed = speed * 1000;
+				if(speed !== NaN) _marqueeSpeed = speed * 1000;
 			}
 			if(setup.fontSize) _fontSize = setup.fontSize;
 			if(setup.spacing) _spacing = setup.spacing;
