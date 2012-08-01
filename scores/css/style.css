@@ -1,28 +1,25 @@
-		body {
-			font-size: 10px;
-			font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-			color: #2f2f2f;
-			/*text-shadow: 0px 1px 0px #c4c4c4;*/
-			background: black;
-		}
-
-		a {
+		.status-link {
 			text-decoration: none;
 			color: #2f2f2f;
 			font-weight: bold;
 		}
 
 		.controls {
-			width: 952px;
+			width: 955px;
 			height: 77px;
 			margin: auto;
 		}
 
 		.container {
-			width: 912px;
+			width: 910px;
 			height: 77px;
 			float: left;
+			font-size: 10px;
+			font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+			color: #2f2f2f;
+			/*text-shadow: 0px 1px 0px #c4c4c4;*/
 			overflow: hidden;
+			position: relative;
 		}
 
 		.box-scores {
@@ -119,6 +116,7 @@
 
 		.date {
 			margin: 0 5px;
+			font-style: italic;
 		}
 
 		.winner {
@@ -129,13 +127,10 @@
 			color: #555;
 		}
 
-		.draw {
-
-		}
-
 		.left-control {
 			width: 20px;
 			height: 75px;
+			margin-right: 1px;
 			float: left;
 			overflow: hidden;
 		}
@@ -143,19 +138,20 @@
 		.right-control {
 			width: 20px;
 			height: 75px;
+			margin-left: 2px;
 			float: left;
 			overflow: hidden;
 		}
 
 		.left-button {
-			display: none;
+			/*display: none;*/
 			cursor: pointer;
 			margin: 25.5px 0;
 			margin-left: 5px;
 		}
 
 		.right-button {
-			display: none;
+			/*display: none;*/
 			cursor: pointer;
 			margin: 25.5px 0;
 			margin-left: -5px;
@@ -167,9 +163,9 @@
 		}
 
 		.WATCH {
-			color: #efefef;
+			/*color: #efefef;*/
 			/*text-shadow: 0px 1px 0px #777;*/
-			background: #ee3124; 
+			/*background: #ee3124; */
   			/*background: -webkit-linear-gradient(top, #ee3124 0%,#d42c20 100%);
 		  	background: -moz-linear-gradient(top, #ee3124 0%,#d42c20 100%);
 		  	background: -o-linear-gradient(top, #ee3124 0%,#d42c20 100%);
@@ -189,5 +185,7 @@
 		}
 
 		.COMING {
+			color: #555;
+			background: #ccc;
        		/*text-shadow: 0px 1px 0px #d6d6d6;*/
 		}

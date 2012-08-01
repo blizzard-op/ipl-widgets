@@ -3,10 +3,6 @@
 <head>
 	<title>IPL Box Scores Demo</title>
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
-<<<<<<< HEAD:scores/ipl_box_score_demo.html
-	<link rel="stylesheet" type="text/css" href="/addons/ipl-widgets/scores/css/style.css">
-=======
->>>>>>> Commit deuce.. Full functionality. Updated styling:scores/boxscore/ipl_box_score_demo.html
 </head>
 
 <body>
@@ -17,14 +13,9 @@
 	
 	<div id='scores'></div>
 
-<<<<<<< HEAD:scores/ipl_box_score_demo.html
-	<div class="controls">
-		<div class='left-control'><img src='/addons/ipl-widgets/scores/images/left.png' class='left-button' /></div>
-=======
 	<script id='ipl-box-scores-template' type='ipl/template'>
 		<div class="controls">
 		<div class='left-control'><img src='images/left.png' class='left-button' /></div>
->>>>>>> Commit deuce.. Full functionality. Updated styling:scores/boxscore/ipl_box_score_demo.html
 		<div class='container'>
 			<div class='box-scores'>
 				{{#each this}}
@@ -33,16 +24,12 @@
 						<div class='title'>{{title}}</div>
 						<div class='team-top'><div class='team-name {{{team1Class}}}'>{{username1}}</div><div class='score {{{team1Class}}}'>{{points1}}</div></div>
 						<div class='team-bottom'><div class='team-name {{{team2Class}}}'>{{username2}}</div><div class='score {{{team2Class}}}'>{{points2}}</div></div>
-<<<<<<< HEAD:scores/ipl_box_score_demo.html
-						<div class='status-container'><a href='{{{url}}}'><div class='vod-image'><img src='/addons/ipl-widgets/scores/images/video.png' /></div><div class='status {{{status}}}'>{{status}}</div></a></div>
-=======
 						<div class='status-container'><a href='{{{url}}}' class='status-link'><div class='vod-image'><img src='images/video.png' /></div><div class='status {{{status}}}'>{{status}}</div></a></div>
->>>>>>> Commit deuce.. Full functionality. Updated styling:scores/boxscore/ipl_box_score_demo.html
 					</div>
 				{{/each}}
 			</div>
 		</div>
-		<div class='right-control'><img src='/addons/ipl-widgets/scores/images/right.png' class='right-button' /></div>
+		<div class='right-control'><img src='images/right.png' class='right-button' /></div>
 	</div>
 	</script>
 	
