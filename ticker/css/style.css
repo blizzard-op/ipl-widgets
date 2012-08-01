@@ -11,7 +11,6 @@
   overflow:hidden;
   height:26px;
   border-top:1px solid #333;
-  border-bottom:1px solid #333;
 }
 
 .ticker-textSlider {
@@ -37,15 +36,12 @@
   height:inherit;
   padding:0 40px 0 40px;
   text-decoration: none;
+   border-left:1px solid #161616;
   /*text-shadow:3px 3px 3px rgba(0,0,0,0.5);*/
 }
 
 .ticker-textBlock:hover {
   background-color:#333;
-}
-
-.ticker-textBlock {
-  border-left:1px solid #333;
 }
 
 .ticker-textBlock span {
