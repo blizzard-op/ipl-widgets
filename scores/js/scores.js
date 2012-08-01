@@ -1,5 +1,5 @@
 (function($) {
-	var basepath = "/addons/ipl-widgets/scores/";
+	var basepath = "http://esports.ign.com/addons/ipl-widgets/scores/";
 	var ipl = {
 		init: function(config) {
 			this.loadStyleSheet();
