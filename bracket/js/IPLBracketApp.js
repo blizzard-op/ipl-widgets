@@ -3,8 +3,11 @@ var IPLBracketApp;
 
 (function($){
 	// Main application - responsible for initializing components and managing events  
+	var browserPrefix = "-webkit"
 	IPLBracketApp = Class.extend({
-		zoomLevel:1,
+		zoomLevel:.2,
+		maxZoom:2,
+		minZoom:.02,
 		fps:30,
 		windowManager:null,
 		spoilers:true,
@@ -13,20 +16,23 @@ var IPLBracketApp;
 		$toolbar:null,
 		mouseIsDown:false,
 		isDragging:false,
-		enable3d:true,
+		enable3d:false,
 		init:function(Container){
 			var that = this;
+			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
-			
+			console.log(Modernizr.prefixed('transform'));
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
-				$(this.$appContainer).css({'-webkit-perspective':1500, '-webkit-transform-origin':'50%'});
-				this.$bracketLayer.css({'translateZ':-1000, '-webkit-backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
+				$(this.$appContainer).css({'-moz-perspective':1500,'-webkit-perspective':1500, 'transform-origin':'50%'});
+				this.$bracketLayer.css({'translateZ':-1000, 'backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
+			}else{
+				this.$bracketLayer.css({'scale': .2}); 
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-			//var a = new Bracket(64);
-			var a = new DoubleElimBracket(16);
+			var a = new Bracket(16);
+			//var a = new DoubleElimBracket(16);
 			
 			a.render(this.$bracketLayer);
 			this.windowManager.centerObject(this.$bracketLayer);
@@ -35,22 +41,35 @@ var IPLBracketApp;
 		},
 		update:function(){
 			//stick drag code here
+			if(this.mouseIsDown){
+				
+			}
 		},
 		setupTools:function($Layer){
 			var that = this;
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("-").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that);
+				that.changeZoom.apply(that,[-450]);
 			});
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("+").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that);
+				that.changeZoom.apply(that,[450]);
 			});
 			$('<div><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>').appendTo($Layer);
 		},
 		onWheel:function(DeltaY){
-			this.changeZoom(DeltaY*250);
+			this.changeZoom(DeltaY*350);
 		},
 		changeZoom:function(ZoomAmt){
-			this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
+			if(this.enable3d){
+				this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
+			}else{
+				this.zoomLevel += ZoomAmt*.00005;
+				if(this.zoomLevel>0){
+					this.zoomLevel = Math.min(this.zoomLevel, this.maxZoom);
+				}else{
+					this.zoomLevel = Math.max(this.zoomLevel, this.minZoom);
+				}
+				this.$bracketLayer.animate({'scale':this.zoomLevel},{duration:300,queue:false});
+			}
 		},
 		mousedown:function(event){
 			mouseIsDown = true;
@@ -68,19 +87,17 @@ var DoubleElimBracket = Class.extend({
 		this.winnersBracket = new Bracket(NumPlayers);
 		this.losersBracket = new LoserBracket(NumPlayers);
 		this.championshipMatch = new Match(null,0);
-		this.championshipMatch.childMatches[0] = this.$winnersBracket;
-		this.championshipMatch.childMatches[0] = this.$losersBracket;
+		this.championshipMatch.childMatches[0] = this.winnersBracket.championshipMatch;
+		this.championshipMatch.childMatches[0] = this.losersBracket.championshipMatch;
 	},
 	render:function($Layer){
-		
 		var $win=$('<div class="winLayer clearfix">').appendTo($Layer);
-		
 		var $loss=$('<div class="lossLayer clearfix">').appendTo($Layer);
 		var $champ=$('<div class="champLayer">').appendTo($Layer);
 		this.winnersBracket.render($win);
-		this.losersBracket.render($loss);
-		console.log(parseInt($win.height()+$loss.height()));
-		$('<div class="bracket-match clearfix">').appendTo($champ).css({'margin-right':-700, 'margin-top':-.5*($win.height()+$loss.height())});
+		//this.losersBracket.render($loss);
+		//console.log(parseInt($win.height()+$loss.height()));
+		//$('<div class="bracket-match clearfix">').appendTo($champ).css({'margin-right':-700, 'margin-top':-.5*($win.height()+$loss.height())});
 	}
 }); 
 
@@ -121,10 +138,12 @@ var DoubleElimBracket = Class.extend({
 		render:function($Layer){
 			var $round;
 			var bracketWidth = 0;
+			var $lineLayer = $('<div>').appendTo($Layer).css('position','relitave');
+			var that = this;
 			for(var i=this.matches.length-1;i>=0;--i){
 				$round = $('<div class="bracket-round matches-'+this.matches[i].length+'">').appendTo($Layer);
 				for(var j=0;j<this.matches[i].length;++j){
-					this.matches[i][j].$element =$('<div class="bracket-match">').appendTo($round).css({'background-color':'#000'});
+					this.matches[i][j].$element =$('<div class="bracket-match">').appendTo($round);
 					//$('<div style="-webkit-transform:translate3d(0,0,100px)"><h1>Let the games begin</h1></div>').appendTo(this.matches[i][j].$element).css({'color':'#fff'});
 
 				}
@@ -132,6 +151,8 @@ var DoubleElimBracket = Class.extend({
 			}
 			$Layer.width(bracketWidth);
 			this.alignMatches();
+			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
+			
 		},
 		alignMatches:function(){
 			for(var i=this.matches.length-2;i>=0;--i){
@@ -144,14 +165,25 @@ var DoubleElimBracket = Class.extend({
 					if(thisInd>0){
 						el.$element.css({'margin-top': lastChildren[0].$element.height() + lastmargin*2});
 					}else{
-						el.$element.css({'margin-top': (lastmargin*2)+(el.$element.height()*.5)-(parseInt(el.$element.css('margin'))*.5)});
+						el.$element.css({'margin-top': (lastmargin*2)+(el.$element.height()*0.5)-(parseInt(el.$element.css('margin-top').replace(/px/,''))*0.5)});
 					}
 				}
 			}
 		},
-
+		connectMatches:function($Layer, Node){
+			if(Node.childMatches.length>0){
+				
+				for(var a in Node.childMatches){
+					this.createLine($Layer, Node.realX(), Node.realY()+38, Node.childMatches[a].realX()+Node.$element.width() ,Node.childMatches[a].realY()+38);
+					this.connectMatches($Layer,Node.childMatches[a]);
+				}
+			}else{
+				return null;
+			}
+			
+		},
 		createLine:function($Layer,x1,y1, x2,y2){
-    		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+    		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) + 50;
   			var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
   			var transform = 'rotate('+angle+'deg)';
 
@@ -160,11 +192,12 @@ var DoubleElimBracket = Class.extend({
         	.addClass('line')
         	.css({
         	  'position': 'absolute',
-        	  'transform': transform
+        	  //'rotateZ': angle
+        	  '-moz-transform': transform,
+        	  '-webkit-transform': transform,
         	})
         	.width(length)
-        	.offset({left: x1, top: y1});
-
+        	.css({top:y1,left:x1});
     		return line;
 		}
 
@@ -222,6 +255,16 @@ var DoubleElimBracket = Class.extend({
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth+1), new Match(this,this.depth+1)];
 			return this.childMatches;
+		},
+		realX:function(){
+			return (this.$element.width() + parseInt(this.$element.parent().css('margin-right')) + (parseInt(this.$element.css('margin-right')))*2)*(this.$element.parent().index()-1) + 20;
+		},
+		realY:function(){
+			var tot = parseInt(this.$element.parent().children().first().css('margin-top'))+(this.$element.height()*this.$element.index());
+			if(this.$element.parent().children().length>1){
+				tot+=(this.$element.index())*parseInt(this.$element.parent().children().eq(1).css('margin-top'));
+			}
+			return tot;
 		}
 	});
 

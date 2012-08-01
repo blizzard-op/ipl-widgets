@@ -12,7 +12,7 @@
         //width: "50%", //String
         //height: "100px", //String
         //fontSize: "48px", //String
-        speed: 10, //Int
+        //speed: 10, //Int
         //spacing: "300px" //String
       };   
     </script>
@@ -53,7 +53,11 @@
       }
 
       #iplTicker {
-        box-shadow:0 5px 5px #999;
+        position:fixed;
+        bottom:0px;
+        left:0px;
+        z-index: 10;
+        width:100%;
       }
     </style>
 
@@ -67,9 +71,10 @@
       <div id="header"></div>
       <div id="largecol">
           <div id="player"></div>
-          <div id="iplTicker"></div>
       </div>
     </div>
+
+    <div id="iplTicker"></div>
 
 
 
