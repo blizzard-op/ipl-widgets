@@ -86,9 +86,9 @@
 			$(window).resize(resizeBar);
 
 			//Bind onfocus event so animation properly resumes from being in background
-			$(window).focus(function() {
-				resetAnimation();
-			});
+			//$(window).focus(function() {
+			//	resetAnimation();
+			//});
 
 			//Start it off!
 			resizeBar();
@@ -120,7 +120,6 @@
 						_data = data;
 						if(!_animStarted) {
 							animate(_animChainID);
-							_animStarted = true;
 						}
 						_pollTimer = setTimeout(function() {
 							poll(); //Poll again!!!
@@ -165,10 +164,17 @@
 			var distanceToTravel = textSliderWidth + _width;
 			var multi = distanceToTravel / _width; //Also start next anim at this point
 			var duration = _marqueeSpeed * multi;
-			var start = new Date().getTime();
-			var end = start + duration;
 			var pause = _pause;
 			var pausedAt;
+
+			var start = new Date().getTime();
+
+			//I want the animation to start as full as possible
+			if(!_animStarted) {
+				start -= (Math.min(textSliderWidth, _width) / distanceToTravel) * duration;
+			}
+
+			var end = start + duration;
 
 			//Start next animation
 			var startedNext = false;
@@ -217,6 +223,8 @@
 
 
 			})();
+
+			_animStarted = true;
 
 		}
 
