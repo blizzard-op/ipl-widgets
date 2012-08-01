@@ -5,7 +5,7 @@ var IPLBracketApp;
 	// Main application - responsible for initializing components and managing events  
 	var browserPrefix = "-webkit"
 	IPLBracketApp = Class.extend({
-		zoomLevel:.2,
+		zoomLevel:.5,
 		maxZoom:2,
 		minZoom:.02,
 		fps:30,
@@ -17,21 +17,28 @@ var IPLBracketApp;
 		mouseIsDown:false,
 		isDragging:false,
 		enable3d:false,
+		mouseX:0,
+		mouseY:0,
+		oldMouse:{x:0,y:0},
+		momentum:{x:0,y:0},
+		releaseAngle:0,
+		speed:0,
+		drag:.4,
 		init:function(Container){
 			var that = this;
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
-			console.log(Modernizr.prefixed('transform'));
+			//console.log(Modernizr.prefixed('transform'));
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
 				$(this.$appContainer).css({'-moz-perspective':1500,'-webkit-perspective':1500, 'transform-origin':'50%'});
 				this.$bracketLayer.css({'translateZ':-1000, 'backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
 			}else{
-				this.$bracketLayer.css({'scale': .2}); 
+				this.$bracketLayer.css({'scale': this.zoomLevel}); 
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-			var a = new Bracket(16);
+			var a = new Bracket(8);
 			//var a = new DoubleElimBracket(16);
 			
 			a.render(this.$bracketLayer);
@@ -41,10 +48,25 @@ var IPLBracketApp;
 		},
 		update:function(){
 			//stick drag code here
+			//console.log(this.mouseX);
 			if(this.mouseIsDown){
-				
+				var xDist = this.mouseX - this.oldMouse.x;
+				var yDist = this.mouseY - this.oldMouse.y;
+				this.releaseAngle = Math.atan2(yDist, xDist);
+				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
+				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + xDist, 'top':parseInt(this.$bracketLayer.css('top')) + yDist});
+			}else{
+				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
+				this.speed *= this.drag;
 			}
+			this.oldMouse.x = this.mouseX;
+			this.oldMouse.y = this.mouseY;
 		},
+		mouseHandler: function(event){
+    		this.mouseX = event.pageX;
+    		this.mouseY = event.pageY;
+  		},
+
 		setupTools:function($Layer){
 			var that = this;
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("-").css('translateZ',4000).click(function(){
@@ -72,10 +94,10 @@ var IPLBracketApp;
 			}
 		},
 		mousedown:function(event){
-			mouseIsDown = true;
+			this.mouseIsDown = true;
 		},
 		mouseup:function(event){
-			mouseIsDown = false;
+			this.mouseIsDown = false;
 		}
 	});
 
@@ -302,12 +324,18 @@ var DoubleElimBracket = Class.extend({
 			this.parent = Parent;
 			this.$appContainer = Container;
 			this.$appContainer.addClass('IPLBracketWindow');
+			$(window).mousemove(function(event){
+      			that.parent.mouseHandler(event);
+    		});
+    		$(window).resize(function(){
+    			that.centerObject(that.parent.$bracketLayer);
+    		});
 			this.$appContainer.mousedown(function(event){
-				that.parent.mousedown.apply(that,[event]);
-			}).mousedown(function(event){
-				that.parent.mousedown.apply(that,[event]);
+				that.parent.mousedown.apply(that.parent,[event]);
+			}).mouseup(function(event){
+				that.parent.mouseup.apply(that.parent,[event]);
 			});
-			var that = this;
+			
 			this.$appContainer.mousewheel(function(data, delta, deltaX, deltaY){
 				//console.log(deltaY);
 				that.parent.onWheel.apply(that.parent,[deltaY]);
