@@ -5,6 +5,9 @@
     text-decoration: none;
     color: #2f2f2f;
     font-weight: bold; }
+  #scores .status-link img {
+    vertical-align: top;
+    padding: 3px 0; }
   #scores .controls {
     width: 955px;
     height: 77px;

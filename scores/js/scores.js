@@ -29,7 +29,7 @@
 				        		date: moment(date, "YYYY-MM-DD").format("MMM D, YYYY"),
 				        		title: (function (title) {
 				        			if(title == "") {
-				        				return " ";
+				        				return "&nbsp;";
 					        		} else {
 					        			return title;
 					        		}
@@ -54,10 +54,10 @@
 				        			switch (url)
 									{
 									case null:
-									  	return 'http://ign.com/ipl/tv';
+									  	return '#';
 									  	break;
 									default:
-									  	return 'http://ign.com/' + url;
+									  	return 'http://ign.com' + url;
 									}
 				        		})(match.match_score.match.url)
 				        	};
