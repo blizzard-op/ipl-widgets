@@ -51,7 +51,6 @@
 									}
 				        		})(match.match_score.match.status),
 				        		url: (function(url) {
-				        			console.log(url);
 				        			switch (url)
 									{
 									case null:
@@ -134,7 +133,6 @@
 
 			$('#scores').on('click', '.right-button', function() {
 				if(i == 5) {
-					console.log(i);
 					$('.box-scores').css('margin-left', '-760');
 				} else {
 					$('.box-scores').animate({'margin-left': '-=152'}, 500);
