@@ -179,7 +179,7 @@
 			(function animloop(now) {
 
 				//var f = window.requestAnimationFrame(animloop);
-				var f = setTimeout(animloop, 16.66);
+				var f = setTimeout(animloop, 40);
 
 				var now = new Date().getTime();
 
