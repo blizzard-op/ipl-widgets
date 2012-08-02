@@ -29,7 +29,7 @@
 				        		date: moment(date, "YYYY-MM-DD").format("MMM D, YYYY"),
 				        		title: (function (title) {
 				        			if(title == "") {
-				        				return " ";
+				        				return "&nbsp;";
 					        		} else {
 					        			return title;
 					        		}
