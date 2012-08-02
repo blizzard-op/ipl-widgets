@@ -42,7 +42,7 @@ var IPLBracketApp;
 			this.loadedBracket = new Bracket(16);
 			//var a = new DoubleElimBracket(16);
 			this.loadBracketJSON("bin/foo_bracket_demo.json", this.backetLoaded);
-			this.loadedBracket.render(this.$bracketLayer);
+			this.loadedBracket.absoluteRender(this.$bracketLayer);
 			this.windowManager.centerObject(this.$bracketLayer);
 			this.setupTools(this.$toolbar);
 			console.log(this.loadedBracket);
@@ -198,15 +198,35 @@ var DoubleElimBracket = Class.extend({
 				$round = $('<div class="bracket-round matches-'+this.matches[i].length+'">').appendTo($Layer);
 				for(var j=0;j<this.matches[i].length;++j){
 					this.matches[i][j].$element =$('<div class="bracket-match">').appendTo($round);
-					//$('<div style="-webkit-transform:translate3d(0,0,100px)"><h1>Let the games begin</h1></div>').appendTo(this.matches[i][j].$element).css({'color':'#fff'});
-
 				}
 				bracketWidth += $round.width() + parseInt($round.css('margin-right')); 
 			}
 			$Layer.width(bracketWidth);
 			this.alignMatches();
 			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
-			
+		},
+		absoluteRender:function($Layer){
+			var $round;
+			var bracketWidth = 0;
+			var $lineLayer = $('<div>').appendTo($Layer).css('position','relitave');
+			var that = this;
+			var match;
+			for(var i=this.matches.length-1;i>=0;--i){
+				console.log(this.matches[i].length);
+				$round = $('<div class="bracket-round matches-'+this.matches[i].length+'">').appendTo($Layer);
+				for(var j=0;j<this.matches[i].length;++j){
+					match = this.matches[i][j];
+					match.$element =$('<div class="bracket-match">').appendTo($round).css('position','absolute');
+					if(i==this.matches.length-1){
+						match.$element.css('top', j*(match.$element.height()+40));
+					}else{
+						match.$element.css('top', (parseInt(match.childMatches[0].$element.css('top'))+parseInt(match.childMatches[1].$element.css('top')))/2);
+					}
+					match.$element.css('left', (this.matches.length - 1 - i) * (200+match.$element.width()));
+				}
+				bracketWidth += $round.width() + parseInt($round.css('margin-right')); 
+			}
+			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
 		},
 		alignMatches:function(){
 			for(var i=this.matches.length-2;i>=0;--i){
@@ -225,10 +245,14 @@ var DoubleElimBracket = Class.extend({
 			}
 		},
 		connectMatches:function($Layer, Node){
+			
+			$Layer.css({'position':'absolute','top':-10});
 			if(Node.childMatches.length>0){
 				
 				for(var a in Node.childMatches){
-					this.createLine($Layer, Node.realX(), Node.realY()+38, Node.childMatches[a].realX()+Node.$element.width() ,Node.childMatches[a].realY()+38);
+					//this.createLine($Layer, Node.realX(), Node.realY()+50, Node.childMatches[a].realX()+Node.$element.width() ,Node.childMatches[a].realY()+50);
+					//console.log(Node.childMatches[a].top());
+					Node.childLines[a] = this.createLine($Layer, Node.left()+4, Node.top()+(Node.$element.height()*.5), Node.childMatches[a].left()+Node.$element.width() ,Node.childMatches[a].top()+(Node.childMatches[a].$element.height())*.5);
 					this.connectMatches($Layer,Node.childMatches[a]);
 				}
 			}else{
@@ -237,7 +261,7 @@ var DoubleElimBracket = Class.extend({
 			
 		},
 		createLine:function($Layer,x1,y1, x2,y2){
-    		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) + 50;
+    		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
   			var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
   			var transform = 'rotate('+angle+'deg)';
 
@@ -293,6 +317,7 @@ var DoubleElimBracket = Class.extend({
 		id:null,
 		parentMatch:null,
 		childMatches:null,
+		childLines:null,
 		matchName:null,
 		players:null,
 		games:null,
@@ -307,6 +332,7 @@ var DoubleElimBracket = Class.extend({
 			this.parentMatch = ParentNode;
 			this.depth = Depth;
 			this.childMatches =[];
+			this.childLines =[];
 			this.players=[];
 			this.games=[];
 		},
@@ -325,14 +351,24 @@ var DoubleElimBracket = Class.extend({
 		},
 		populateMatch:function(){
 			//console.log(this.players);
-			for(var teamOrPlayer in this.players){
-				$('<div class="team-name">').appendTo(this.$element).html('<h2>'+this.players[teamOrPlayer].username +' : '+ this.players[teamOrPlayer].points+'</h2>');
+			if(this.players.length > 0){
+				for(var teamOrPlayer in this.players){
+					$('<div class="team-name">').appendTo(this.$element).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
+				}
+			}else{
+				this.$element.css('background-color','#555');
 			}
 			
 		},
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth+1), new Match(this,this.depth+1)];
 			return this.childMatches;
+		},
+		left:function(){
+			return parseFloat(this.$element.css('left'));
+		},
+		top:function(){
+			return parseFloat(this.$element.css('top'));
 		},
 		realX:function(){
 			return (this.$element.width() + parseInt(this.$element.parent().css('margin-right')) + (parseInt(this.$element.css('margin-right')))*2)*(this.$element.parent().index()-1) + 20;
