@@ -14,16 +14,17 @@ var IPLBracketApp;
 		$appContainer:null,
 		$bracketLayer:null,
 		$toolbar:null,
+		loadedBracket:null,
+		enable3d:false,
+		//Mouse drag variables
 		mouseIsDown:false,
 		isDragging:false,
-		enable3d:false,
 		mouseX:0,
 		mouseY:0,
 		oldMouse:{x:0,y:0},
-		momentum:{x:0,y:0},
 		releaseAngle:0,
 		speed:0,
-		drag:.4,
+		drag:.6,
 		init:function(Container){
 			var that = this;
 			this.enable3d = Modernizr.csstransforms3d;
@@ -38,17 +39,47 @@ var IPLBracketApp;
 				this.$bracketLayer.css({'scale': this.zoomLevel}); 
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-			var a = new Bracket(8);
+			this.loadedBracket = new Bracket(16);
 			//var a = new DoubleElimBracket(16);
-			
-			a.render(this.$bracketLayer);
+			this.loadBracketJSON("bin/foo_bracket_demo.json", this.backetLoaded);
+			this.loadedBracket.render(this.$bracketLayer);
 			this.windowManager.centerObject(this.$bracketLayer);
 			this.setupTools(this.$toolbar);
+			console.log(this.loadedBracket);
 			setInterval(function(){that.update()}, 1000/this.fps);
+		},
+		backetLoaded:function(Data){
+			//add title
+			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
+			$('<h1>').appendTo($title).text(Data.name);
+			$title.css('left',this.$bracketLayer.width()-$title.width());
+			 //Data.name
+			// begin populating tree
+			var mappedRound=0;
+			for(var a in Data.rounds){
+				for(var b in Data.rounds[a].matches){
+					//flip the order so it maps to the bracket object
+					mappedRound = this.loadedBracket.matches.length - Data.rounds[a].position - 1;
+					this.loadedBracket.matches[mappedRound][b].parseData(Data.rounds[a].matches[b].match);
+				}
+			}
+			//this.loadedBracket;
+		},
+		loadBracketJSON:function(JSONURI, Callback){
+			var that = this;
+			$.ajax({
+				url:JSONURI,
+				// TODO change to jsonp for production
+				dataType:'json',
+				success:function(data){
+
+					Callback.apply(that,[data]);
+				}
+			});
+			console.log('loading');
 		},
 		update:function(){
 			//stick drag code here
-			//console.log(this.mouseX);
 			if(this.mouseIsDown){
 				var xDist = this.mouseX - this.oldMouse.x;
 				var yDist = this.mouseY - this.oldMouse.y;
@@ -56,7 +87,8 @@ var IPLBracketApp;
 				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + xDist, 'top':parseInt(this.$bracketLayer.css('top')) + yDist});
 			}else{
-				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
+				if(this.speed>.1)
+					this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
 				this.speed *= this.drag;
 			}
 			this.oldMouse.x = this.mouseX;
@@ -66,7 +98,6 @@ var IPLBracketApp;
     		this.mouseX = event.pageX;
     		this.mouseY = event.pageY;
   		},
-
 		setupTools:function($Layer){
 			var that = this;
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("-").css('translateZ',4000).click(function(){
@@ -132,6 +163,7 @@ var DoubleElimBracket = Class.extend({
 		x:0,
 		y:0,
 		init:function(NumPlayers){
+			this.matches = [];
 			this.totalCompetitors = NumPlayers;
 			this.matchDepth = Math.ceil(Math.log(NumPlayers)/Math.log(2));
 			this.championshipMatch = new Match(null, 0);
@@ -155,9 +187,9 @@ var DoubleElimBracket = Class.extend({
 					}
 				}
 			}
-			//console.log(this.matches);
 		},
 		render:function($Layer){
+			//TODO refactor to use absolute positioning
 			var $round;
 			var bracketWidth = 0;
 			var $lineLayer = $('<div>').appendTo($Layer).css('position','relitave');
@@ -248,7 +280,6 @@ var DoubleElimBracket = Class.extend({
 							el.$element.css({'margin-top': lastChildren[0].$element.height() + lastmargin*2});
 						}else{
 							el.$element.css({'margin-top': (lastmargin*2)+(el.$element.height()*.5)-(parseInt(el.$element.css('margin'))*.5)});
-						//console.log(lastmargin);
 						}
 					}
 				}
@@ -259,20 +290,45 @@ var DoubleElimBracket = Class.extend({
 
 	// contains information about individual matches
 	var Match = Class.extend({
+		id:null,
 		parentMatch:null,
-		childMatches:[],
+		childMatches:null,
 		matchName:null,
-		players:[],
-		games:[],
+		players:null,
+		games:null,
 		bestOf:3,
 		scheduledTime:'',
 		winner:null,
 		status:'upcoming',
+		slug:'',
 		depth:0,
 		$element:null,
 		init:function(ParentNode, Depth){
 			this.parentMatch = ParentNode;
 			this.depth = Depth;
+			this.childMatches =[];
+			this.players=[];
+			this.games=[];
+		},
+		parseData:function(Data){
+			this.slug = Data.slug || "";
+			this.status = Data.status || 'upcoming'; 
+			this.bestOf = Data.best_of || 3;
+			this.scheduledTime = Data.publish_at;
+			this.id = Data.id;
+			this.matchName = Data.score.title || '';
+			for(var a in Data.score.card){
+				this.players.push(Data.score.card[a]);
+			}
+			//$('<h2>').appendTo(this.$element).text(this.status);
+			this.populateMatch();
+		},
+		populateMatch:function(){
+			//console.log(this.players);
+			for(var teamOrPlayer in this.players){
+				$('<div class="team-name">').appendTo(this.$element).html('<h2>'+this.players[teamOrPlayer].username +' : '+ this.players[teamOrPlayer].points+'</h2>');
+			}
+			
 		},
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth+1), new Match(this,this.depth+1)];
@@ -337,7 +393,6 @@ var DoubleElimBracket = Class.extend({
 			});
 			
 			this.$appContainer.mousewheel(function(data, delta, deltaX, deltaY){
-				//console.log(deltaY);
 				that.parent.onWheel.apply(that.parent,[deltaY]);
 			});
 		},
