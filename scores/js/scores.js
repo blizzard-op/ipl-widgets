@@ -55,10 +55,10 @@
 				        			switch (url)
 									{
 									case null:
-									  	return 'http://ign.com/ipl/tv';
+									  	return '#';
 									  	break;
 									default:
-									  	return 'http://ign.com/' + url;
+									  	return 'http://ign.com' + url;
 									}
 				        		})(match.match_score.match.url)
 				        	};
