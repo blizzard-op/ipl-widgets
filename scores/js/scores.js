@@ -51,15 +51,11 @@
 									}
 				        		})(match.match_score.match.status),
 				        		url: (function(url) {
-				        			console.log(url);
-				        			switch (url)
-									{
-									case null:
-									  	return '#';
-									  	break;
-									default:
-									  	return 'http://ign.com' + url;
-									}
+				        			if(url == null) {
+				        				return '#';
+									} else {
+										return 'http://ign.com' + url;
+									};
 				        		})(match.match_score.match.url)
 				        	};
 				        	var i = 1;
