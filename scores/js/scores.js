@@ -37,11 +37,15 @@
 					        			return title;
 					        		}
 					        	})(match.match_score.title),
-				        		status: (function(status) {
+				        		status: (function(status, url) {
 				        			switch (status)
 									{
 									case 'finished':
-									  	return "WATCH VOD";
+										if(url == null) {
+									  	return "COMING SOON";
+									  } else {
+									  	return "WATCH NOW";
+									  };
 									  	break;
 									case 'underway':
 										return "LIVE NOW";
@@ -52,7 +56,7 @@
 									default:
 									  	return "FINISHED";
 									}
-				        		})(match.match_score.match.status),
+				        		})(match.match_score.match.status, match.match_score.match.url),
 				        		url: (function(url) {
 				        			if(url == null) {
 				        				return '#';

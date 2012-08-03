@@ -68,6 +68,7 @@
 			    				$('#date-7').html(date);
 			    				subtitle_1 = match_Obj.subtitle_1;
 			    				if (subtitle_1 == null) subtitle_1 = '';
+			    				var tag = 'NEW';
 			    				var day = moment().diff(start);
 			    				var game_time = moment(start);
 				    			var tomorrow = moment().eod();
@@ -75,37 +76,37 @@
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
 					    					if(game_time < tomorrow) {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>AHH</span></p></div>").appendTo('#lol-today');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-today');
 											} else if(game_time > tomorrow && game_time < day3){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-tomorrow');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-tomorrow');
 											} else if(day > -259200000 && day < -172800000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-3');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-3');
 											} else if(day > -345600000 && day < -259200000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-4');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-4');
 											} else if(day > -432000000 && day < -345600000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-5');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-5');
 											} else if(day > -518400000 && day < -432000000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-6');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-6');
 											} else {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-7');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-7');
 											};
 										})();
 									} else {
 										(function() {
 					    					if(game_time < tomorrow) {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-today');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-today');
 											} else if(day > -172800000 && day < -86400000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-tomorrow');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-tomorrow');
 											} else if(day > -259200000 && day < -172800000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-3');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-3');
 											} else if(day > -345600000 && day < -259200000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-4');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-4');
 											} else if(day > -432000000 && day < -345600000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-5');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-5');
 											} else if(day > -518400000 && day < -432000000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-6');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-6');
 											} else {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-7');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-7');
 											};
 										})();
 									};

@@ -9,25 +9,21 @@ body {
 	font-size: 12px;
 	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	background: #efefef;
-	background: -webkit-linear-gradient(bottom, #efefef 0%,#e5e5e5 100%);
-  	background: -moz-linear-gradient(bottom, #efefef 0%,#ddd 100%);
-  	background: -o-linear-gradient(bottom, #efefef 0%,#ddd 100%);
-  	background: -ms-linear-gradient(bottom, #efefef 0%,#ddd 100%);
-  	background: linear-gradient(bottom, #efefef 0%,#ddd 100%);
-	border: 1px solid #efefef;
-
+	background: -webkit-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: -moz-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: -o-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: -ms-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: linear-gradient(bottom, #efefef 0%,#ccc 100%);
 }
 
 .header {
 	background: white;
-	border: 1px solid #efefef;
 }
 
 .date-header {
 	font-size: 12px;
 	font-style: italic;
 	margin: 15px 0;
-	border-right: 1px solid #efefef;
 	text-align: center;
 	font-weight: bold;
 /*	vertical-align: middle;*/
@@ -36,13 +32,17 @@ body {
 
 }
 
+th {
+	border: 1px solid #ccc;
+}
+
 .sc-header {
 	font-size: 15px;
 	margin: 15px 0;
 	text-align: center;
 	font-weight: bold;
 	vertical-align: middle;
-	border-right: 1px solid #efefef;
+	
 	/*padding: 15px 0;*/
 	background: #fff;
 
@@ -67,26 +67,30 @@ body {
 .date {
 	width: 100px;
 	height: 50px;
+	vertical-align: top;
 	text-align: center;
 	font-weight: bold;
+	padding: 8px 0;
 	text-shadow: 0px 1px 0px #ccc;
-	border: 1px solid #efefef;
+	border: 1px solid #ccc;
 }
 
 .sc2 {
 	width: 250px;
 	height: 50px;
+	vertical-align: top;
 	text-align: left;
 	font-weight: bold;
-	border: 1px solid #efefef;
+	border: 1px solid #ccc;
 }
 
 .lol {
 	width: 250px;
 	height: 50px;
+	vertical-align: top;
 	text-align: left;
 	font-weight: bold;
-	border: 1px solid #efefef;
+	border: 1px solid #ccc;
 }
 
 .listing {
@@ -148,9 +152,23 @@ a:hover {
 .new {
     font-weight: bold;
     font-size: 9px;
+    font-style: normal;
     text-transform: uppercase;
     background: black;
     color: white;
+    padding: 2px;
+    border-radius: 0.25em;
+}
+
+.tag {
+	font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-shadow: none;
+    text-transform: uppercase;
+    background: #b21b00;
+    color: white;
+    padding: 2px;
     border-radius: 0.25em;
 }
 
