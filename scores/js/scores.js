@@ -21,6 +21,9 @@
 			    type: 'GET',
 			    url: this.url,
 			    dataType: "jsonp",
+			    cache: true,
+				jsonpCallback: "getCachedScores",
+
 			    success: function(data) {
 			        self.matchUps = [];
 			        $.map(data, function(data, date) {
@@ -51,14 +54,11 @@
 									}
 				        		})(match.match_score.match.status),
 				        		url: (function(url) {
-				        			switch (url)
-									{
-									case null:
-									  	return '#';
-									  	break;
-									default:
-									  	return 'http://ign.com' + url;
-									}
+				        			if(url == null) {
+				        				return '#';
+									} else {
+										return 'http://ign.com' + url;
+									};
 				        		})(match.match_score.match.url)
 				        	};
 				        	var i = 1;
