@@ -25,45 +25,63 @@ var IPLBracketApp;
 		releaseAngle:0,
 		speed:0,
 		drag:.6,
+		ZoomAmt3d:250,
+		ZoomAmt2d:450,
 		init:function(Container){
 			var that = this;
+			var initalZoom
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
 			//console.log(Modernizr.prefixed('transform'));
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
-				$(this.$appContainer).css({'-moz-perspective':1500,'-webkit-perspective':1500, 'transform-origin':'50%'});
+				$(this.$appContainer).css({'-moz-perspective':1000,'-webkit-perspective':1000, 'transform-origin':'50%'});
 				this.$bracketLayer.css({'translateZ':-1000, 'backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
 			}else{
-				this.$bracketLayer.css({'scale': this.zoomLevel}); 
+				this.$bracketLayer.css({'scale': this.zoomLevel});
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-			this.loadedBracket = new Bracket(16);
+				//this.loadedBracket = new Bracket(16);
 			//var a = new DoubleElimBracket(16);
 			this.loadBracketJSON("bin/foo_bracket_demo.json", this.backetLoaded);
-			this.loadedBracket.absoluteRender(this.$bracketLayer);
-			this.windowManager.centerObject(this.$bracketLayer);
+
 			this.setupTools(this.$toolbar);
-			console.log(this.loadedBracket);
+			
 			setInterval(function(){that.update()}, 1000/this.fps);
 		},
 		backetLoaded:function(Data){
 			//add title
+			//if(Data == null)
 			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
 			$('<h1>').appendTo($title).text(Data.name);
-			$title.css('left',this.$bracketLayer.width()-$title.width());
-			 //Data.name
+			// TODO put a fallback here if number of players is invalid
+			
+			this.loadedBracket = new Bracket(Data.rounds[0].matches.length*2);
+			this.loadedBracket.absoluteRender(this.$bracketLayer);
+
+			this.$bracketLayer.hide().fadeIn('slow');
+
+			this.windowManager.centerObject(this.$bracketLayer);
+			this.windowManager.setInitalZoom(this.$bracketLayer);
+			$title.css('left',this.loadedBracket.championshipMatch.left()+this.loadedBracket.championshipMatch.$element.width()-$title.width());
 			// begin populating tree
 			var mappedRound=0;
 			for(var a in Data.rounds){
-				for(var b in Data.rounds[a].matches){
-					//flip the order so it maps to the bracket object
-					mappedRound = this.loadedBracket.matches.length - Data.rounds[a].position - 1;
+				
+				//flip the order so it maps to the bracket object
+				mappedRound = this.loadedBracket.matches.length - Data.rounds[a].position - 1;
+				//Add round title
+				if(Data.rounds[mappedRound]){
+				$('<h2>').appendTo(this.$bracketLayer)
+				.addClass('round-title')
+				.text(Data.rounds[mappedRound].name).css({width:this.loadedBracket.matches[a][0].$element.width(), top:this.loadedBracket.matches[a][0].top(),left:this.loadedBracket.matches[a][0].left()});
+				this.loadedBracket.matches[mappedRound][0].top();
+				}
+				for(var b in Data.rounds[a].matches){					
 					this.loadedBracket.matches[mappedRound][b].parseData(Data.rounds[a].matches[b].match);
 				}
 			}
-			//this.loadedBracket;
 		},
 		loadBracketJSON:function(JSONURI, Callback){
 			var that = this;
@@ -71,12 +89,12 @@ var IPLBracketApp;
 				url:JSONURI,
 				// TODO change to jsonp for production
 				dataType:'json',
+				//jsonpCallback:'',
 				success:function(data){
-
 					Callback.apply(that,[data]);
 				}
 			});
-			console.log('loading');
+			// attach a preloader here
 		},
 		update:function(){
 			//stick drag code here
@@ -101,18 +119,19 @@ var IPLBracketApp;
 		setupTools:function($Layer){
 			var that = this;
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("-").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[-450]);
+				that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*3:that.ZoomAmt2d*2)]);
 			});
 			$('<button class="btn btn-inverse">').appendTo($Layer).text("+").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[450]);
+				that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*3:that.ZoomAmt2d*2)]);
 			});
 			$('<div><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>').appendTo($Layer);
 		},
 		onWheel:function(DeltaY){
-			this.changeZoom(DeltaY*350);
+			this.changeZoom(DeltaY*(this.enable3d?this.ZoomAmt3d:this.ZoomAmt2d));
 		},
 		changeZoom:function(ZoomAmt){
 			if(this.enable3d){
+				if(this.$bracketLayer.css('') ){}
 				this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
 			}else{
 				this.zoomLevel += ZoomAmt*.00005;
@@ -188,6 +207,7 @@ var DoubleElimBracket = Class.extend({
 				}
 			}
 		},
+		//Legacy
 		render:function($Layer){
 			//TODO refactor to use absolute positioning
 			var $round;
@@ -206,28 +226,35 @@ var DoubleElimBracket = Class.extend({
 			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
 		},
 		absoluteRender:function($Layer){
+			//TODO clean all these variables 
 			var $round;
-			var bracketWidth = 0;
+			var horizontalSpacing = 200;
+			var verticalSpacing = 40;
+
 			var $lineLayer = $('<div>').appendTo($Layer).css('position','relitave');
 			var that = this;
 			var match;
 			for(var i=this.matches.length-1;i>=0;--i){
-				console.log(this.matches[i].length);
 				$round = $('<div class="bracket-round matches-'+this.matches[i].length+'">').appendTo($Layer);
 				for(var j=0;j<this.matches[i].length;++j){
 					match = this.matches[i][j];
 					match.$element =$('<div class="bracket-match">').appendTo($round).css('position','absolute');
 					if(i==this.matches.length-1){
-						match.$element.css('top', j*(match.$element.height()+40));
+						match.$element.css('top', j*(match.$element.height()+verticalSpacing));
 					}else{
 						match.$element.css('top', (parseInt(match.childMatches[0].$element.css('top'))+parseInt(match.childMatches[1].$element.css('top')))/2);
 					}
-					match.$element.css('left', (this.matches.length - 1 - i) * (200+match.$element.width()));
+					match.$element.css('left', (this.matches.length - 1 - i) * (horizontalSpacing+match.$element.width()));
 				}
-				bracketWidth += $round.width() + parseInt($round.css('margin-right')); 
+				//bracketWidth += $round.width() + parseInt($round.css('margin-right')); 
 			}
+			$Layer.width(this.matches.length * (match.$element.width()+horizontalSpacing) - horizontalSpacing);
+			$Layer.height(this.matches[this.matches.length-1].length * (match.$element.height() + verticalSpacing));
+
+
 			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
 		},
+		//Legacy
 		alignMatches:function(){
 			for(var i=this.matches.length-2;i>=0;--i){
 				for(var j=0;j<this.matches[i].length;++j){
@@ -278,8 +305,6 @@ var DoubleElimBracket = Class.extend({
         	.css({top:y1,left:x1});
     		return line;
 		}
-
-
 	});
 
 	var LoserBracket = Bracket.extend({
@@ -350,13 +375,28 @@ var DoubleElimBracket = Class.extend({
 			this.populateMatch();
 		},
 		populateMatch:function(){
-			//console.log(this.players);
+			var $teamName;
+			var $scores;
+			//If the match has been played...
+			
 			if(this.players.length > 0){
+				$scores = $('<div class="score-slidein">').appendTo(this.$element);
 				for(var teamOrPlayer in this.players){
-					$('<div class="team-name">').appendTo(this.$element).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
+					$teamName = $('<div class="team-name">').appendTo(this.$element).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
+					if(this.players[teamOrPlayer].username.length > 12){
+						$teamName.addClass('long-team-name');
+					}
+					//set up scores
+					$('<div class="score">').appendTo($scores).html('<h3>'+this.players[teamOrPlayer].points+'</h3>');
+					$scores.css('left', this.$element.width()-$scores.width());
+					
 				}
+			// If it is upcoming... 
 			}else{
-				this.$element.css('background-color','#555');
+				this.$element.addClass('unplayed');
+				for(var a in this.childLines){
+					this.childLines[a].addClass('unplayed');
+				}
 			}
 			
 		},
@@ -436,6 +476,18 @@ var DoubleElimBracket = Class.extend({
 			//$Target.left(((this.$appContainer.width()/2) - ($Target.width()/2)));
 			$Target.css({'left':((this.$appContainer.width()/2) - ($Target.width()/2))});
 			$Target.css({'top':((this.$appContainer.height()/2) - ($Target.height()/2))});
+		},
+		setInitalZoom:function($Target){
+			var targetHeight = this.$appContainer.height() / ($Target.height()+100);
+			var targetHeight3d =  ($Target.height()+100) / this.$appContainer.height();
+			if(this.parent.enable3d){
+				// doesn't scale linearly, but this works for now
+				$Target.css({'translateZ': -targetHeight3d*800});
+			}else{
+				$Target.css('scale', targetHeight);
+				this.parent.zoomLevel = targetHeight;
+			}
+			
 		}
 	});
 
