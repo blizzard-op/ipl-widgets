@@ -9,8 +9,8 @@ body {
 	font-size: 12px;
 	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 	background: #efefef;
-	background: -webkit-linear-gradient(bottom, #efefef 0%,#ccc 100%);
-  	background: -moz-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+	background: -webkit-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: -moz-linear-gradient(bottom, #efefef 0%,#cecece 100%);
   	background: -o-linear-gradient(bottom, #efefef 0%,#ccc 100%);
   	background: -ms-linear-gradient(bottom, #efefef 0%,#ccc 100%);
   	background: linear-gradient(bottom, #efefef 0%,#ccc 100%);
@@ -68,9 +68,8 @@ th {
 	width: 100px;
 	height: 50px;
 	vertical-align: top;
-	text-align: center;
 	font-weight: bold;
-	padding: 8px 0;
+	padding: 8px 8px;
 	text-shadow: 0px 1px 0px #ccc;
 	border: 1px solid #ccc;
 }
@@ -170,6 +169,10 @@ a:hover {
     color: white;
     padding: 2px;
     border-radius: 0.25em;
+}
+
+.Rebroadcast {
+	font-size: 10px;
 }
 
 #date-2, #date-3, #date-4, #date-5, #date-6, #date-7  {

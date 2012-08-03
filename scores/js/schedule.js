@@ -68,33 +68,52 @@
 			    				$('#date-7').html(date);
 			    				subtitle_1 = match_Obj.subtitle_1;
 			    				if (subtitle_1 == null) subtitle_1 = '';
-			    				var tag = 'NEW';
-			    				var day = moment().diff(start);
+			    				var tag = match_Obj.metadata.rebroadcast;
+			    					if(tag == false) {
+			    						tag = 'new';
+			    					} else {
+			    						tag = 'Rebroadcast';
+			    					};
+			    				// var day = moment().diff(start);
 			    				var game_time = moment(start);
-				    			var tomorrow = moment().eod();
-				    			var day3 = moment(game_time).add('days', 2);
+			    				console.log(game_time);
+				    			var endOfDay = moment().eod();
+				    			var add_day = moment().add('days', 1);
+				    			var tomorrow = moment(add_day);
+				    			var add_day = moment().add('days', 2);
+				    			var day3 = moment(add_day);
+				    			var add_day = moment().add('days', 3);
+				    			var day4 = moment(add_day);
+				    			var add_day = moment().add('days', 4);
+				    			var day5 = moment(add_day);
+				    			var add_day = moment().add('days', 5);
+				    			var day6 = moment();
+				    			day6.hours();
+								day6.add('hours', 24).hours();
+								console.log(day6);
+				    			
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
-					    					if(game_time < tomorrow) {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-today');
+					    					if(game_time < endOfDay) {
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
+											} else if(game_time > endOfDay && game_time < tomorrow){
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-tomorrow');
 											} else if(game_time > tomorrow && game_time < day3){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-tomorrow');
-											} else if(day > -259200000 && day < -172800000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-3');
-											} else if(day > -345600000 && day < -259200000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-4');
-											} else if(day > -432000000 && day < -345600000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-5');
-											} else if(day > -518400000 && day < -432000000){
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-6');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-3');
+											} else if(game_time > day3 && game_time < day4){
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-4');
+											} else if(game_time > day4 && game_time < day5){
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-5');
+											} else if(game_time > day5 && game_time < day6){
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-6');
 											} else {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#lol-7');
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#lol-7');
 											};
 										})();
 									} else {
 										(function() {
-					    					if(game_time < tomorrow) {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-today');
+					    					if(game_time < endOfDay) {
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p><p><span class=' + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
 											} else if(day > -172800000 && day < -86400000){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>" + tag + '</span></p></div>').appendTo('#sc-tomorrow');
 											} else if(day > -259200000 && day < -172800000){
