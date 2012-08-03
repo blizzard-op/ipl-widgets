@@ -28,6 +28,7 @@ var IPLBracketApp;
 		drag:.6,
 		ZoomAmt3d:250,
 		ZoomAmt2d:450,
+		$zoomTip:null,
 		init:function(Container){
 			var that = this;
 			var initalZoom
@@ -52,7 +53,7 @@ var IPLBracketApp;
 			this.loadBracketJSON("bin/foo_bracket_demo.json", this.backetLoaded);
 
 			this.setupTools(this.$toolbar);
-			
+			//that.parent.update.apply(that.parent), 1000/that.parent.fps
 			
 		},
 		
@@ -130,13 +131,10 @@ var IPLBracketApp;
   		},
 		setupTools:function($Layer){
 			var that = this;
-			$('<button class="btn btn-inverse">').appendTo($Layer).text("-").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
-			});
-			$('<button class="btn btn-inverse">').appendTo($Layer).text("+").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
-			});
-			$('<div><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
+			//
+			this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
+
+			$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
 			.appendTo($Layer).find('input')
 			.change(function(data){
 				//console.log();
@@ -146,8 +144,19 @@ var IPLBracketApp;
 					$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content').css('opacity',1).fadeIn();
 				}
 			});
-			this.windowManager.getZoomTooltip().appendTo($Layer);
 
+			//zoom buttons
+			var $btnGrp = $('<div class="btn-group">').appendTo($Layer);  
+			$('<button class="btn btn-inverse">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
+				that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
+			});
+			$('<button class="btn btn-inverse">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
+				that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
+			});
+			
+			
+			this.windowManager.positionToolbar();
+			
 
 		},
 		onWheel:function(DeltaY){
@@ -530,9 +539,11 @@ var DoubleElimBracket = Class.extend({
 			this.$appContainer.addClass('IPLBracketWindow');
 			$(window).mousemove(function(event){
       			that.parent.mouseHandler(event);
+      			
     		});
     		$(window).resize(function(){
     			that.centerObject(that.parent.$bracketLayer);
+    			that.positionToolbar.apply(that);
     		});
 			this.$appContainer.mousedown(function(event){
 				that.parent.mousedown.apply(that.parent,[event]);
@@ -542,16 +553,20 @@ var DoubleElimBracket = Class.extend({
 			
 			this.$appContainer.mousewheel(function(data, delta, deltaX, deltaY){
 				that.parent.onWheel.apply(that.parent,[-deltaY]);
-			});
+				if(that.parent.$zoomTip != null){
+					that.parent.$zoomTip.fadeOut();
+					that.parent.$zoomTip = null;
+				}
 
+			});
+			
 			this.$appContainer.mouseenter(function(){
 				that.updateId = setInterval(function(){
-					that.parent.update.apply(that.parent), 1000/that.parent.fps
-				});
+					that.parent.update.apply(that.parent)}, 1000/that.parent.fps);
 			}).mouseleave(function(){
 				clearInterval(that.updateId);
 			});
-
+			
 			
 
 		},
@@ -572,8 +587,18 @@ var DoubleElimBracket = Class.extend({
 			}	
 		},
 		getZoomTooltip:function($Layer){
-			var $tip = $('<div>').html('<p><i class="icon-search"></i>Use mouse wheel to zoom</p>');
+			var $tip = $('<div>').html('<i class="icon-search"></i>Use mouse wheel to zoom').addClass('bracket-zoom-tip');
 			return $tip;
+		},
+		positionToolbar:function(){
+
+			this.parent.$toolbar.css({left:this.$appContainer.width()-6-this.parent.$toolbar.width()-parseInt(this.parent.$toolbar.css('padding-right'))*2, top:this.$appContainer.height()-6-this.parent.$toolbar.height()-parseInt(this.parent.$toolbar.css('padding-bottom'))*2});
+			if(this.parent.$zoomTip != null){
+				this.parent.$zoomTip.css({
+					left:this.$appContainer.width() - this.parent.$zoomTip.width() -20,
+					top:parseInt(this.parent.$toolbar.css('top')) - this.parent.$zoomTip.height() - 16
+				});
+			}
 		}
 
 	});
