@@ -76,21 +76,12 @@
 			    					};
 			    				// var day = moment().diff(start);
 			    				var game_time = moment(start);
-			    				console.log(game_time);
 				    			var endOfDay = moment().eod();
-				    			var add_day = moment().add('days', 1);
-				    			var tomorrow = moment(add_day);
-				    			var add_day = moment().add('days', 2);
-				    			var day3 = moment(add_day);
-				    			var add_day = moment().add('days', 3);
-				    			var day4 = moment(add_day);
-				    			var add_day = moment().add('days', 4);
+				    			var tomorrow = endOfDay.add('hours', 24)
+				    			var day3 = endOfDay.add('hours', 24)
+				    			var day4 = endOfDay.add('hours', 24)
 				    			var day5 = moment(add_day);
-				    			var add_day = moment().add('days', 5);
-				    			var day6 = moment();
-				    			day6.hours();
-								day6.add('hours', 24).hours();
-								console.log(day6);
+				    			var day6 = 
 				    			
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
