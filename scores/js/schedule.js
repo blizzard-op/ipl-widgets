@@ -69,13 +69,14 @@
 			    				subtitle_1 = match_Obj.subtitle_1;
 			    				if (subtitle_1 == null) subtitle_1 = '';
 			    				var day = moment().diff(start);
+			    				var game_time = moment(start);
+				    			var tomorrow = moment().eod();
+				    			var day3 = moment(game_time).add('days', 2);
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
-				    						var current_time = moment();
-				    						var tomorrow = moment().eod();
-					    					if(current_time < tomorrow) {
-												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-today');
-											} else if(day > -172800000 && day < -86400000){
+					    					if(game_time < tomorrow) {
+												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p><span class='new'>AHH</span></p></div>").appendTo('#lol-today');
+											} else if(game_time > tomorrow && game_time < day3){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-tomorrow');
 											} else if(day > -259200000 && day < -172800000){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-3');
@@ -91,7 +92,7 @@
 										})();
 									} else {
 										(function() {
-					    					if(day < moment().eod()) {
+					    					if(game_time < tomorrow) {
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-today');
 											} else if(day > -172800000 && day < -86400000){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-tomorrow');
