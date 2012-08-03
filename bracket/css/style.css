@@ -1,4 +1,5 @@
 @import url(http://fonts.googleapis.com/css?family=Questrial);
+
 .IPLBracketWindow{
 	width:100%;
 	height:100%;
@@ -28,11 +29,21 @@
 	float:right;
 }
 
+.bracket-title{
+	font-size: 2em;
+	color:#000;
+	text-shadow: 2px 2px 0 #fff;
+	-moz-user-select: none;
+ 	-webkit-user-select: none;
+}
+
 .round-title{
 	color:#000;
 	float:left;
 	position: absolute;
 	margin-top: -50px;
+	-moz-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 div.IPLBracketLayer{
@@ -51,8 +62,11 @@ div.IPLBracketLayer h1{
 }
 
 div.line{
+transform-origin: 0 100%;
   -webkit-transform-origin: 0 100%;
   -moz-transform-origin: 0 100%;
+  -o-transform-origin: 0 100%;
+  -ms-transform-origin: 0 100%;
   height: 6px;
   background-color:rgba(180,0,0,1);
 
@@ -64,7 +78,6 @@ div.line{
 
 div.line.unplayed{
 	background-color: #aaa;
-
 }
 
 div.bracket-match{
@@ -92,6 +105,10 @@ div.bracket-match.unplayed{
 	background-color: #aaa;
 }
 
+div.spoiler{
+
+}
+
 div.bracket-match .team-name{
 	width:100%;
 	height:50%;
@@ -100,6 +117,11 @@ div.bracket-match .team-name{
 	padding-left:10px;
 }
 
+/*
+div.bracket-match.match-spoiler .team-name{
+	display: none;
+}
+*/
 div.bracket-match .score-slidein{
 	position: absolute;
 	float:left;
@@ -108,7 +130,11 @@ div.bracket-match .score-slidein{
 	border-radius: 8px 8px 0 8px;
 	width:60px;
 }
-
+/*
+div.bracket-match.match-spoiler .score-slidein{
+	display: none;
+}
+*/
 div.bracket-match .score-slidein .score{
 	
 	height: 50%;
@@ -123,7 +149,7 @@ div.bracket-match .score-slidein .score h3{
 	vertical-align: middle;
 
 	display: table-cell;
-	font-size: 2.5em;
+	font-size: 3em;
 	font-weight: bold;
 	text-shadow: 2px 2px 0 #000;
 }
