@@ -22,7 +22,7 @@
 			    url: this.url,
 			    dataType: "jsonp",
 			    cache: true,
-				jsonpCallback: "getCachedScores",
+				jsonpCallback: "getCachedSchedule",
 
 			    success: function(data) {
 			    	for(var gameTitle in data) {

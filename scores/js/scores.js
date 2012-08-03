@@ -3,7 +3,7 @@
 	var ipl = {
 		init: function(config) {
 			this.loadStyleSheet();
-			this.url = 'http://esports.ign.com/scores.json?callback=getCachedScores';
+			this.url = 'http://esports.ign.com/scores.json';
 			this.template = config.template;
 			this.container = config.container;
 			this.fetch();
@@ -21,6 +21,9 @@
 			    type: 'GET',
 			    url: this.url,
 			    dataType: "jsonp",
+			    cache: true,
+				jsonpCallback: "getCachedScores",
+
 			    success: function(data) {
 			        self.matchUps = [];
 			        $.map(data, function(data, date) {
