@@ -77,11 +77,12 @@
 			    				// var day = moment().diff(start);
 			    				var game_time = moment(start);
 				    			var endOfDay = moment().eod();
-				    			var tomorrow = endOfDay.add('hours', 24)
-				    			var day3 = endOfDay.add('hours', 24)
-				    			var day4 = endOfDay.add('hours', 24)
-				    			var day5 = moment(add_day);
-				    			var day6 = 
+				    			var tomorrow = endOfDay.add('hours', 24);
+				    			var day3 = endOfDay.add('hours', 48);
+				    			var day4 = endOfDay.add('hours', 72);
+				    			var day5 = endOfDay.add('hours', 96);
+				    			var day6 = endOfDay.add('hours', 120);
+				    			var day7 = endOfDay.add('hours', 144);
 				    			
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
