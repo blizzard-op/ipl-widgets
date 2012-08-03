@@ -3,7 +3,7 @@
 	var ipl = {
 		init: function(config) {
 			this.loadStyleSheet();
-			this.url = 'http://esports.ign.com/scores.json';
+			this.url = 'http://esports.ign.com/scores.json?callback=getCachedScores';
 			this.template = config.template;
 			this.container = config.container;
 			this.fetch();
