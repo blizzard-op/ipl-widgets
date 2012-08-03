@@ -8,27 +8,29 @@ body {
 	color: #333;
 	font-size: 12px;
 	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-	background: #f6f6f6;
-	background: -webkit-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
-      	background: -moz-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
-      	background: -o-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
-      	background: -ms-linear-gradient(top, #efefef 0%,#d6d6d6 100%);
-      	background: linear-gradient(top, #efefef 0%,#d6d6d6 100%);
+	background: #efefef;
+	background: -webkit-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: -moz-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: -o-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: -ms-linear-gradient(bottom, #efefef 0%,#ccc 100%);
+  	background: linear-gradient(bottom, #efefef 0%,#ccc 100%);
 	border: 1px solid #efefef;
 
 }
 
 .header {
-	height: 50px;
 	background: white;
 	border: 1px solid #efefef;
 }
 
 .date-header {
-	font-size: 15px;
+	font-size: 12px;
+	font-style: italic;
+	margin: 15px 0;
+	border-right: 1px solid #efefef;
 	text-align: center;
 	font-weight: bold;
-	vertical-align: middle;
+/*	vertical-align: middle;*/
 	/*padding: 15px 0;*/
 	background: #fff;
 
@@ -36,9 +38,11 @@ body {
 
 .sc-header {
 	font-size: 15px;
+	margin: 15px 0;
 	text-align: center;
 	font-weight: bold;
 	vertical-align: middle;
+	border-right: 1px solid #efefef;
 	/*padding: 15px 0;*/
 	background: #fff;
 
@@ -46,6 +50,7 @@ body {
 
 .lol-header {
 	font-size: 15px;
+	margin: 15px 0;
 	text-align: center;
 	font-weight: bold;
 	vertical-align: middle;
@@ -57,10 +62,6 @@ body {
 .schedule-link {
 	color: #555;
 	font-size: 10px;
-}
-
-.schedule {
-	text-align: center;
 }
 
 .date {
@@ -93,6 +94,10 @@ body {
 	margin: 5px;
 	padding: 5px;
 	background: #fff;
+}
+
+.listing:hover {
+	background: rgba(178, 27,0, 0.1);
 }
 
 #date-today {
@@ -150,4 +155,9 @@ a:hover {
     border-radius: 0.25em;
     padding: 0.25em 0.5em;
     float: left; 
+}
+
+#date-2, #date-3, #date-4, #date-5, #date-6, #date-7  {
+	font-size: 10px;
+	font-style: italic;
 }

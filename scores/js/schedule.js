@@ -21,6 +21,9 @@
 			    type: 'GET',
 			    url: this.url,
 			    dataType: "jsonp",
+			    cache: true,
+				jsonpCallback: "getCachedScores",
+
 			    success: function(data) {
 			    	for(var gameTitle in data) {
 			    		var game_Arr = data[gameTitle];
@@ -29,40 +32,48 @@
 			    			var match_Obj = game_Arr[i],
 			    				title = match_Obj.title,
 			    				start = match_Obj.starts_at;
-			    				// day_1 = moment(start).format('dddd');
-			    				// date_1 = moment(start).format('MMMM do');
-			    				// $('#day-1').html(day_1);
-			    				// $('#date-1').html(date_1);
-			    				// day_2 = moment(start).format('dddd').add('days', 1);
-			    				// date_2 = moment(start).format('MMMM do').add('days', 1);
-			    				// $('#day-2').html(day_2);
-			    				// $('#date-2').html(date_2);
-			    				// day_3 = moment(start).format('dddd');
-			    				// date_3 = moment(start).format('MMMM do');
-			    				// $('#day-3').html(day_3);
-			    				// $('#date-3').html(date_3);
-			    				// day_4 = moment(start).format('dddd');
-			    				// date_4 = moment(start).format('MMMM do');
-			    				// $('#day-4').html(day_4);
-			    				// $('#date-4').html(date_4);
-			    				// day_5 = moment(start).format('dddd');
-			    				// date_5 = moment(start).format('MMMM do');
-			    				// $('#day-5').html(day_5);
-			    				// $('#date-5').html(date_5);
-			    				// day_6 = moment(start).format('dddd');
-			    				// date_6 = moment(start).format('MMMM do');
-			    				// $('#day-6').html(day_6);
-			    				// $('#date-6').html(date_6);
-			    				// day_7 = moment(start).format('dddd');
-			    				// date_7 = moment(start).format('MMMM do');
-			    				// $('#day-7').html(day_7);
-			    				// $('#date-7').html(date_7);
+			    				day = moment().format('dddd');
+			    				date = moment().format('MMMM Do');
+			    				$('#day-1').html(day);
+			    				$('#date-1').html(date);
+			    				add_day = moment().add('days', 1);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-2').html(day);
+			    				$('#date-2').html(date);
+			    				add_day = moment().add('days', 2);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-3').html(day);
+			    				$('#date-3').html(date);
+			    				add_day = moment().add('days', 3);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-4').html(day);
+			    				$('#date-4').html(date);
+			    				add_day = moment().add('days', 4);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-5').html(day);
+			    				$('#date-5').html(date);
+			    				add_day = moment().add('days', 5);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-6').html(day);
+			    				$('#date-6').html(date);
+			    				add_day = moment().add('days', 6);
+			    				day = moment(add_day).format('dddd');
+			    				date = moment(add_day).format('MMMM Do')
+			    				$('#day-7').html(day);
+			    				$('#date-7').html(date);
 			    				subtitle_1 = match_Obj.subtitle_1;
 			    				if (subtitle_1 == null) subtitle_1 = '';
 			    				var day = moment().diff(start);
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
-					    					if(day > -86400000) {
+				    						var current_time = moment();
+				    						var tomorrow = moment().eod();
+					    					if(current_time < tomorrow) {
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-today');
 											} else if(day > -172800000 && day < -86400000){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#lol-tomorrow');
@@ -80,7 +91,7 @@
 										})();
 									} else {
 										(function() {
-					    					if(day > -86400000) {
+					    					if(day < moment().eod()) {
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-today');
 											} else if(day > -172800000 && day < -86400000){
 												$("<div class='listing'><p><span>" + moment(start).format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + '</p></div>').appendTo('#sc-tomorrow');
