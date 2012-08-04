@@ -171,8 +171,21 @@ a:hover {
     border-radius: 0.25em;
 }
 
-.Rebroadcast {
-	font-size: 10px;
+.rebroadcast {
+	font-size: 9px;
+	text-transform: uppercase;
+}
+
+.live {
+	font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-shadow: none;
+    text-transform: uppercase;
+    background: #b21b00;
+    color: white;
+    padding: 2px;
+    border-radius: 0.25em;
 }
 
 #date-2, #date-3, #date-4, #date-5, #date-6, #date-7  {
