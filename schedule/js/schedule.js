@@ -93,6 +93,11 @@
 			    				date = moment(add_day).local().format('MMMM Do');
 			    				$('#day-7').html(day);
 			    				$('#date-7').html(date);
+			    				// subtitle_1 = match_Obj.subtitle_1;
+			    				// if (subtitle_1 == null || subtitle_1 == 'NA') subtitle_1 = '&nbsp';
+			    				// subtitle_2 = match_Obj.subtitle_2;
+			    				// if (subtitle_2 == null || subtitle_2 == 'NA') subtitle_2 = '&nbsp';
+
 			    			};
 
 			    			function getSubtitles(match_Obj) {
@@ -125,7 +130,7 @@
 				    				if(gameTitle == 'league-of-legends') {
 				    					(function() {
 				    						if(now > gameStart && now < gameEnd) {
-				    							$("<div class='listing live-now'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
+				    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
 					    					} else if(gameEnd > now && gameStart < today) {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
 											} else if(gameStart > today && gameStart < tomorrow){
@@ -145,21 +150,21 @@
 									} else {
 										(function() {
 											if(now > gameStart && now < gameEnd) {
-				    							$("<div class='listing live-now'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
+				    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
 					    					} else if(gameEnd > now && gameStart < today) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
 											} else if(gameStart > today && gameStart < tomorrow){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-tomorrow');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-tomorrow');
 											} else if(gameStart > tomorrow && gameStart < day3){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-3');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-3');
 											} else if(gameStart > day3 && gameStart < day4){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-4');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-4');
 											} else if(gameStart > day4 && gameStart < day5){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-5');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-5');
 											} else if(gameStart > day5 && gameStart < day6){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-6');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-6');
 											} else if(gameStart > day6 && gameStart < day7){
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-7');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-7');
 											};
 										})();
 									};
@@ -179,6 +184,7 @@
 								};
 							};
 		    			};
+
 		    		},
 			    error: function(jqXHR, textStatus, errorThrown) {
 			        data = {
