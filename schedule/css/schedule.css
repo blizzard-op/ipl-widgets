@@ -104,7 +104,7 @@ th {
 	background: rgba(0, 0, 0, 0.1);
 }*/
 
-.hover {
+.live-now:hover {
 	background: rgba(178, 27, 0, 0.1);
 	cursor: pointer;
 }
