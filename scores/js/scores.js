@@ -71,7 +71,6 @@
 									};
 				        		})(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 				        	};
-				        	console.log('Hi Mom!');
 				        	var i = 1;
 				        	var team1Score,
 				        		team2Score,
