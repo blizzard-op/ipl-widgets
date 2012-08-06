@@ -11,11 +11,11 @@
 	var subtitle_2;
 	
 	var iplSchedule = {
-		
+
 		init: function(config) {
 
-			this.attachTemplate();
 			this.loadStyleSheet();
+			this.attachTemplate();
 			this.url = 'http://esports.ign.com/schedule.json';
 			this.fetch();
 
@@ -165,6 +165,11 @@
 										})();
 									};
 
+									// if (title == 'IPL Face Off: San Francisco Showdown') {
+									// 	console.log(title);
+									// 	$("<span class='live'><a href='http://www.ign.com/ipl/all/face-off-san-francisco-showdown' class='now'>FACE OFF</a></span>").prependTo('.tags');
+									// };
+
 									if(now > gameStart && now < gameEnd) {
 										$("<span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span>").prependTo('.tags');
 										$(".listing").click(function() {
@@ -177,7 +182,6 @@
 											});
 										});
 									};
-
 								};
 							};
 		    			};
