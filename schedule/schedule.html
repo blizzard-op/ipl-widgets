@@ -5,74 +5,13 @@
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/3.5.1/build/cssreset/cssreset-min.css">
 	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src = 'https://raw.github.com/timrwood/moment/1.7.0/min/moment.min.js'></script>
-	<script src ='js/schedule.js'></script>
 </head>
 
 <body>
-	<div>
-		<table class='schedule-container persist-area'>
-			<th>
-			<tr class='header persist-header'>
-				<th>
-					<div class='date-header'>Date/Time</div>
-				</th>
-				<th>
-					<div class='sc-header'>
-						<p>
-							<a href='http://www.ign.com/ipl/starcraft-2'>StarCraft II</a>
-						</p>
-						<p class='schedule'>
-							<a href='https://www.google.com/calendar/embed?src=1u5m1559a5rlih3tr8jqp4kgac%40group.calendar.google.com' class='schedule-link'>Full Schedule</a>
-						</p>
-					</div>
-				</th>
-				<th>
-					<div class='lol-header'>
-						<p>
-							<a href='http://www.ign.com/ipl/league-of-legends'>League of Legends</a>
-						</p>
-						<p class='schedule'><a href='https://www.google.com/calendar/embed?src=igpia9kc2fst1ijkde1avplkq0%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p>
-					</div>
-				</th>
-			</tr>
-			</th>
-			<tr>
-				<td id='date-today' class='date'><p id='day-1'></p><p id='date-1'></p><span id='tag' class='tag'>TODAY</span></td>
-				<td id='sc-today' class='sc2'></td>
-				<td id='lol-today' class='lol'></td>
-			</tr>
-			<tr>
-				<td id='date-tomorrow' class='date'><p id='day-2'></p><p id='date-2'></p></td>
-				<td id='sc-tomorrow' class='sc2'></td>
-				<td id='lol-tomorrow' class='lol'></td>
-			</tr>
-			<tr>
-				<td class='date'><p id='day-3'></p><p id='date-3'></p></td>
-				<td id='sc-3' class='sc2'></td>
-				<td id='lol-3' class='lol'></td>
-			</tr>
-			<tr>
-				<td class='date'><p id='day-4'></p><p id='date-4'></p></td>
-				<td id='sc-4' class='sc2'></td>
-				<td id='lol-4' class='lol'></td>
-			</tr>
-			<tr>
-				<td class='date'><p id='day-5'></p><p id='date-5'></p></td>
-				<td id='sc-5' class='sc2'></td>
-				<td id='lol-5' class='lol'></td>
-			</tr>
-			<tr>
-				<td class='date'><p id='day-6'></p><p id='date-6'></p></td>
-				<td id='sc-6' class='sc2'></td>
-				<td id='lol-6' class='lol'></td>
-			</tr>
-			<tr>
-				<td class='date'><p id='day-7'></p><p id='date-7'></p></td>
-				<td id='sc-7' class='sc2'></td>
-				<td id='lol-7' class='lol'></td>
-			</tr>
-		</table>
-	</div>
 
+	<div id='schedule'></div>
+
+	<script src ='js/schedule.js'></script>
+	
 </body>
 </html>

@@ -44,7 +44,7 @@
 										if(url == null) {
 									  	return "COMING SOON";
 									  } else {
-									  	return "WATCH NOW";
+									  	return "WATCH VOD";
 									  };
 									  	break;
 									case 'underway':
@@ -71,7 +71,6 @@
 									};
 				        		})(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 				        	};
-				        	console.log('Hi Mom!');
 				        	var i = 1;
 				        	var team1Score,
 				        		team2Score,
@@ -121,7 +120,9 @@
 		loadStyleSheet: function() {
 		   var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/ removing link nodes
 		       link = document.createElement( 'link' );           // create the link node
-		   link.setAttribute( 'href', /*+ basepath +*/ 'css/style.css' );
+
+		   link.setAttribute( 'href', basepath + 'css/style.css' );
+
 		   link.setAttribute( 'rel', 'stylesheet' );
 		   head.appendChild(link);  // insert the link node into the DOM and start loading the style sheet
 		},
