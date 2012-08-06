@@ -44,7 +44,7 @@
 										if(url == null) {
 									  	return "COMING SOON";
 									  } else {
-									  	return "WATCH NOW";
+									  	return "WATCH VOD";
 									  };
 									  	break;
 									case 'underway':
