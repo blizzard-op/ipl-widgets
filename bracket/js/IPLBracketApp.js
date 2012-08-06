@@ -2,8 +2,13 @@
 var IPLBracketApp;
 
 (function($){
+	// enum for match state
+	var MatchState = {
+		'ready':0,
+		'finished':1,
+		'underway':2
+	};
 	// Main application - responsible for initializing components and managing events  
-	var browserPrefix = "-webkit"
 	IPLBracketApp = Class.extend({
 		zoomLevel:.5,
 		maxZoom:2,
@@ -17,6 +22,7 @@ var IPLBracketApp;
 		$toolbar:null,
 		loadedBracket:null,
 		enable3d:false,
+		enableZoom:true,
 		//Mouse drag variables
 		mouseIsDown:false,
 		isDragging:false,
@@ -35,6 +41,9 @@ var IPLBracketApp;
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
+
+
+
 			//console.log(Modernizr.prefixed('transform'));
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
@@ -48,14 +57,18 @@ var IPLBracketApp;
 				this.$bracketLayer.css({'scale': this.zoomLevel});
 			}
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
-				//this.loadedBracket = new Bracket(16);
-			//var a = new DoubleElimBracket(16);
-			this.loadBracketJSON("bin/foo_bracket_demo2.json", this.backetLoaded);
-			//this.loadBracketJSON("http://esports.ign.com/brackets/face-off-2012-league-of-legends.json", this.backetLoaded);
-
-			this.setupTools(this.$toolbar);
-			//that.parent.update.apply(that.parent), 1000/that.parent.fps
 			
+			if (navigator.appName == 'Microsoft Internet Explorer'){
+				this.enableZoom = false;
+			}
+
+			//Apply no-zoom stylesheet
+			if(!this.enableZoom){
+				this.$bracketLayer.addClass('no-zoom');
+			}
+
+			this.loadBracketJSON("bin/foo_bracket_demo2.json", this.backetLoaded);
+			this.setupTools(this.$toolbar);
 		},
 		
 		loadBracketJSON:function(JSONURI, Callback){
@@ -85,7 +98,7 @@ var IPLBracketApp;
 			//}else{
 				this.loadedBracket = new Bracket(Data.rounds[0].matches.length*2);
 			//}
-			console.log(this.loadedBracket);
+			//console.log(this.loadedBracket);
 			this.loadedBracket.render(this.$bracketLayer);
 			this.$bracketLayer.hide().fadeIn('slow');
 
@@ -142,10 +155,16 @@ var IPLBracketApp;
 			.appendTo($Layer).find('input')
 			.change(function(data){
 				//console.log();
+				//WARN this will spoil outside of scope if there is more than one BracketApp on the page
+				//TODO fix above problem using find()
 				if($(this).prop('checked')){
-					$('.match-pos-spoiler').addClass('match-spoiler').find('.match-content').css('opacity',1).fadeOut();
+					that.$appContainer.find('.match-pos-spoiler .match-content.score-tip').css('opacity',1).fadeIn();
+					that.$appContainer.find('.match-hide-score').hide();
+					$('.match-pos-spoiler').addClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeOut();
 				}else{
-					$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content').css('opacity',1).fadeIn();
+					$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeIn();
+					that.$appContainer.find('.match-content.score-tip').css('opacity',1).fadeOut();
+					that.$appContainer.find('.match-hide-score').show();
 				}
 			});
 
@@ -334,7 +353,7 @@ var DoubleElimBracket = Bracket.extend({
 		bestOf:3,
 		scheduledTime:'',
 		winner:null,
-		status:'upcoming',
+		status:0,
 		slug:'',
 		depth:0,
 		matchPosition:0,
@@ -349,7 +368,7 @@ var DoubleElimBracket = Bracket.extend({
 		},
 		parseData:function(Data){
 			this.slug = Data.slug || "";
-			this.status = Data.status || 'upcoming'; 
+			this.status = MatchState[Data.status] || 0; 
 			this.bestOf = Data.best_of || 3;
 			this.scheduledTime = Data.publish_at;
 			this.id = Data.id;
@@ -361,23 +380,29 @@ var DoubleElimBracket = Bracket.extend({
 			//$('<h2>').appendTo(this.$element).text(this.status);
 			this.populateMatch();
 		},
+		//Put a recursive call to get children nodes here
+		getChildNodes:function(Ar){
+			Ar.push(this);
+			if(this.childMatches.length>0){
+				this.childMatches[0].getChildNodes(Ar);
+				this.childMatches[1].getChildNodes(Ar);
+			}
+			return Ar;
+		},
 		// Draws information about this match onto the DOM
 		populateMatch:function(){
 			var that = this;
 			var $teamName;
 			var $scores;
-			var $content = $('<div class="match-content">').appendTo(this.$element).css({'position':'relative', 'height':'100%', width:this.$element.width()});
-			if(this.childMatches.length > 0){
-				this.$element.addClass('match-pos-spoiler match-spoiler match-hide-score');
-				$content.hide();
-			}
-
+			var $content = $('<div class="match-content-container">').appendTo(this.$element).css({'position':'relative', 'height':'100%', width:this.$element.width()});
+			
 			//If the match has been played or is in progress...
 			
 			if(this.players.length > 0){
-				$scores = $('<div class="score-slidein">').appendTo($content);
+				$playersContain = $('<div class="match-content players">').appendTo($content).height(this.$element.height()).width(this.$element.width());
+				$scores = $('<div class="score-slidein">').appendTo($playersContain).addClass('match-hide-score');
 				for(var teamOrPlayer in this.players){
-					$teamName = $('<div class="team-name">').appendTo($content).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
+					$teamName = $('<div class="team-name">').appendTo($playersContain).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
 					//$('<i class="icon-search icon-white"></i>').prependTo($content);
 					if(this.players[teamOrPlayer].username.length > 12){
 						$teamName.addClass('long-team-name');
@@ -388,20 +413,21 @@ var DoubleElimBracket = Bracket.extend({
 					
 					//check if child games have been played
 					for(var a in this.childMatches){
-						if(this.childMatches[a].status != 'finished'){
+						if(this.childMatches[a].status == MatchState.ready){
 							this.childLines[a].addClass('unplayed');
 						}
 					}
 
 					//hover hook
-					this.$element.mouseenter(function(event){
+					
+				}
+				this.$element.mouseenter(function(event){
 						that.onMouseEnter.apply(that,[event]);
 					}).mouseleave(function(event){
 						that.onMouseLeave.apply(that,[event]);
 					}).click(function(event){
 						that.onClick.apply(that,[event]);
 					});
-				}
 			// If it is upcoming... 
 			}else{
 				this.$element.addClass('unplayed');
@@ -409,6 +435,20 @@ var DoubleElimBracket = Bracket.extend({
 					this.childLines[b].addClass('unplayed');
 				}
 			}
+
+			//add spoiler classes
+			if(this.childMatches.length > 0){
+				this.$element.addClass('match-pos-spoiler match-spoiler');
+				$content.find('.players').hide();
+
+				// add rev content
+				if(this.status != MatchState.underway && this.players.length>0){
+					$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
+					.height(this.$element.height());
+				//.css('margin-top', -parseInt(this.$element.height()));
+				}
+			}
+
 			
 		},
 		addBranch:function(){
@@ -421,25 +461,37 @@ var DoubleElimBracket = Bracket.extend({
 		top:function(){
 			return parseFloat(this.$element.css('top'));
 		},
+		showScores:function(){
+
+		},
+		reveal:function(){
+
+		},
 		onMouseEnter:function(event){
 			if(this.$element.hasClass('match-spoiler')){
 				//this.$element.removeClass('match-spoiler');
-				this.$element.find('.match-content').show().css('opacity',0).animate({'opacity':1},{duration:400,queue:false});
+				this.$element.find('.match-content.players').show().css('opacity',0).animate({'opacity':1},{duration:400,queue:false});
+				this.$element.find('.match-content.score-tip').animate({'opacity':0},{duration:400,queue:false});
+				//unspoil behind
+				var trailers = this.getChildNodes([]);
 			}
 		},
 		onMouseLeave:function(event){
 			if(this.$element.hasClass('match-spoiler')){
 				//this.$element.addClass('match-spoiler');
-				this.$element.find('.match-content').animate({'opacity':0},{duration:400,queue:false});
+				this.$element.find('.match-content.players').animate({'opacity':0},{duration:400,queue:false});
+				this.$element.find('.match-content.score-tip').show().css('opacity',0).animate({'opacity':1},{duration:400,queue:false});
 			}
 		},
 		onClick:function(){
 			if(this.$element.hasClass('match-pos-spoiler')){
 				this.$element.removeClass('match-spoiler');
 				this.$element.removeClass('match-pos-spoiler');
-				this.$element.removeClass('match-hide-score');
-
+				
+				//this.showScores();
 			}
+			this.$element.find('.match-hide-score').show();
+			console.log(this.getChildNodes([]));
 		}
 	});
 
