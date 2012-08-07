@@ -128,13 +128,11 @@
 
 								for(var matches in match_Obj.metadata.matches) {
 				    				match_Arr = match_Obj.metadata.matches[matches];
-				    				console.log(match_Arr);
 				    				for (var rebroadcast in match_Arr) {
 				    					matches_Obj = match_Arr[rebroadcast];
 				    					var vod = matches_Obj.games[0].game.video;
 				    					if(vod) {
-				    						var vodLink = matches_Obj.games[0].game.video.url; console.log(vodLink);
-				    						// $("<p><a href='http://ign.com" + vodLink + "'><img src='http://esports.ign.com/addons/ipl-widgets/schedule/images/video.png' />Watch Vod</a></p>").appendTo('.listing');
+				    						var vodLink = matches_Obj.games[0].game.video.url;
 				    					};
 				    				};
 				    			};
