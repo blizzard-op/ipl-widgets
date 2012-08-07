@@ -1,9 +1,6 @@
 
 /* JAMES BURROUGHS 2012 Code-Foo */
 
-@import url(http://fonts.googleapis.com/css?family=Questrial);
-
-
 #ticker-bar {
   position:relative;
   background:url(../img/bar_tile.png) top repeat-x #000;
@@ -14,7 +11,7 @@
 }
 
 .ticker-textSlider {
-  font-family:"Questrial", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   visibility:hidden;
   white-space:nowrap;
   position:absolute;
