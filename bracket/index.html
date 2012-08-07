@@ -11,7 +11,6 @@
 
   <meta name="viewport" content="width=device-width">
   <link rel="stylesheet" href="css/lib/bootstrap.min.css">
-  <link rel="stylesheet" href="css/ui-darkness/jquery-ui-1.8.22.custom.css">
   <link rel="stylesheet" href="css/style.css">
 
   <script src="js/lib/modernizr-2.5.3.min.js"></script>
@@ -25,7 +24,7 @@
   <!--[if lt IE 7]><p class=chromeframe>Your browser is <em>ancient!</em> <a href="http://browsehappy.com/">Upgrade to a different browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to experience this site.</p><![endif]-->
 
   
-    <div id="mainAppContainer">
+    <div id="mainAppContainer" style="width:50%;height:2000px">
     </div><!--mainAppContainer-->
   
 
@@ -37,8 +36,6 @@
 
    <script src="js/lib/jquery.mousewheel.js"></script>
    <script src="js/lib/transformjs.js"></script>
-   <script src="js/lib/jquery-ui-1.8.22.custom.min.js"></script>
-  <script src="js/transformie.js"></script>
   <script src="js/IPLBracketApp.js"></script>
   <script>$(document).ready(function(){
     var a = new IPLBracketApp({'container':$('#mainAppContainer'), 'url': 'http://esports.ign.com/brackets/face-off-2012-league-of-legends.json'});

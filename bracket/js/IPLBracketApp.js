@@ -24,6 +24,7 @@ var IPLBracketApp;
 		loadedBracket:null,
 		enable3d:false,
 		enableZoom:true,
+		enableSpoilers:false,
 		//Mouse drag variables
 		mouseIsDown:false,
 		isDragging:false,
@@ -43,9 +44,6 @@ var IPLBracketApp;
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Options.container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
-
-
-
 		
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
@@ -80,6 +78,7 @@ var IPLBracketApp;
 				// TODO change to jsonp for production
 				dataType:'jsonp',
 				jsonpCallback:'getCached',
+				cache:true,
 				success:function(data){
 					Callback.apply(that,[data]);
 				}
@@ -596,8 +595,9 @@ var DoubleElimBracket = Bracket.extend({
 		parent:null,
 		$appContainer:null,
 		updateId:0,
+		hasHover:false,
 		
-		init:function(Parent, Container){ 
+		init:function(Parent, Container){
 			var that = this;
 			this.parent = Parent;
 			this.$appContainer = Container;
@@ -607,7 +607,7 @@ var DoubleElimBracket = Bracket.extend({
       			
     		});
     		$(window).resize(function(){
-    			s
+    			
     			that.centerObject(that.parent.$bracketLayer);
     			that.positionToolbar.apply(that);
     		});
@@ -617,7 +617,10 @@ var DoubleElimBracket = Bracket.extend({
 				that.parent.mouseup.apply(that.parent,[event]);
 			});
 			
-			this.$appContainer.mousewheel(function(data, delta, deltaX, deltaY){
+			this.$appContainer.mousewheel(function(event, delta, deltaX, deltaY){
+				if(that.hasHover){
+					event.preventDefault();
+				}
 				that.parent.onWheel.apply(that.parent,[-deltaY]);
 				if(that.parent.$zoomTip != null){
 					that.parent.$zoomTip.fadeOut();
@@ -627,9 +630,11 @@ var DoubleElimBracket = Bracket.extend({
 			});
 			
 			this.$appContainer.mouseenter(function(){
+				that.hasHover=true;
 				that.updateId = setInterval(function(){
 					that.parent.update.apply(that.parent)}, 1000/that.parent.fps);
 			}).mouseleave(function(){
+				that.hasHover=false;
 				clearInterval(that.updateId);
 			});
 			
