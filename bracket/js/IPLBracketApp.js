@@ -138,6 +138,16 @@ var IPLBracketApp;
 						'left':parseInt(that.$bracketLayer.find('.lossLayer').first().css('left'))+parseInt($(this).css('left'))
 					});
 				});
+				// correct where tree splits into loser bracket
+				var cl =this.loadedBracket.matches[this.loadedBracket.matches.length-2][0];
+				for(var a in cl.childLines){
+					if(cl.childMatches[a].status != MatchState.ready && cl.status != MatchState.ready){
+						cl.childLines[a].removeClass('unplayed');
+					}
+					
+				}
+				
+
 			}
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
@@ -359,6 +369,7 @@ var DoubleElimBracket = Bracket.extend({
 		this._super($Layer, XSpacing, YSpacing);
 		$loss.css({'top':$Layer.height()+80, 'left':-80});
 		this.renderFinalMatches($Layer, $loss);
+
 		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*.5);
 		$Layer.height($Layer.height()+$loss.height()+80);
 	},
@@ -379,12 +390,6 @@ var DoubleElimBracket = Bracket.extend({
 		curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
 		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
 		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
-		//console.log();
-		if(curMatch.childMatches[1].status == MatchState.finished){
-			curMatch.childLines[1].removeClass('unplayed').addClass('ooo');
-			curMatch.childLines[1].css('border','2px solid blue');
-			
-		}
 		//curMatch.childLines[1].css('border','2px solid blue');
 	}
 }); 
@@ -429,7 +434,7 @@ var DoubleElimBracket = Bracket.extend({
 		},
 		parseData:function(Data){
 			this.slug = Data.slug || "";
-			this.status = MatchState[Data.status] || 0; 
+			this.status = MatchState[Data.status] || 0;
 			this.bestOf = Data.best_of || 3;
 			this.scheduledTime = Data.publish_at;
 			this.id = Data.id;
@@ -476,7 +481,7 @@ var DoubleElimBracket = Bracket.extend({
 					
 					//check if child games have been played
 					for(var a in this.childMatches){
-						if(this.childMatches[a].status == MatchState.ready){
+						if(this.status==MatchState.ready|| this.childMatches[a].status == MatchState.ready){
 							this.childLines[a].addClass('unplayed');
 						}
 					}
@@ -622,7 +627,7 @@ var DoubleElimBracket = Bracket.extend({
 				if(that.hasHover){
 					event.preventDefault();
 				}
-				that.parent.onWheel.apply(that.parent,[-deltaY]);
+				that.parent.onWheel.apply(that.parent,[deltaY]);
 				if(that.parent.$zoomTip != null){
 					that.parent.$zoomTip.fadeOut();
 					that.parent.$zoomTip = null;
