@@ -1,4 +1,4 @@
-@import url(http://fonts.googleapis.com/css?family=Questrial);
+
 .IPLBracketWindow{
 	width:100%;
 	height:100%;
@@ -6,25 +6,82 @@
 	background: -webkit-linear-gradient(top, #ccc 0, #fff 100%);
 
 	display:block;
-	position: absolute;
+	position: relative;
 	overflow:hidden;
 	cursor: move;
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	
 }
+
+
 
 .IPLBracketWindow.dark{
 	background: -webkit-linear-gradient(top, #000 0, #303030 100%);
 
 }
 
-.IPLBracketTools{
+div.IPLBracketTools{
 	z-index: 1000;
 	position: absolute;
-	margin:12px;
+	padding:4px;
+	border-radius: 8px;
 	display:block;
-	font-weight: bold;
+	
 	width:auto;
 	height:auto;
 	float:right;
+	background-color: rgba(255, 255, 255, .8);
+	white-space: nowrap;
+}
+
+div.bracket-zoom-tip{
+	margin:8px;
+	padding: 4px;
+	background-color: #fff;
+	border-radius: 8px;
+	width:auto;
+	display: block;
+	position: absolute;
+	white-space: nowrap;
+}
+
+div.IPLBracketTools div{
+	float:left;
+}
+
+div.IPLBracketTools .toolbar-spoiler-box{
+	background-color: #000;
+	color:#fff;
+	border-radius: 4px;
+	padding: 0 4px 5px 4px;
+	margin: 0 2px 2px 2px;
+	width:auto;
+	white-space: nowrap;
+
+}
+
+h1.bracket-title{
+	font-size: 3.6em;
+	line-height: 1.3em;
+	color:#000;
+	text-shadow: 2px 2px 0 #fff;
+	-moz-user-select: none;
+ 	-webkit-user-select: none;
+ 	margin-top:-1em;
+ 	white-space: nowrap;
+}
+
+.no-zoom .bracket-title, .no-zoom .round-title{
+	font-size: 100%;
+}
+
+.round-title{
+	color:#000;
+	float:left;
+	position: absolute;
+	margin-top: -1.8em;
+	-moz-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 div.IPLBracketLayer{
@@ -32,21 +89,20 @@ div.IPLBracketLayer{
 	display:block;
 	width:auto;
 	height:auto;
-	
 }
 
-div.IPLBracketLayer h1{
-	font-family: 'Questrial', sans-serif;
-	color: #000;
-	font-weight: bold;
-	font-size: 6em;
+.no-zoom div.line{
+	height:3px;
 }
 
 div.line{
+transform-origin: 0 100%;
   -webkit-transform-origin: 0 100%;
   -moz-transform-origin: 0 100%;
+  -o-transform-origin: 0 100%;
+  -ms-transform-origin: 0 100%;
   height: 6px;
-  background-color:#000;
+  background-color:#a00000;
 
   /*
   background-color:transparent;
@@ -54,46 +110,134 @@ div.line{
   */
 }
 
+div.line.unplayed{
+	background-color: #aaa;
+	z-index:-2;
+}
+
+div.match-content{
+	position: absolute;
+}
+
+div.score-tip-padding{
+	height:100%;
+	width: 100%;
+	padding-left: 26%;
+	display:table;
+	text-align:center;
+	margin: auto;
+}
+
+div.match-content.score-tip p{
+	font-size:2em;
+	margin: auto;
+	height:100%;
+	line-height: 1.3em;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
 div.bracket-match{
-	
-	width:360px;
+	width:400px;
 	height:120px;
 	/*
+	width:160px;
+	height:40px;
+	font-size: 33%;
 	border-radius: 4px;
 	border: 2px solid black;
 	-webkit-transform-style: preserve-3d;
-	
 	background: -webkit-linear-gradient(top, #000 0, #303030 100%);*/
 	
-	box-shadow: 3px 3px 0px rgba(0,0,0,1),  6px 6px 0px rgba(0,0,0,1);
+	box-shadow: 3px 3px 0px #a00000,  6px 6px 0px #a00000;
 	background-color: #000;
 	border-radius: 0 8px 0 8px;
 	border: 0px solid #000;
 	position: relative;
 	color:#fff;
 	overflow: hidden;
+}
+
+.no-zoom div.bracket-match{
+	width:160px;
+	height:40px;
+	font-size: 36%;
+}
+
+div.bracket-match.unplayed{
+	box-shadow: 3px 3px 0px #aaa,  6px 6px 0px #aaa;
+	background-color: #aaa;
+}
+
+div.spoiler{
+
+}
 
 
+
+/*
+div.bracket-match.match-spoiler .team-name{
+	display: none;
+}
+*/
+div.bracket-match .score-slidein{
+	position: absolute;
+	float:left;
+	height:100%;
+	background-color: #a00000;
+	border-radius: 8px 8px 0 8px;
+	width:3.75em;
+}
+
+div.bracket-match .match-hide-score{
+	display: none;
+}
+/*
+div.bracket-match.match-spoiler .score-slidein{
+	display: none;
+}
+*/
+div.bracket-match .score-slidein .score{
+	height: 50%;
+	clear:both;
+	display: table;
+	margin: auto;
+	
+}
+
+div.bracket-match .score-slidein .score h3{
+	color: #fff;
+	vertical-align: middle;
+	display: table-cell;
+	font-size: 3em;
+	line-height: 1.3em;
+	
+	text-shadow: 2px 2px 0 #000;
 }
 
 div.bracket-match .team-name{
 	width:100%;
 	height:50%;
-	vertical-align: middle;
-	display: table;
-	padding-left:20px;
-}
 
-div.bracket-match .team-name:first-child{
-	border-bottom: 2px solid white;
+	position: relative;
+	vertical-align: middle;
+	display: table;	
 }
 
 div.bracket-match .team-name h2{
 	vertical-align: middle;
 	display:table-cell;
-	height: 100%;
-	padding-left:20px;
-	font-size: 2em;
+	height:100%;
+
+	line-height: 1.3em;
+	padding-left:4%;
+	font-size: 2.6em;
+	font-weight: lighter;
+}
+
+div.bracket-match .team-name.long-team-name{
+	font-size: .75em;
 }
 
 div.winLayer{
@@ -102,6 +246,10 @@ div.winLayer{
 
 div.champLayer{
 	float:right;
+}
+
+div.lossLayer{
+	position: absolute;
 }
 
 .lossLayer .bracket-round{
@@ -125,15 +273,3 @@ div.champLayer{
 }
 
 
-
-.matches-4 .bracket-match{
-	
-}
-
-.two-matches{
-
-}
-
-.one-matches{
-	
-}

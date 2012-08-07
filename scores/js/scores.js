@@ -21,6 +21,9 @@
 			    type: 'GET',
 			    url: this.url,
 			    dataType: "jsonp",
+			    cache: true,
+				jsonpCallback: "getCachedScores",
+
 			    success: function(data) {
 			        self.matchUps = [];
 			        $.map(data, function(data, date) {
@@ -34,11 +37,15 @@
 					        			return title;
 					        		}
 					        	})(match.match_score.title),
-				        		status: (function(status) {
+				        		status: (function(status, url) {
 				        			switch (status)
 									{
 									case 'finished':
+										if(url == null) {
+									  	return "COMING SOON";
+									  } else {
 									  	return "WATCH VOD";
+									  };
 									  	break;
 									case 'underway':
 										return "LIVE NOW";
@@ -49,18 +56,20 @@
 									default:
 									  	return "FINISHED";
 									}
-				        		})(match.match_score.match.status),
-				        		url: (function(url) {
-				        			console.log(url);
-				        			switch (url)
-									{
-									case null:
-									  	return '#';
-									  	break;
-									default:
-									  	return 'http://ign.com' + url;
-									}
-				        		})(match.match_score.match.url)
+				        		})(match.match_score.match.status, match.match_score.match.url),
+				        		url: (function(url, status, slug) {
+				        			if (status == 'underway') {
+				        				return 'http://ign.com/ipl/' + slug;
+									} else if (status == 'finished') {
+										if(url == null) {
+											return '#';
+										} else {
+											return 'http://ign.com' + url;
+										};
+									} else {
+										return '#';
+									};
+				        		})(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 				        	};
 				        	var i = 1;
 				        	var team1Score,
@@ -111,7 +120,9 @@
 		loadStyleSheet: function() {
 		   var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/ removing link nodes
 		       link = document.createElement( 'link' );           // create the link node
+
 		   link.setAttribute( 'href', basepath + 'css/style.css' );
+
 		   link.setAttribute( 'rel', 'stylesheet' );
 		   head.appendChild(link);  // insert the link node into the DOM and start loading the style sheet
 		},
@@ -134,7 +145,6 @@
 
 			$('#scores').on('click', '.right-button', function() {
 				if(i == 5) {
-					console.log(i);
 					$('.box-scores').css('margin-left', '-760');
 				} else {
 					$('.box-scores').animate({'margin-left': '-=152'}, 500);

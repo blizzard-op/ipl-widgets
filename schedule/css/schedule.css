@@ -1,0 +1,212 @@
+body {
+	background: black;
+}
+
+.schedule-container {
+	width: 600px;
+	margin: auto;
+	color: #333;
+	font-size: 12px;
+	font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	background: #efefef;
+	background: -webkit-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: -moz-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: -o-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: -ms-linear-gradient(bottom, #efefef 0%,#ddd 100%);
+  	background: linear-gradient(bottom, #efefef 0%,#ddd 100%);
+}
+
+.header {
+	background: white;
+}
+
+.date-header {
+	font-size: 12px;
+	font-style: italic;
+	margin: 15px 0;
+	text-align: center;
+	font-weight: bold;
+/*	vertical-align: middle;*/
+	/*padding: 15px 0;*/
+	background: #fff;
+
+}
+
+th {
+	border: 1px solid #ccc;
+}
+
+.sc-header {
+	font-size: 15px;
+	margin: 15px 0;
+	text-align: center;
+	font-weight: bold;
+	vertical-align: middle;
+	
+	/*padding: 15px 0;*/
+	background: #fff;
+
+}
+
+.lol-header {
+	font-size: 15px;
+	margin: 15px 0;
+	text-align: center;
+	font-weight: bold;
+	vertical-align: middle;
+	/*padding: 15px 0;*/
+	background: #fff;
+
+}
+
+.schedule-link {
+	color: #777;
+	font-size: 10px;
+}
+
+.date {
+	width: 100px;
+	height: 50px;
+	vertical-align: top;
+	font-weight: bold;
+	padding: 8px 8px;
+	text-shadow: 0px 1px 0px #ccc;
+	border: 1px solid #ccc;
+}
+
+.sc2 {
+	width: 250px;
+	height: 50px;
+	vertical-align: top;
+	text-align: left;
+	font-weight: bold;
+	border: 1px solid #ccc;
+}
+
+.lol {
+	width: 250px;
+	height: 50px;
+	vertical-align: top;
+	text-align: left;
+	font-weight: bold;
+	border: 1px solid #ccc;
+}
+
+.listing {
+	border: 1px solid #efefef;
+	margin: 5px;
+	padding: 5px;
+	background: #fff;
+}
+
+/*.listing:hover {
+	background: rgba(178, 27,0, 0.1);
+	background: rgba(0, 0, 0, 0.1);
+}*/
+
+.live-now:hover {
+	background: rgba(178, 27, 0, 0.1);
+	cursor: pointer;
+}
+
+#date-today {
+	color: #B21B00;
+	font-weight: bold;
+	font-size: 15px;
+}
+
+.sub1 {
+	font-weight: normal;
+	color: #777;
+}
+
+.sub2 {
+	font-weight: normal;
+	color: #777;
+	font-size: 9px;
+	font-style: italic;
+}
+
+span {
+	font-style: italic;
+	color: #555;
+}
+
+a {
+  color: #333;
+  -webkit-transition: color 300ms ease-in-out 50ms;
+  -moz-transition: color 300ms ease-in-out 50ms;
+  -ms-transition: color 300ms ease-in-out 50ms;
+  -o-transition: color 300ms ease-in-out 50ms;
+  transition: color 300ms ease-in-out 50ms;
+}
+  
+a:link, a:visited {
+    color: #333;
+}
+
+a:hover {
+    cursor: pointer;
+    color: #b21b00;
+}
+
+#date-1 {
+	font-size: 10px;
+	font-style: italic;
+}
+
+.all {
+    font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-transform: uppercase;
+    background: black;
+    color: white;
+    padding: 2px;
+    border-radius: 0.25em;
+}
+
+.tag {
+	font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-shadow: none;
+    text-transform: uppercase;
+    background: #b21b00;
+    color: white;
+    padding: 2px;
+    border-radius: 0.25em;
+}
+
+.rebroadcast {
+	font-size: 9px;
+	text-transform: uppercase;
+}
+
+.live {
+	font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-shadow: none;
+    text-transform: uppercase;
+    margin-right: 5px;
+    background: #b21b00;
+    color: white;
+    padding: 2px;
+    border-radius: 0.25em;
+}
+
+a.now {
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+    font-size: 9px;
+    font-style: normal;
+    text-shadow: none;
+    text-transform: uppercase;
+}
+
+#date-2, #date-3, #date-4, #date-5, #date-6, #date-7  {
+	font-size: 10px;
+	font-style: italic;
+}
