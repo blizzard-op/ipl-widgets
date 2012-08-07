@@ -1,4 +1,3 @@
-
 .IPLBracketWindow{
 	width:100%;
 	height:100%;
@@ -10,6 +9,7 @@
 	background:        linear-gradient(top, #ccc 0, #fff 100%);
 
 	display:block;
+	/* needs to be absolute if not contained within an outside object */
 	position: relative;
 	overflow:hidden;
 	cursor: move;
@@ -231,6 +231,9 @@ div.champLayer{
 
 div.lossLayer{
 	position: absolute;
+	-moz-user-select: none;
+	-ms-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 .lossLayer .bracket-round{

@@ -80,6 +80,7 @@ var IPLBracketApp;
 				cache:true,
 				success:function(data){
 					Callback.apply(that,[data]);
+
 				}
 			});
 			// attach a preloader here
@@ -101,7 +102,7 @@ var IPLBracketApp;
 			}
 		
 			this.loadedBracket.render(this.$bracketLayer);
-			this.$bracketLayer.hide().fadeIn('slow');
+			//this.$bracketLayer.hide().fadeIn('slow');
 
 			if(this.enableZoom){
 				this.windowManager.centerObject(this.$bracketLayer);
@@ -377,7 +378,14 @@ var DoubleElimBracket = Bracket.extend({
 		// Draw lines
 		curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
 		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
-		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+12, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+		//console.log();
+		if(curMatch.childMatches[1].status == MatchState.finished){
+			curMatch.childLines[1].removeClass('unplayed').addClass('ooo');
+			curMatch.childLines[1].css('border','2px solid blue');
+			
+		}
+		//curMatch.childLines[1].css('border','2px solid blue');
 	}
 }); 
 
@@ -498,8 +506,8 @@ var DoubleElimBracket = Bracket.extend({
 
 				// add rev content
 				if(this.status != MatchState.underway && this.players.length>0){
-					$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
-					.height(this.$element.height());
+					//$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
+					//.height(this.$element.height());
 				//.css('margin-top', -parseInt(this.$element.height()));
 				}
 			}
