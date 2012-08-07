@@ -1,8 +1,5 @@
 (function($) {
-	var basepath = "";
-	if (!local) {
-		basepath = "http://test.ign.com/addons/ipl-widgets/schedule/";
-	}
+	var basepath = "http://esports.ign.com/addons/ipl-widgets/schedule/";
 	var game_Arr;
 	var match_Arr;
 	var match_Obj;
