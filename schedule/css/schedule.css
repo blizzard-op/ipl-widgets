@@ -206,6 +206,16 @@ a.now {
     text-transform: uppercase;
 }
 
+a.vod {
+	font-weight: bold;
+	color: #333;
+	font-size: 10px;
+}
+
+img.vid {
+	padding: right: 5px;
+}
+
 #date-2, #date-3, #date-4, #date-5, #date-6, #date-7  {
 	font-size: 10px;
 	font-style: italic;
