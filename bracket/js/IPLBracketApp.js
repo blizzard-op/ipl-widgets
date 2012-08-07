@@ -10,6 +10,7 @@ var IPLBracketApp;
 	};
 	// Main application - responsible for initializing components and managing events  
 	IPLBracketApp = Class.extend({
+		isDoubleElim:false,
 		zoomLevel:.5,
 		maxZoom:2,
 		max3dZoom:-82,
@@ -35,11 +36,12 @@ var IPLBracketApp;
 		ZoomAmt3d:250,
 		ZoomAmt2d:450,
 		$zoomTip:null,
-		init:function(Container){
+
+		init:function(Options){
 			var that = this;
 			var initalZoom;
 			this.enable3d = Modernizr.csstransforms3d;
-			this.$appContainer = Container;
+			this.$appContainer = Options.appContainer;
 			this.windowManager = new WindowManager(this,this.$appContainer);
 
 
@@ -66,8 +68,8 @@ var IPLBracketApp;
 			if(!this.enableZoom){
 				this.$bracketLayer.addClass('no-zoom');
 			}
-
-			this.loadBracketJSON("bin/foo_bracket_demo2.json", this.backetLoaded);
+			//"bin/foo_bracket_demo2.json"
+			this.loadBracketJSON(Options.bracketJson, this.backetLoaded);
 			this.setupTools(this.$toolbar);
 		},
 		
@@ -94,7 +96,7 @@ var IPLBracketApp;
 			//If there is a round after the finals then create a Double Elim bracket
 			var bracketSize = Math.ceil(Math.log(Data.rounds[0].matches.length*2)/Math.log(2));
 			if(Data.rounds.length >bracketSize){
-				this.loadedBracket = new DoubleElimBracket(Data.rounds[0].matches.length*2);//Bracket(Data.rounds[0].matches.length*2);
+				this.loadedBracket = new DoubleElimBracket(Data.rounds[0].matches.length*2);
 			}else{
 				this.loadedBracket = new Bracket(Data.rounds[0].matches.length*2);
 			}
@@ -106,36 +108,50 @@ var IPLBracketApp;
 				this.windowManager.centerObject(this.$bracketLayer);
 				this.windowManager.setInitalZoom(this.$bracketLayer);
 			}
-			$title.css('left',this.loadedBracket.championshipMatch.left()+this.loadedBracket.championshipMatch.$element.width()-$title.width());
+			//$title.css('left',this.loadedBracket.championshipMatch.left()+this.loadedBracket.championshipMatch.$element.width()-$title.width());
+			$title.css('left',this.$bracketLayer.width()-$title.width());
 			// begin populating tree
 			var mappedRound=0;
 			for(var a in Data.rounds){
 				//Add round title
 				//console.log(a);
 				if(Data.rounds[a] && this.loadedBracket.matches[a]){
-					this.addRoundTitle(Data.rounds[a].name, this.loadedBracket.matches[a][0]);
+					this.addRoundTitle(Data.rounds[a].name, this.loadedBracket.matches[a][0], 'winner-title');
 					//send data to match object	
 					for(var b in Data.rounds[a].matches){			
 						this.loadedBracket.matches[a][b].parseData(Data.rounds[a].matches[b].match);
 					}
 				}else if(Data.rounds[a] && this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length]){
 					//add some sort of offset or add to a layer
-					this.addRoundTitle(Data.rounds[a].name, this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length][0]);
+					this.addRoundTitle(Data.rounds[a].name, this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length][0],'loser-title');
 					for(var c in Data.rounds[a].matches){
 						this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length][c].parseData(Data.rounds[a].matches[c].match);
 					}
 					
 				}
 			}
+			if(this.loadedBracket instanceof DoubleElimBracket){
+				console.log();
+				var that = this;
+				this.$bracketLayer.find('.loser-title').each(function(){
+					$(this).css({
+						'top':parseInt(that.$bracketLayer.find('.lossLayer').first().css('top'))+parseInt($(this).css('top')),
+						'left':parseInt(that.$bracketLayer.find('.lossLayer').first().css('left'))+parseInt($(this).css('left'))
+					});
+				});
+			}
 		},
-		addRoundTitle:function(Title, Element){
+		addRoundTitle:function(Title, Element, TitleClass){
+			
 			$('<h2>').appendTo(this.$bracketLayer)
 					.addClass('round-title')
 					.text(Title)
-					.css({width:Element.$element.width(), 
+					.css({
+						width:Element.$element.width(), 
 						top:Element.top(),
 						left:Element.left()
-					});
+					}).addClass(TitleClass);
+
 		},
 		update:function(){
 			//stick drag code here
@@ -187,16 +203,14 @@ var IPLBracketApp;
 
 			//zoom buttons
 			var $btnGrp = $('<div class="btn-group">').appendTo($Layer);  
-			$('<button class="btn btn-inverse">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
+			$('<button class="btn btn-danger">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
 				that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
 			});
-			$('<button class="btn btn-inverse">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
+			$('<button class="btn btn-danger">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
 				that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
 			});
 			
-			
 			this.windowManager.positionToolbar();
-			
 
 		},
 		onWheel:function(DeltaY){
@@ -269,7 +283,7 @@ var IPLBracketApp;
 			var horizontalSpacing = XSpacing || 1.6;
 			var verticalSpacing = YSpacing || 40;
 
-			var $lineLayer = $('<div>').appendTo($Layer).css('position','relative');
+			var $lineLayer = $('<div class="line-layer">').appendTo($Layer).css('position','relative');
 			var that = this;
 			var match;
 			for(var i=0;i<this.matches.length;++i){
@@ -335,14 +349,43 @@ var DoubleElimBracket = Bracket.extend({
 		
 		this.matches.push([new Match(null,this.matches.length)]);
 		this.matches.push([new Match(null,this.matches.length)]);
-		console.log(this.matches);
-		//this.championshipMatch = new Match(null,88);
+		//set up the Grand Finals match connections
+		this.matches[this.matches.length-2][0].parentMatch = this.matches[this.matches.length-1][0];
+		this.matches[this.matches.length-2][0].childMatches = [this.matches[this.matches.length-3][0],this.losersBracket.matches[this.losersBracket.matches.length-1][0]];
+		this.matches[this.matches.length-1][0].childMatches = [this.matches[this.matches.length-2][0]];
+		//console.log(this.matches);
 	},
 	render:function($Layer, XSpacing, YSpacing){
-		this._super($Layer, XSpacing, YSpacing);
 		var $loss = $('<div class="lossLayer">').appendTo($Layer);
-		$loss.css({'top':$Layer.height()+60, 'left':-80});
 		this.losersBracket.render($loss, 1.1, 10);
+		this._super($Layer, XSpacing, YSpacing);
+		$loss.css({'top':$Layer.height()+80, 'left':-80});
+		this.renderFinalMatches($Layer, $loss);
+		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*.5);
+		$Layer.height($Layer.height()+$loss.height()+80);
+	},
+	renderFinalMatches:function($Layer, $LossLayer){
+		var curMatch = this.matches[this.matches.length-2][0];
+		//console.log($LossLayer.height());
+		var tTop = (parseInt(curMatch.childMatches[0].$element.css('top'))+$Layer.height()+(curMatch.$element.height()*.5)+parseInt(curMatch.childMatches[1].$element.css('top')))/2;
+		var tLeft = parseInt(curMatch.childMatches[0].$element.css('left'))>(parseInt(curMatch.childMatches[1].$element.css('left')))?parseInt(curMatch.childMatches[0].$element.css('left'))+(curMatch.$element.width()*1.3):parseInt(curMatch.childMatches[1].$element.css('left'))+(curMatch.$element.width()*1.3);
+		curMatch.$element.css({
+			'top': tTop,
+			'left': tLeft 
+		});
+		curMatch.parentMatch.$element.css({
+			'top': tTop,
+			'left': tLeft + (curMatch.$element.width() * 1.3) 
+		});
+
+		// Draw lines
+		curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
+		
+		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
+		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+12, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+		
+
+		
 	}
 }); 
 
@@ -404,8 +447,9 @@ var DoubleElimBracket = Bracket.extend({
 			Ar = Ar || [] 
 			Ar.push(this);
 			if(this.childMatches.length>0){
-				this.childMatches[0].getChildNodes(Ar);
-				this.childMatches[1].getChildNodes(Ar);
+				for(var a in this.childMatches){
+					this.childMatches[a].getChildNodes(Ar);
+				}
 			}
 			return Ar;
 		},

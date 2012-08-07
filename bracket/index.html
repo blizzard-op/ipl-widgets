@@ -41,7 +41,7 @@
   <script src="js/transformie.js"></script>
   <script src="js/IPLBracketApp.js"></script>
   <script>$(document).ready(function(){
-    var a = new IPLBracketApp($('#mainAppContainer'));
+    var a = new IPLBracketApp({'appContainer':$('#mainAppContainer'), 'bracketJson': 'bin/foo_bracket_demo2.json'});
   })</script>
 
 </body>
