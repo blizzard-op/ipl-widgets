@@ -41,12 +41,12 @@ var IPLBracketApp;
 			var that = this;
 			var initalZoom;
 			this.enable3d = Modernizr.csstransforms3d;
-			this.$appContainer = Options.appContainer;
+			this.$appContainer = Options.container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
 
 
 
-			//console.log(Modernizr.prefixed('transform'));
+		
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
 				$(this.$appContainer).css({'-moz-perspective':1000,
@@ -69,7 +69,7 @@ var IPLBracketApp;
 				this.$bracketLayer.addClass('no-zoom');
 			}
 			//"bin/foo_bracket_demo2.json"
-			this.loadBracketJSON(Options.bracketJson, this.backetLoaded);
+			this.loadBracketJSON(Options.url, this.backetLoaded);
 			this.setupTools(this.$toolbar);
 		},
 		
@@ -78,7 +78,7 @@ var IPLBracketApp;
 			$.ajax({
 				url:JSONURI,
 				// TODO change to jsonp for production
-				dataType:'json',
+				dataType:'jsonp',
 				jsonpCallback:'getCached',
 				success:function(data){
 					Callback.apply(that,[data]);
@@ -89,9 +89,10 @@ var IPLBracketApp;
 
 		backetLoaded:function(Data){
 			//add title
-		 //console.log(Data);
+		 
 			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
-			$('<h1 class="bracket-title">').appendTo($title).text(Data.name);
+			$('<h1 class="bracket-title">').appendTo($title).text(Data.name.replace(/-/g,' '));
+			
 			// TODO put a fallback here if number of players is invalid		
 			//If there is a round after the finals then create a Double Elim bracket
 			var bracketSize = Math.ceil(Math.log(Data.rounds[0].matches.length*2)/Math.log(2));
@@ -100,7 +101,7 @@ var IPLBracketApp;
 			}else{
 				this.loadedBracket = new Bracket(Data.rounds[0].matches.length*2);
 			}
-			//console.log(this.loadedBracket);
+		
 			this.loadedBracket.render(this.$bracketLayer);
 			this.$bracketLayer.hide().fadeIn('slow');
 
@@ -114,7 +115,7 @@ var IPLBracketApp;
 			var mappedRound=0;
 			for(var a in Data.rounds){
 				//Add round title
-				//console.log(a);
+				
 				if(Data.rounds[a] && this.loadedBracket.matches[a]){
 					this.addRoundTitle(Data.rounds[a].name, this.loadedBracket.matches[a][0], 'winner-title');
 					//send data to match object	
@@ -131,7 +132,6 @@ var IPLBracketApp;
 				}
 			}
 			if(this.loadedBracket instanceof DoubleElimBracket){
-				console.log();
 				var that = this;
 				this.$bracketLayer.find('.loser-title').each(function(){
 					$(this).css({
@@ -163,7 +163,6 @@ var IPLBracketApp;
 				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
 				if(this.enable3d){
 					var dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
-					//console.log(dragScaling);
 					dragScaling = dragScaling<1?1:dragScaling;
 				}
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (xDist*dragScaling), 'top':parseInt(this.$bracketLayer.css('top')) + (yDist*dragScaling)});
@@ -183,11 +182,11 @@ var IPLBracketApp;
 			var that = this;
 			//
 			this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
-
+			/*
 			$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
 			.appendTo($Layer).find('input')
 			.change(function(data){
-				//console.log();
+				
 				//WARN this will spoil outside of scope if there is more than one BracketApp on the page
 				//TODO fix above problem using find()
 				if($(this).prop('checked')){
@@ -199,16 +198,18 @@ var IPLBracketApp;
 					that.$appContainer.find('.match-content.score-tip').css('opacity',1).fadeOut();
 					that.$appContainer.find('.match-hide-score').show();
 				}
-			});
+			});*/
 
 			//zoom buttons
-			var $btnGrp = $('<div class="btn-group">').appendTo($Layer);  
-			$('<button class="btn btn-danger">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
-			});
-			$('<button class="btn btn-danger">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
-				that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
-			});
+			if(this.enableZoom){
+				var $btnGrp = $('<div class="btn-group">').appendTo($Layer);  
+				$('<button class="btn btn-danger">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
+					that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
+				});
+				$('<button class="btn btn-danger">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
+					that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
+				});
+			}
 			
 			this.windowManager.positionToolbar();
 
@@ -278,7 +279,6 @@ var IPLBracketApp;
 			}
 		},
 		render:function($Layer, XSpacing, YSpacing){
-			//console.log(this.matches);
 			var $round;
 			var horizontalSpacing = XSpacing || 1.6;
 			var verticalSpacing = YSpacing || 40;
@@ -353,7 +353,6 @@ var DoubleElimBracket = Bracket.extend({
 		this.matches[this.matches.length-2][0].parentMatch = this.matches[this.matches.length-1][0];
 		this.matches[this.matches.length-2][0].childMatches = [this.matches[this.matches.length-3][0],this.losersBracket.matches[this.losersBracket.matches.length-1][0]];
 		this.matches[this.matches.length-1][0].childMatches = [this.matches[this.matches.length-2][0]];
-		//console.log(this.matches);
 	},
 	render:function($Layer, XSpacing, YSpacing){
 		var $loss = $('<div class="lossLayer">').appendTo($Layer);
@@ -366,7 +365,6 @@ var DoubleElimBracket = Bracket.extend({
 	},
 	renderFinalMatches:function($Layer, $LossLayer){
 		var curMatch = this.matches[this.matches.length-2][0];
-		//console.log($LossLayer.height());
 		var tTop = (parseInt(curMatch.childMatches[0].$element.css('top'))+$Layer.height()+(curMatch.$element.height()*.5)+parseInt(curMatch.childMatches[1].$element.css('top')))/2;
 		var tLeft = parseInt(curMatch.childMatches[0].$element.css('left'))>(parseInt(curMatch.childMatches[1].$element.css('left')))?parseInt(curMatch.childMatches[0].$element.css('left'))+(curMatch.$element.width()*1.3):parseInt(curMatch.childMatches[1].$element.css('left'))+(curMatch.$element.width()*1.3);
 		curMatch.$element.css({
@@ -395,7 +393,6 @@ var DoubleElimBracket = Bracket.extend({
 			this.totalCompetitors = NumPlayers;
 			this.matchDepth = (Math.ceil(Math.log(NumPlayers)/Math.log(2))-1)*2;
 			this.championshipMatch = new LoserMatch(null, this.matchDepth-1)
-			console.log(this.matchDepth-1);
 			this.buildGraph(this.championshipMatch);
 		},
 		buildGraph:function(HeadNode){
@@ -464,7 +461,7 @@ var DoubleElimBracket = Bracket.extend({
 			
 			if(this.players.length > 0){
 				$playersContain = $('<div class="match-content players">').appendTo($content).height(this.$element.height()).width(this.$element.width());
-				$scores = $('<div class="score-slidein">').appendTo($playersContain).addClass('match-hide-score');
+				$scores = $('<div class="score-slidein">').appendTo($playersContain);//.addClass('match-hide-score');
 				for(var teamOrPlayer in this.players){
 					$teamName = $('<div class="team-name">').appendTo($playersContain).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
 					//$('<i class="icon-search icon-white"></i>').prependTo($content);
@@ -483,6 +480,7 @@ var DoubleElimBracket = Bracket.extend({
 					}
 					//hover hook
 				}
+				/*
 				this.$element.mouseenter(function(event){
 						that.onMouseEnter.apply(that,[event]);
 					}).mouseleave(function(event){
@@ -490,6 +488,7 @@ var DoubleElimBracket = Bracket.extend({
 					}).click(function(event){
 						that.onClick.apply(that,[event]);
 					});
+			*/
 			// If it is upcoming... 
 			}else{
 				this.$element.addClass('unplayed');
@@ -500,8 +499,8 @@ var DoubleElimBracket = Bracket.extend({
 
 			//add spoiler classes
 			if(this.childMatches.length > 0){
-				this.$element.addClass('match-pos-spoiler match-spoiler');
-				$content.find('.players').hide();
+				//this.$element.addClass('match-pos-spoiler match-spoiler');
+				//$content.find('.players').hide();
 
 				// add rev content
 				if(this.status != MatchState.underway && this.players.length>0){

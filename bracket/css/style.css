@@ -69,6 +69,7 @@ h1.bracket-title{
 	-moz-user-select: none;
  	-webkit-user-select: none;
  	margin-top:-1em;
+ 	white-space: nowrap;
 }
 
 .no-zoom .bracket-title, .no-zoom .round-title{
