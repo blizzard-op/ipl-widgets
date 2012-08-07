@@ -1,6 +1,8 @@
 (function($) {
-	
-	var basepath = "http://esports.ign.com/addons/ipl-widgets/scores/";
+	var basepath = "";
+	if (!local) {
+		basepath = "http://test.ign.com/addons/ipl-widgets/schedule/";
+	}
 	var game_Arr;
 	var match_Arr;
 	var match_Obj;
@@ -255,7 +257,7 @@
 		   var head = document.getElementsByTagName( 'head' )[0], // reference to document.head for appending/removing link nodes
 		       link = document.createElement( 'link' );           // create the link node
 		   
-		   link.setAttribute( 'href', /*basepath +*/ 'css/schedule.css' );
+		   link.setAttribute( 'href', basepath + 'css/schedule.css' );
 		   link.setAttribute( 'rel', 'stylesheet' );
 		   
 		   head.appendChild(link);  // insert the link node into the DOM and match_start loading the style sheet
