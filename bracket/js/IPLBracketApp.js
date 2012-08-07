@@ -66,7 +66,6 @@ var IPLBracketApp;
 			if(!this.enableZoom){
 				this.$bracketLayer.addClass('no-zoom');
 			}
-			//"bin/foo_bracket_demo2.json"
 			this.loadBracketJSON(Options.url, this.backetLoaded);
 			this.setupTools(this.$toolbar);
 		},
@@ -377,12 +376,8 @@ var DoubleElimBracket = Bracket.extend({
 
 		// Draw lines
 		curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
-		
 		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
 		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+12, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
-		
-
-		
 	}
 }); 
 
@@ -508,8 +503,6 @@ var DoubleElimBracket = Bracket.extend({
 				//.css('margin-top', -parseInt(this.$element.height()));
 				}
 			}
-
-			
 		},
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth-1), new Match(this,this.depth-1)];
@@ -640,7 +633,6 @@ var DoubleElimBracket = Bracket.extend({
 			
 		},
 		centerObject:function($Target){
-			//$Target.left(((this.$appContainer.width()/2) - ($Target.width()/2)));
 			$Target.css({'left':((this.$appContainer.width()/2) - ($Target.width()/2))});
 			$Target.css({'top':((this.$appContainer.height()/2) - ($Target.height()/2))});
 		},
@@ -648,9 +640,6 @@ var DoubleElimBracket = Bracket.extend({
 			
 			if(this.parent.enable3d){
 				// doesn't scale linearly, but this works for now
-				
-				//$Target.css({'translateZ':  -(boxHeight/2)/Math.tan(targetHeight/2) });
-				//$Target.css({'translateZ':-3000*targetHeight});
 				var targetHeight3d =  ($Target.height()+100) / this.$appContainer.height();
 				var targetWidth3d =  ($Target.width()+100) / this.$appContainer.width();
 				if(targetHeight3d>targetWidth3d){
@@ -669,8 +658,6 @@ var DoubleElimBracket = Bracket.extend({
 					$Target.css('scale', targetWidth);
 					this.parent.zoomLevel = targetWidth;
 				}
-				
-				
 			}	
 		},
 		getZoomTooltip:function($Layer){

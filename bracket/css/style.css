@@ -2,8 +2,12 @@
 .IPLBracketWindow{
 	width:100%;
 	height:100%;
-	background-color: #ddd;
-	background: -webkit-linear-gradient(top, #ccc 0, #fff 100%);
+	background-color:#ddd;
+	background:-webkit-gradient(linear,left top,left bottom,color-stop(#ccc,0),color-stop(#fff,1));
+	background:-webkit-linear-gradient(top, #ccc 0, #fff 100%);
+	background:   -moz-linear-gradient(top, #ccc 0, #fff 100%);
+	background:     -o-linear-gradient(top, #ccc 0, #fff 100%);
+	background:        linear-gradient(top, #ccc 0, #fff 100%);
 
 	display:block;
 	position: relative;
@@ -13,18 +17,13 @@
 	
 }
 
-
-
-.IPLBracketWindow.dark{
-	background: -webkit-linear-gradient(top, #000 0, #303030 100%);
-
-}
-
 div.IPLBracketTools{
 	z-index: 1000;
 	position: absolute;
 	padding:4px;
-	border-radius: 8px;
+	-webkit-border-radius:8px;
+    -moz-border-radius:8px;
+    border-radius:8px;
 	display:block;
 	
 	width:auto;
@@ -38,7 +37,9 @@ div.bracket-zoom-tip{
 	margin:8px;
 	padding: 4px;
 	background-color: #fff;
-	border-radius: 8px;
+	-webkit-border-radius:8px;
+    -moz-border-radius:8px;
+    border-radius:8px;
 	width:auto;
 	display: block;
 	position: absolute;
@@ -57,7 +58,6 @@ div.IPLBracketTools .toolbar-spoiler-box{
 	margin: 0 2px 2px 2px;
 	width:auto;
 	white-space: nowrap;
-
 }
 
 h1.bracket-title{
@@ -66,6 +66,7 @@ h1.bracket-title{
 	color:#000;
 	text-shadow: 2px 2px 0 #fff;
 	-moz-user-select: none;
+	-ms-user-select: none;
  	-webkit-user-select: none;
  	margin-top:-1em;
  	white-space: nowrap;
@@ -81,6 +82,7 @@ h1.bracket-title{
 	position: absolute;
 	margin-top: -1.8em;
 	-moz-user-select: none;
+	-ms-user-select: none;
  	-webkit-user-select: none;
 }
 
@@ -103,11 +105,6 @@ transform-origin: 0 100%;
   -ms-transform-origin: 0 100%;
   height: 6px;
   background-color:#a00000;
-
-  /*
-  background-color:transparent;
-  border: 3px dashed #000;
-  */
 }
 
 div.line.unplayed{
@@ -141,19 +138,13 @@ div.match-content.score-tip p{
 div.bracket-match{
 	width:400px;
 	height:120px;
-	/*
-	width:160px;
-	height:40px;
-	font-size: 33%;
-	border-radius: 4px;
-	border: 2px solid black;
-	-webkit-transform-style: preserve-3d;
-	background: -webkit-linear-gradient(top, #000 0, #303030 100%);*/
-	
-	box-shadow: 3px 3px 0px #a00000,  6px 6px 0px #a00000;
+	-webkit-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
+    -moz-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
+    box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
 	background-color: #000;
-	border-radius: 0 8px 0 8px;
-	border: 0px solid #000;
+	-webkit-border-radius:0 8px 0 8px;
+    -moz-border-radius:0 8px 0 8px;
+    border-radius:0 8px 0 8px;
 	position: relative;
 	color:#fff;
 	overflow: hidden;
@@ -166,15 +157,11 @@ div.bracket-match{
 }
 
 div.bracket-match.unplayed{
-	box-shadow: 3px 3px 0px #aaa,  6px 6px 0px #aaa;
+	-webkit-box-shadow:3px 3px 0px #aaa,  6px 6px 0px #aaa;
+    -moz-box-shadow:3px 3px 0px #aaa,  6px 6px 0px #aaa;
+    box-shadow:3px 3px 0px #aaa,  6px 6px 0px #aaa;
 	background-color: #aaa;
 }
-
-div.spoiler{
-
-}
-
-
 
 /*
 div.bracket-match.match-spoiler .team-name{
@@ -186,24 +173,21 @@ div.bracket-match .score-slidein{
 	float:left;
 	height:100%;
 	background-color: #a00000;
-	border-radius: 8px 8px 0 8px;
+	-webkit-border-radius:8px 8px 0 8px;
+    -moz-border-radius:8px 8px 0 8px;
+    border-radius:8px 8px 0 8px;
 	width:3.75em;
 }
 
 div.bracket-match .match-hide-score{
 	display: none;
 }
-/*
-div.bracket-match.match-spoiler .score-slidein{
-	display: none;
-}
-*/
+
 div.bracket-match .score-slidein .score{
 	height: 50%;
 	clear:both;
 	display: table;
 	margin: auto;
-	
 }
 
 div.bracket-match .score-slidein .score h3{
@@ -212,14 +196,12 @@ div.bracket-match .score-slidein .score h3{
 	display: table-cell;
 	font-size: 3em;
 	line-height: 1.3em;
-	
 	text-shadow: 2px 2px 0 #000;
 }
 
 div.bracket-match .team-name{
 	width:100%;
 	height:50%;
-
 	position: relative;
 	vertical-align: middle;
 	display: table;	
@@ -229,7 +211,6 @@ div.bracket-match .team-name h2{
 	vertical-align: middle;
 	display:table-cell;
 	height:100%;
-
 	line-height: 1.3em;
 	padding-left:4%;
 	font-size: 2.6em;
@@ -263,6 +244,7 @@ div.lossLayer{
 	float:left;
 	margin-right: 200px;
 	-moz-user-select: none;
+	-ms-user-select: none;
  	-webkit-user-select: none;
 }
 
