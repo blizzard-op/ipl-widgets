@@ -95,11 +95,6 @@
 			    				date = moment(add_day).local().format('MMMM Do');
 			    				$('#day-7').html(day);
 			    				$('#date-7').html(date);
-			    				// subtitle_1 = match_Obj.subtitle_1;
-			    				// if (subtitle_1 == null || subtitle_1 == 'NA') subtitle_1 = '&nbsp';
-			    				// subtitle_2 = match_Obj.subtitle_2;
-			    				// if (subtitle_2 == null || subtitle_2 == 'NA') subtitle_2 = '&nbsp';
-
 			    			};
 
 			    			function getSubtitles(match_Obj) {
@@ -137,7 +132,7 @@
 				    					var vod = matches_Obj.games[0].game.video;
 				    					if(vod) {
 				    						var vodLink = matches_Obj.games[0].game.video.url; console.log(vodLink);
-				    						// $("<p><a href='http://ign.com" + vodLink + "'><img src='images/video.png' />WATCH VOD</a></p>").appendTo('.listing');
+				    						// $("<p><a href='http://ign.com" + vodLink + "'><img src='images/video.png' />Watch Vod</a></p>").appendTo('.listing');
 				    					};
 				    				};
 				    			};
@@ -148,43 +143,43 @@
 			    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
 				    					} else if(gameEnd > now && gameStart < today) {
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-today');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-today');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
 											};
 										} else if(gameStart > today && gameStart < tomorrow){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-tomorrow');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-tomorrow');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-tomorrow');
 											};
 										} else if(gameStart > tomorrow && gameStart < day3){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-3');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-3');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-3');
 											};
 										} else if(gameStart > day3 && gameStart < day4){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-4');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-4');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-4');
 											};
 										} else if(gameStart > day4 && gameStart < day5){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-5');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-5');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-5');
 											};
 										} else if(gameStart > day5 && gameStart < day6){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-6');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-6');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-6');
 											};
 										} else if(gameStart > day6 && gameStart < day7){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#lol-7');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-7');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-7');
 											};
@@ -196,68 +191,52 @@
 			    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
 				    					} else if(gameEnd > now && gameStart < today) {
 				    						if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-today');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-today');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
 											};
 										} else if(gameStart > today && gameStart < tomorrow){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-tomorrow');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-tomorrow');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-tomorrow');
 											}; 
 										} else if(gameStart > tomorrow && gameStart < day3){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-3');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-3');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-3');
 											};
 										} else if(gameStart > day3 && gameStart < day4){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-4');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-4');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-4');
 											};
 										} else if(gameStart > day4 && gameStart < day5){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-5');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-5');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-5');
 											};
 										} else if(gameStart > day5 && gameStart < day6){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-6');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-6');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-6');
 											};
 										} else if(gameStart > day6 && gameStart < day7){
 											if (vodLink) {
-												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' /> WATCH VOD</a></p></div>").appendTo('#sc-7');
+												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-7');
 											} else {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-7');
 											};
 										};
 									})();
 								};
-
-								
-
-								// if(now > gameStart && now < gameEnd) {
-								// 	$("<span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span>").prependTo('.tags');
-								// 	$(".listing").click(function() {
-							 //     		window.location=$(this).find("a").attr("href"); 
-							 //     		return false;
-								// 	});
-								// 	$('.listing').on('mouseenter', function() {
-								// 		$(this).addClass('hover').on('mouseleave', function() {
-								// 			$(this).removeClass('hover');
-								// 		});
-								// 	});
-								// };
 							};
 						};
 	    			};
-
 	    		},
 			    error: function(jqXHR, textStatus, errorThrown) {
 			        data = {
