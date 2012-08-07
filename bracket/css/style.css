@@ -89,6 +89,7 @@ div.IPLBracketLayer{
 	display:block;
 	width:auto;
 	height:auto;
+	border:1px solid black;
 }
 
 .no-zoom div.line{
@@ -163,7 +164,7 @@ div.bracket-match{
 .no-zoom div.bracket-match{
 	width:160px;
 	height:40px;
-	font-size: 33%;
+	font-size: 36%;
 }
 
 div.bracket-match.unplayed{
@@ -246,6 +247,10 @@ div.winLayer{
 
 div.champLayer{
 	float:right;
+}
+
+div.lossLayer{
+	position: absolute;
 }
 
 .lossLayer .bracket-round{
