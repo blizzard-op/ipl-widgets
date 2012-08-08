@@ -240,17 +240,17 @@ var IPLBracketApp;
 				}
 				if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))>-1200){
 					this.highLOD = true;
-					for (var a in this.loadedBracket.matches) {
-						for(var b in this.loadedBracket.matches[a]){
-							this.loadedBracket.matches[a][b].switchLOD(1);
-						}
+					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+					console.log(mth.length);
+					for(var a in mth){
+						mth[a].switchLOD(1);
 					}
+					
 				}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))<-1200){
 					this.highLOD = false;
-					for (var c in this.loadedBracket.matches) {
-						for(var d in this.loadedBracket.matches[c]){
-							this.loadedBracket.matches[c][d].switchLOD(0);
-						}
+					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+					for(var b in mth){
+						mth[b].switchLOD(0);
 					}
 				}
 			}else if(this.enableZoom){
@@ -365,6 +365,15 @@ var IPLBracketApp;
         	.width(length)
         	.css({top:y1,left:x1});
     		return line;
+		},
+		getMatches:function(){
+			var ret = [];
+			for(var a in this.matches){
+				for(var b in this.matches[a]){
+					ret.push(this.matches[a][b]);
+				}
+			}
+			return ret;
 		}
 	});
 
@@ -410,6 +419,10 @@ var DoubleElimBracket = Bracket.extend({
 		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
 		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
 		//curMatch.childLines[1].css('border','2px solid blue');
+	},
+	getMatches:function(){
+		var rei = this._super();
+		return rei.concat(this.losersBracket.getMatches.apply(this.losersBracket));
 	}
 }); 
 
@@ -515,7 +528,7 @@ var DoubleElimBracket = Bracket.extend({
 					var matchDate = new Date(this.scheduledTime);
 					var outStr = matchDate.toDateString().replace(/ \d{4}$/i,'');
 					var unfHours = matchDate.getHours(); 
-					var meridian; 
+					var meridian;
 					if(unfHours>0&&unfHours<=12){
 						meridian = "am";
 					}else{
@@ -527,7 +540,8 @@ var DoubleElimBracket = Bracket.extend({
 					
 				}else if(this.status == MatchState.underway){
 					// attach Watch Live link 
-					$addInfo.text('Match Live');
+					$addInfo.html('<a href="http://www.ign.com/ipl/tv"><button class="btn btn-danger">Watch Live</button></a>');
+						
 				}else if(this.status == MatchState.finished){
 					// attach vod links
 				}
@@ -631,10 +645,8 @@ var DoubleElimBracket = Bracket.extend({
 			}else{
 				this.$element.find('.match-content.players').animate({'height':'100%','font-size':'100%'},{duration:300,queue:false});
 				this.$element.find('.additional-info').fadeOut();
-			}
-			
+			}	
 		}
-
 	});
 
 	var LoserMatch = Match.extend({
