@@ -37,6 +37,7 @@ var IPLBracketApp;
 		ZoomAmt3d:250,
 		ZoomAmt2d:450,
 		$zoomTip:null,
+		forceScrollbars:false,
 
 		init:function(Options){
 			var that = this;
@@ -44,6 +45,7 @@ var IPLBracketApp;
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Options.container;
 			this.windowManager = new WindowManager(this,this.$appContainer);
+			this.forceScrollbars = Options.scrollbars || false;
 		
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			if(this.enable3d){
@@ -190,7 +192,7 @@ var IPLBracketApp;
 		setupTools:function($Layer){
 			var that = this;
 			//
-			this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
+			
 			/*
 			$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
 			.appendTo($Layer).find('input')
@@ -211,6 +213,7 @@ var IPLBracketApp;
 
 			//zoom buttons
 			if(this.enableZoom){
+				this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
 				var $btnGrp = $('<div class="btn-group">').appendTo($Layer);  
 				$('<button class="btn btn-danger">').appendTo($btnGrp).text("-").css('translateZ',4000).click(function(){
 					that.changeZoom.apply(that,[-(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
@@ -364,10 +367,11 @@ var DoubleElimBracket = Bracket.extend({
 		this.matches[this.matches.length-1][0].childMatches = [this.matches[this.matches.length-2][0]];
 	},
 	render:function($Layer, XSpacing, YSpacing){
+		// TODO get rid of some magic numbers
 		var $loss = $('<div class="lossLayer">').appendTo($Layer);
-		this.losersBracket.render($loss, 1.1, 10);
+		this.losersBracket.render($loss, 1.1, 14);
 		this._super($Layer, XSpacing, YSpacing);
-		$loss.css({'top':$Layer.height()+80, 'left':-80});
+		$loss.css({'top':$Layer.outerHeight()+80, 'left':-80});
 		this.renderFinalMatches($Layer, $loss);
 
 		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*.5);
@@ -613,8 +617,9 @@ var DoubleElimBracket = Bracket.extend({
       			
     		});
     		$(window).resize(function(){
-    			
-    			that.centerObject(that.parent.$bracketLayer);
+    			if(that.parent.enableZoom){
+    				that.centerObject(that.parent.$bracketLayer);
+    			}
     			that.positionToolbar.apply(that);
     		});
 			this.$appContainer.mousedown(function(event){

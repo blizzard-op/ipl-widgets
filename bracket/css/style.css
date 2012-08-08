@@ -17,6 +17,10 @@
 	
 }
 
+.btn{
+	font-weight: bold;
+}
+
 div.IPLBracketTools{
 	z-index: 1000;
 	position: absolute;
@@ -256,5 +260,13 @@ div.lossLayer{
 	float:left;
 	margin-right: 48px;
 }
-
+/* ugly fix for ie */
+.no-zoom div.lossLayer{
+	margin-top: 121px;
+	margin-left: 80px;
+}
+.no-zoom .loser-title{
+	margin-top: 100px;
+	margin-left: 80px;
+}
 
