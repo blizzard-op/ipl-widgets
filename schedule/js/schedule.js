@@ -43,16 +43,10 @@
 
 			    		for (var i = 0; i < game_Arr.length; i++) {
 			    			
-			    			match_Obj = game_Arr[i];
-			    			getGameTitle(match_Obj);
-			    			getMatchDate(match_Obj);
-			    			getSubtitles(match_Obj);
-			    			setSchedule(match_Obj);
-
 			    			function getGameTitle(match_Obj) {
 			    				title = match_Obj.title;
 			    			};
-			    			
+
 			    			function getMatchDate(match_Obj) {
 			    				
 			    				match_start = match_Obj.starts_at;
@@ -232,6 +226,11 @@
 									})();
 								};
 							};
+							match_Obj = game_Arr[i];
+			    			getGameTitle(match_Obj);
+			    			getMatchDate(match_Obj);
+			    			getSubtitles(match_Obj);
+			    			setSchedule(match_Obj);
 						};
 	    			};
 	    		},
