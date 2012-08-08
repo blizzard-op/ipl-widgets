@@ -38,51 +38,52 @@ var IPLBracketApp;
 		ZoomAmt2d:450,
 		$zoomTip:null,
 		forceScrollbars:false,
+		highLOD:false,
 
 		init:function(Options){
 			var that = this;
 			var initalZoom;
 			this.enable3d = Modernizr.csstransforms3d;
 			this.$appContainer = Options.container;
-			this.windowManager = new WindowManager(this,this.$appContainer);
-			this.forceScrollbars = Options.scrollbars || false;
-		
-			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
-			if(this.enable3d){
-				$(this.$appContainer).css({'-moz-perspective':1000,
-											'-webkit-perspective':1000, 
-											'-ms-perspective':1000, 
-											'-o-perspective':1000, 
-											'transform-origin':'50%'});
-				this.$bracketLayer.css({'translateZ':-1000, 'backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
-			}else if(this.enableZoom){
-				this.$bracketLayer.css({'scale': this.zoomLevel});
-			}
-			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
 			
-			if (navigator.appName == 'Microsoft Internet Explorer'){
-				this.enableZoom = false;
-			}
+			this.forceScrollbars = Options.scrollbars || false;
 
-			//Apply no-zoom stylesheet
-			if(!this.enableZoom){
-				this.$bracketLayer.addClass('no-zoom');
-			}
+			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
+			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
+
+			this.windowManager = new WindowManager({
+				'parent':this,
+				'container':this.$appContainer, 
+				'enable3d':this.enable3d,
+				'forceScrollbars':this.forceScrollbars
+			});
+
 			this.loadBracketJSON(Options.url, this.backetLoaded);
 			this.setupTools(this.$toolbar);
+			//TODO move this somewhere thst makes more sense
+			this.$bracketLayer.dblclick(function(){
+				var offX = that.mouseX - that.$appContainer.width() * .5;
+				var offY = that.mouseY - that.$appContainer.height() * .5;
+				var modX = 1;
+				var modY = 1;
+				if(that.enable3d){
+					modX = that.$bracketLayer.width()/that.$bracketLayer[0].getBoundingClientRect().width; 
+					modY = that.$bracketLayer.height()/that.$bracketLayer[0].getBoundingClientRect().height; 
+				}
+				that.$bracketLayer.animate({'left': parseInt(that.$bracketLayer.css('left'))-(offX * modX), 'top':(parseInt(that.$bracketLayer.css('top'))-(offY*modY))},{duration:200,queue:false});
+				that.changeZoom(1200);
+			});
 		},
 		
 		loadBracketJSON:function(JSONURI, Callback){
 			var that = this;
 			$.ajax({
 				url:JSONURI,
-				// TODO change to jsonp for production
 				dataType:'jsonp',
 				jsonpCallback:'getCached',
 				cache:true,
 				success:function(data){
 					Callback.apply(that,[data]);
-
 				}
 			});
 			// attach a preloader here
@@ -132,6 +133,7 @@ var IPLBracketApp;
 					
 				}
 			}
+			//Correct titles for Double Elim Brackets
 			if(this.loadedBracket instanceof DoubleElimBracket){
 				var that = this;
 				this.$bracketLayer.find('.loser-title').each(function(){
@@ -148,9 +150,9 @@ var IPLBracketApp;
 					}
 					
 				}
-				
-
 			}
+			// Add times to each match
+
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
 			
@@ -231,13 +233,26 @@ var IPLBracketApp;
 		},
 		changeZoom:function(ZoomAmt){
 			if(this.enable3d){
-				
 				if(ZoomAmt>0 && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>this.max3dZoom){
 					this.$bracketLayer.animate({'translateZ':this.max3dZoom},{duration:300,queue:false});			
 				}else{
 					this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
 				}
-				
+				if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))>-1200){
+					this.highLOD = true;
+					for (var a in this.loadedBracket.matches) {
+						for(var b in this.loadedBracket.matches[a]){
+							this.loadedBracket.matches[a][b].switchLOD(1);
+						}
+					}
+				}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))<-1200){
+					this.highLOD = false;
+					for (var c in this.loadedBracket.matches) {
+						for(var d in this.loadedBracket.matches[c]){
+							this.loadedBracket.matches[c][d].switchLOD(0);
+						}
+					}
+				}
 			}else if(this.enableZoom){
 				this.zoomLevel += ZoomAmt*.00005; // factor out
 				if(this.zoomLevel>0){
@@ -472,7 +487,7 @@ var DoubleElimBracket = Bracket.extend({
 			
 			if(this.players.length > 0){
 				$playersContain = $('<div class="match-content players">').appendTo($content).height(this.$element.height()).width(this.$element.width());
-				$scores = $('<div class="score-slidein">').appendTo($playersContain);//.addClass('match-hide-score');
+				$scores = $('<div class="score-slidein">').appendTo($content);//.addClass('match-hide-score');
 				for(var teamOrPlayer in this.players){
 					$teamName = $('<div class="team-name">').appendTo($playersContain).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
 					//$('<i class="icon-search icon-white"></i>').prependTo($content);
@@ -491,6 +506,37 @@ var DoubleElimBracket = Bracket.extend({
 					}
 					//hover hook
 				}
+				//var matchDate = new Date(this.scheduledTime); 
+				$addInfo = $('<div class="additional-info">').appendTo($content);
+				$addInfo.css({'top':$content.height()-$addInfo.height()}).hide();
+				
+				if(this.status == MatchState.ready){
+					// attach time
+					var matchDate = new Date(this.scheduledTime);
+					var outStr = matchDate.toDateString().replace(/ \d{4}$/i,'');
+					var unfHours = matchDate.getHours(); 
+					var meridian; 
+					if(unfHours>0&&unfHours<=12){
+						meridian = "am";
+					}else{
+						meridian = "pm";
+						unfHours = Math.abs(unfHours-12);
+					}
+					var mins = String(matchDate.getMinutes()).length<2?'0'+matchDate.getMinutes():matchDate.getMinutes();
+					$addInfo.text('Match at: '+outStr+', '+unfHours+':'+mins+' '+meridian);
+					
+				}else if(this.status == MatchState.underway){
+					// attach Watch Live link 
+					$addInfo.text('Match Live');
+				}else if(this.status == MatchState.finished){
+					// attach vod links
+				}
+
+				//create a higher LOD
+
+				//$highLOD = $playersContain.clone().appendTo($content).addClass('high-lod').hide();
+				//$playersContain.addClass('low-lod');
+
 				/*
 				this.$element.mouseenter(function(event){
 						that.onMouseEnter.apply(that,[event]);
@@ -574,7 +620,21 @@ var DoubleElimBracket = Bracket.extend({
 			for(var i=1;i<trailers.length;++i){
 				trailers[i].$element.find('.score-slidein').removeClass('.match-hide-score');
 			}
+		},
+		getMatchTime:function(){
+			return new Date(this.scheduledTime);
+		},
+		switchLOD:function(Dir){
+			if(Dir==1){
+				this.$element.find('.match-content.players').animate({'height':'75%','font-size':'75%'},{duration:300,queue:false});
+				this.$element.find('.additional-info').fadeIn();
+			}else{
+				this.$element.find('.match-content.players').animate({'height':'100%','font-size':'100%'},{duration:300,queue:false});
+				this.$element.find('.additional-info').fadeOut();
+			}
+			
 		}
+
 	});
 
 	var LoserMatch = Match.extend({
@@ -607,10 +667,10 @@ var DoubleElimBracket = Bracket.extend({
 		updateId:0,
 		hasHover:false,
 		
-		init:function(Parent, Container){
+		init:function(Options){
 			var that = this;
-			this.parent = Parent;
-			this.$appContainer = Container;
+			this.parent = Options.parent;
+			this.$appContainer = Options.container;
 			this.$appContainer.addClass('IPLBracketWindow');
 			$(window).mousemove(function(event){
       			that.parent.mouseHandler(event);
@@ -639,7 +699,7 @@ var DoubleElimBracket = Bracket.extend({
 				}
 
 			});
-			
+			//Enable Update function on mouse enter
 			this.$appContainer.mouseenter(function(){
 				that.hasHover=true;
 				that.updateId = setInterval(function(){
@@ -648,6 +708,29 @@ var DoubleElimBracket = Bracket.extend({
 				that.hasHover=false;
 				clearInterval(that.updateId);
 			});
+			//
+
+			if(Options.enable3d){
+				$(this.$appContainer).css({'-moz-perspective':1000,
+											'-webkit-perspective':1000, 
+											'-ms-perspective':1000, 
+											'-o-perspective':1000, 
+											'transform-origin':'50%'});
+				//this.$bracketLayer.css({'translateZ':-1000, 'backface-visibility':'hidden', '-webkit-transform-style':'preserve-3d'});
+			}
+			
+			if (navigator.appName == 'Microsoft Internet Explorer'){
+				this.enableZoom = false;
+			}
+
+			//Apply no-zoom stylesheet
+			if(!this.parent.enableZoom){
+				this.parent.$bracketLayer.addClass('no-zoom');
+			}
+
+			if(Options.forceScrollbars){
+				this.$appContainer.css('overflow','scroll');
+			}
 			
 		},
 		centerObject:function($Target){

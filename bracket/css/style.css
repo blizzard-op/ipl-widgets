@@ -225,6 +225,14 @@ div.bracket-match .team-name.long-team-name{
 	font-size: .75em;
 }
 
+div.additional-info{
+	position: absolute;
+	height:32px;
+	padding-left:4%;
+	font-size: 1.35em;
+	
+}
+
 div.winLayer{
 	margin-left:45px;
 }
