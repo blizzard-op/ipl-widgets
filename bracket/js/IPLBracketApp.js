@@ -38,7 +38,9 @@ var IPLBracketApp;
 		ZoomAmt2d:450,
 		$zoomTip:null,
 		forceScrollbars:false,
+		//lod scrolling
 		highLOD:false,
+		enableLOD:false,
 
 		init:function(Options){
 			var that = this;
@@ -71,7 +73,6 @@ var IPLBracketApp;
 					modY = that.$bracketLayer.height()/that.$bracketLayer[0].getBoundingClientRect().height; 
 				}
 				that.$bracketLayer.animate({'left': parseInt(that.$bracketLayer.css('left'))-(offX * modX), 'top':(parseInt(that.$bracketLayer.css('top'))-(offY*modY))},{duration:200,queue:false});
-				that.changeZoom(1200);
 			});
 		},
 		
@@ -111,7 +112,7 @@ var IPLBracketApp;
 				this.windowManager.centerObject(this.$bracketLayer);
 				this.windowManager.setInitalZoom(this.$bracketLayer);
 			}
-			//$title.css('left',this.loadedBracket.championshipMatch.left()+this.loadedBracket.championshipMatch.$element.width()-$title.width());
+			
 			$title.css('left',this.$bracketLayer.width()-$title.width());
 			// begin populating tree
 			var mappedRound=0;
@@ -193,25 +194,6 @@ var IPLBracketApp;
   		},
 		setupTools:function($Layer){
 			var that = this;
-			//
-			
-			/*
-			$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
-			.appendTo($Layer).find('input')
-			.change(function(data){
-				
-				//WARN this will spoil outside of scope if there is more than one BracketApp on the page
-				//TODO fix above problem using find()
-				if($(this).prop('checked')){
-					that.$appContainer.find('.match-pos-spoiler .match-content.score-tip').css('opacity',1).fadeIn();
-					that.$appContainer.find('.match-hide-score').hide();
-					$('.match-pos-spoiler').addClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeOut();
-				}else{
-					$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeIn();
-					that.$appContainer.find('.match-content.score-tip').css('opacity',1).fadeOut();
-					that.$appContainer.find('.match-hide-score').show();
-				}
-			});*/
 
 			//zoom buttons
 			if(this.enableZoom){
@@ -238,19 +220,21 @@ var IPLBracketApp;
 				}else{
 					this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
 				}
-				if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
-					this.highLOD = true;
-					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
-					console.log(mth.length);
-					for(var a in mth){
-						mth[a].switchLOD(1);
-					}
-					
-				}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt<-1300){
-					this.highLOD = false;
-					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
-					for(var b in mth){
-						mth[b].switchLOD(0);
+				if(this.enableLOD){
+					if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
+						this.highLOD = true;
+						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+						console.log(mth.length);
+						for(var a in mth){
+							mth[a].switchLOD(1);
+						}
+						
+					}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt<-1300){
+						this.highLOD = false;
+						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+						for(var b in mth){
+							mth[b].switchLOD(0);
+						}
 					}
 				}
 			}else if(this.enableZoom){
@@ -268,6 +252,13 @@ var IPLBracketApp;
 		},
 		mouseup:function(event){
 			this.mouseIsDown = false;
+		},
+		refresh:function(){
+			//save the zoom/bracket position
+
+			//dump the current bracket
+			//call the load
+
 		}
 	});
 
@@ -338,7 +329,7 @@ var IPLBracketApp;
 			$Layer.css({'position':'absolute','top':-10});
 			if(Node.childMatches.length>0){
 				for(var a in Node.childMatches){
-					Node.childLines[a] = this.createLine($Layer, Node.left()+4, Node.top()+(Node.$element.height()*.5), Node.childMatches[a].left()+Node.$element.width() ,Node.childMatches[a].top()+(Node.childMatches[a].$element.height())*.5);
+					Node.childLines[a] = this.createLine($Layer, Node.childMatches[a].left()+Node.$element.width() ,Node.childMatches[a].top()+(Node.childMatches[a].$element.height())*.5, Node.left()+4, Node.top()+(Node.$element.height()*.5));
 					this.connectMatches($Layer,Node.childMatches[a]);
 				}
 			}else{
@@ -494,13 +485,16 @@ var DoubleElimBracket = Bracket.extend({
 			var that = this;
 			var $teamName;
 			var $scores;
+			var $scoreContainer;
 			var $content = $('<div class="match-content-container">').appendTo(this.$element).css({'position':'relative', 'height':'100%', width:this.$element.width()});
 			
 			//If the match has been played or is in progress...
 			
 			if(this.players.length > 0){
-				$playersContain = $('<div class="match-content players">').appendTo($content).height(this.$element.height()).width(this.$element.width());
 				$scores = $('<div class="score-slidein">').appendTo($content);//.addClass('match-hide-score');
+				$playersContain = $('<div class="match-content players">').appendTo($content).width(this.$element.width());
+				
+				$scoreContainer = $('<div class="score-container">').appendTo($scores);
 				for(var teamOrPlayer in this.players){
 					$teamName = $('<div class="team-name">').appendTo($playersContain).html('<h2>'+this.players[teamOrPlayer].username +'</h2>');
 					//$('<i class="icon-search icon-white"></i>').prependTo($content);
@@ -508,60 +502,30 @@ var DoubleElimBracket = Bracket.extend({
 						$teamName.addClass('long-team-name');
 					}
 					//set up scores
-					$('<div class="score">').appendTo($scores).html('<h3>'+this.players[teamOrPlayer].points+'</h3>');
+					$('<div class="score">').appendTo($scoreContainer).html('<h3>'+this.players[teamOrPlayer].points+'</h3>');
 					$scores.css('left', $content.outerWidth()-$scores.outerWidth());
 					
 					//check if child games have been played
 					for(var a in this.childMatches){
-						if(this.status==MatchState.ready && this.childMatches[a].status != MatchState.finished){
+						if(this.status == MatchState.underway){
+							this.childLines[a].addClass('toLive');
+						}if(this.childMatches[a].status != MatchState.finished){
 							this.childLines[a].addClass('unplayed');
 						}
 					}
-					//hover hook
 				}
-				//var matchDate = new Date(this.scheduledTime); 
 				$addInfo = $('<div class="additional-info">').appendTo($content);
-				$addInfo.css({'top':$content.height()-$addInfo.height()-4}).hide();
-				
+
 				if(this.status == MatchState.ready){
-					// attach time
-					var matchDate = new Date(this.scheduledTime);
-					var outStr = matchDate.toDateString().replace(/ \d{4}$/i,'');
-					var unfHours = matchDate.getHours(); 
-					var meridian;
-					if(unfHours>0&&unfHours<=12){
-						meridian = "am";
-					}else{
-						meridian = "pm";
-						unfHours = Math.abs(unfHours-12);
-					}
-					var mins = String(matchDate.getMinutes()).length<2?'0'+matchDate.getMinutes():matchDate.getMinutes();
-					$addInfo.text('Match at: '+outStr+', '+unfHours+':'+mins+' '+meridian);
-					
+					this.$element.addClass('has-content');
+					$('<p>Upcoming</p>').appendTo($addInfo);
 				}else if(this.status == MatchState.underway){
-					// attach Watch Live link 
-					$addInfo.html('<a href="http://www.ign.com/ipl/tv"><button class="btn btn-danger">Watch Live</button></a>');
-						
+					this.$element.addClass('live has-content');
+					$('<a href="http://www.ign.com/ipl/tv"><button class="btn btn-warning">Watch Live</button></a>').appendTo($addInfo);
 				}else if(this.status == MatchState.finished){
-					// attach vod links
-					/*$addInfo.css('width','100%');
-					$('<div style="float:left;display:block;margin-right:2%;">Videos</div> <div float="left" class="btn-group"><button class="btn btn-inverse">1</button><button class="btn btn-inverse">2</button></div>').appendTo($addInfo);*/
+
 				}
 
-				//create a higher LOD
-
-				//$highLOD = $playersContain.clone().appendTo($content).addClass('high-lod').hide();
-				//$playersContain.addClass('low-lod');
-
-				/*
-				this.$element.mouseenter(function(event){
-						that.onMouseEnter.apply(that,[event]);
-					}).mouseleave(function(event){
-						that.onMouseLeave.apply(that,[event]);
-					}).click(function(event){
-						that.onClick.apply(that,[event]);
-					});
-			*/
 			// If it is upcoming... 
 			}else{
 				this.$element.addClass('unplayed');
@@ -571,17 +535,19 @@ var DoubleElimBracket = Bracket.extend({
 			}
 
 			//add spoiler classes
+			/*
 			if(this.childMatches.length > 0){
-				//this.$element.addClass('match-pos-spoiler match-spoiler');
-				//$content.find('.players').hide();
+				this.$element.addClass('match-pos-spoiler match-spoiler');
+				$content.find('.players').hide();
 
 				// add rev content
 				if(this.status != MatchState.underway && this.players.length>0){
-					//$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
-					//.height(this.$element.height());
+					$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
+					.height(this.$element.height());
 				//.css('margin-top', -parseInt(this.$element.height()));
 				}
 			}
+			*/
 		},
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth-1), new Match(this,this.depth-1)];
@@ -734,7 +700,7 @@ var DoubleElimBracket = Bracket.extend({
 			}
 			
 			if (navigator.appName == 'Microsoft Internet Explorer'){
-				this.enableZoom = false;
+				this.parent.enableZoom = false;
 			}
 
 			//Apply no-zoom stylesheet

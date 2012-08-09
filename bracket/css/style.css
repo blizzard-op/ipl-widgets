@@ -116,8 +116,25 @@ div.line.unplayed{
 	z-index:-2;
 }
 
+div.line.toLive{
+	background-color: #fdb531;
+	background:-webkit-linear-gradient(left, #a00000 0, #fdb531 100%);
+	background:   -moz-linear-gradient(top, #ccc 0, #fff 100%);
+	background:     -o-linear-gradient(top, #ccc 0, #fff 100%);
+	background:        linear-gradient(top, #ccc 0, #fff 100%);
+}
+
 div.match-content{
 	position: absolute;
+}
+
+div.match-content.players{
+	height:100%;
+	position: relative;
+}
+
+ div.has-content div.match-content.players{
+	height:70%;
 }
 
 div.score-tip-padding{
@@ -127,6 +144,10 @@ div.score-tip-padding{
 	display:table;
 	text-align:center;
 	margin: auto;
+}
+
+div.additional-info p{
+	margin: 2% 0 0 0;
 }
 
 div.match-content.score-tip p{
@@ -141,7 +162,7 @@ div.match-content.score-tip p{
 
 div.bracket-match{
 	width:400px;
-	height:120px;
+	height:140px;
 	-webkit-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
     -moz-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
     box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
@@ -154,10 +175,25 @@ div.bracket-match{
 	overflow: hidden;
 }
 
+div.bracket-match.live{
+	-webkit-box-shadow:3px 3px 0px #fdb531,  6px 6px 0px #fdb531, 0px 0px 24px #fdb531;
+    -moz-box-shadow:3px 3px 0px #fdb531,  6px 6px 0px #fdb531, 0px 0px 24px #fdb531;
+    box-shadow:3px 3px 0px #fdb531,  6px 6px 0px #fdb531, 0px 0px 24px #fdb531;
+}
+
+div.bracket-match button.btn-warning{
+	color:#000;
+	font-size:1.3em;
+	
+}
+
 .no-zoom div.bracket-match{
 	width:160px;
 	height:40px;
 	font-size: 36%;
+	-webkit-box-shadow:3px 3px 0px #a00000;
+    -moz-box-shadow:3px 3px 0px #a00000;
+    box-shadow:3px 3px 0px #a00000;
 }
 
 div.bracket-match.unplayed{
@@ -183,6 +219,18 @@ div.bracket-match .score-slidein{
 	width:3.75em;
 }
 
+div.bracket-match .score-container{
+	height:100%;
+}
+
+div.bracket-match.has-content .score-slidein .score-container{
+	height:70%;
+}
+
+div.bracket-match.live .score-slidein{
+	background-color: #fdb531;
+}
+
 div.bracket-match .match-hide-score{
 	display: none;
 }
@@ -198,9 +246,14 @@ div.bracket-match .score-slidein .score h3{
 	color: #fff;
 	vertical-align: middle;
 	display: table-cell;
-	font-size: 3em;
+	font-size: 2.4em;
 	line-height: 1.3em;
 	text-shadow: 2px 2px 0 #000;
+}
+
+div.bracket-match.live .score-slidein .score h3{
+	color: #000;
+	text-shadow: 2px 2px 0 #fff;
 }
 
 div.bracket-match .team-name{
@@ -217,7 +270,7 @@ div.bracket-match .team-name h2{
 	height:100%;
 	line-height: 1.3em;
 	padding-left:4%;
-	font-size: 2.6em;
+	font-size: 2.4em;
 	font-weight: lighter;
 }
 
@@ -226,11 +279,11 @@ div.bracket-match .team-name.long-team-name{
 }
 
 div.additional-info{
-	position: absolute;
-	height:32px;
+	position: relative;
+	height:30%;
+	display: block;
 	padding-left:4%;
 	font-size: 1.35em;
-	
 }
 
 div.winLayer{
