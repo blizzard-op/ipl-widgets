@@ -238,7 +238,7 @@ var IPLBracketApp;
 				}else{
 					this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
 				}
-				if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))>-1200){
+				if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
 					this.highLOD = true;
 					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
 					console.log(mth.length);
@@ -246,7 +246,7 @@ var IPLBracketApp;
 						mth[a].switchLOD(1);
 					}
 					
-				}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))<-1200){
+				}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt<-1300){
 					this.highLOD = false;
 					var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
 					for(var b in mth){
@@ -513,7 +513,7 @@ var DoubleElimBracket = Bracket.extend({
 					
 					//check if child games have been played
 					for(var a in this.childMatches){
-						if(this.status==MatchState.ready|| this.childMatches[a].status == MatchState.ready){
+						if(this.status==MatchState.ready && this.childMatches[a].status != MatchState.finished){
 							this.childLines[a].addClass('unplayed');
 						}
 					}
@@ -521,7 +521,7 @@ var DoubleElimBracket = Bracket.extend({
 				}
 				//var matchDate = new Date(this.scheduledTime); 
 				$addInfo = $('<div class="additional-info">').appendTo($content);
-				$addInfo.css({'top':$content.height()-$addInfo.height()}).hide();
+				$addInfo.css({'top':$content.height()-$addInfo.height()-4}).hide();
 				
 				if(this.status == MatchState.ready){
 					// attach time
@@ -544,6 +544,8 @@ var DoubleElimBracket = Bracket.extend({
 						
 				}else if(this.status == MatchState.finished){
 					// attach vod links
+					/*$addInfo.css('width','100%');
+					$('<div style="float:left;display:block;margin-right:2%;">Videos</div> <div float="left" class="btn-group"><button class="btn btn-inverse">1</button><button class="btn btn-inverse">2</button></div>').appendTo($addInfo);*/
 				}
 
 				//create a higher LOD
