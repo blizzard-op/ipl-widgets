@@ -2,8 +2,7 @@
   float: left;
 }
 #schedule p {
-  margin: 0;
-}
+  margin: 0; }
 #schedule .schedule-container {
   width: 640px;
   color: #333;
@@ -76,6 +75,9 @@
 #schedule .live-now:hover {
   background: rgba(178, 27, 0, 0.1);
   cursor: pointer; }
+#schedule .live-now a {
+  text-decoration: none;
+}
 #schedule #date-today {
   color: #B21B00;
   font-weight: bold;

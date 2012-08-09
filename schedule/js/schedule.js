@@ -131,7 +131,7 @@
 			    				if(gameTitle == 'league-of-legends') {
 			    					(function() {
 			    						if(now > gameStart && now < gameEnd) {
-			    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#lol-today');
+			    							$("<a href='http://ign.com/ipl/tv' class='link-live' style='text-decoration: none;'><div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'>LIVE NOW</span><span class=" + tag + '>' + tag + '</span></p></div></a>').appendTo('#lol-today');
 				    					} else if(gameEnd > now && gameStart < today) {
 											if (vodLink) {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='http://esports.ign.com/addons/ipl-widgets/schedule/images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#lol-today');
@@ -179,7 +179,7 @@
 								} else {
 									(function() {
 										if(now > gameStart && now < gameEnd) {
-			    							$("<div class='listing live-now'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'><a href='http://ign.com/ipl/tv' class='now'>LIVE NOW</a></span><span class=" + tag + '>' + tag + '</span></p></div>').appendTo('#sc-today');
+			    							$("<div class='listing live-now'><a href='http://ign.com/ipl/tv' class='link-live' style='text-decoration: none;'><p>" + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class='live'>LIVE NOW</span><span class=" + tag + '>' + tag + '</span></p></a></div>').appendTo('#sc-today');
 				    					} else if(gameEnd > now && gameStart < today) {
 				    						if (vodLink) {
 												$("<div class='listing'><p><span>" + gameStart.local().format('hA') + '</span> - ' + title + "</p><p class='sub1'>" + subtitle_1 + "</p><p class='sub2'>" + subtitle_2 + "</p><p class='tags'><span class=" + tag + '>' + tag + "</span></p><p><a href='http://ign.com" + vodLink + "' class='vod'><img src='http://esports.ign.com/addons/ipl-widgets/schedule/images/video.png' class='vid' />Watch Vod</a></p></div>").appendTo('#sc-today');
