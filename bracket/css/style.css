@@ -14,7 +14,10 @@
 	overflow:hidden;
 	cursor: move;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-	
+}
+
+.no-zoom .IPLBracketWindow{
+	overflow: scroll;
 }
 
 .btn{
@@ -109,11 +112,13 @@ transform-origin: 0 100%;
   -ms-transform-origin: 0 100%;
   height: 6px;
   background-color:#a00000;
+  background-color: #aaa;
+	z-index:2;
 }
 
 div.line.unplayed{
 	background-color: #aaa;
-	z-index:-2;
+	z-index:0;
 }
 
 div.line.toLive{
@@ -323,11 +328,9 @@ div.lossLayer{
 }
 /* ugly fix for ie */
 .no-zoom div.lossLayer{
-	margin-top: 121px;
 	margin-left: 80px;
 }
 .no-zoom .loser-title{
-	margin-top: 100px;
 	margin-left: 80px;
 }
 

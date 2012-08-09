@@ -30,6 +30,7 @@ var IPLBracketApp;
 		bracketURL:null,
 		loadedBracket:null,
 		enable3d:false,
+		enable2d:true,
 		enableZoom:true,
 		enableSpoilers:false,
 		//Mouse drag variables
@@ -53,6 +54,8 @@ var IPLBracketApp;
 			var that = this;
 			var initalZoom;
 			this.enable3d = Modernizr.csstransforms3d;
+			this.enable2d = Modernizr.csstransforms;
+
 			this.$appContainer = Options.container;
 			this.bracketURL = Options.url;
 			this.forceScrollbars = Options.scrollbars || false;
@@ -89,7 +92,9 @@ var IPLBracketApp;
 		},
 		bracketLoaded:function(Data){
 			//add title
-		 
+			 if(!this.enableZoom){
+				this.$bracketLayer.addClass('no-zoom');
+			}
 			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
 			$('<h1 class="bracket-title">').appendTo($title).text(Data.name.replace(/-/g,' '));
 			
@@ -108,6 +113,8 @@ var IPLBracketApp;
 			if(this.enableZoom){
 				this.windowManager.centerObject(this.$bracketLayer);
 				this.windowManager.setInitalZoom(this.$bracketLayer);
+			}else{
+				this.$bracketLayer.css({'left':0,'top':0});
 			}
 			
 			$title.css('left',this.$bracketLayer.width()-$title.width());
@@ -171,11 +178,13 @@ var IPLBracketApp;
 				var xDist = this.mouseX - this.oldMouse.x;
 				var yDist = this.mouseY - this.oldMouse.y;
 				this.releaseAngle = Math.atan2(yDist, xDist);
+
 				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
 				if(this.enable3d){
 					var dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
 					dragScaling = dragScaling<1?1:dragScaling;
 				}
+				console.log(this.$bracketLayer.css('left'));
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (xDist*dragScaling), 'top':parseInt(this.$bracketLayer.css('top')) + (yDist*dragScaling)});
 			}else if(this.speed>.1){
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
@@ -288,9 +297,9 @@ var IPLBracketApp;
 			this.bracketLoaded(Data);
 
 			this.$bracketLayer.css({'left':this.savedPosition.left,'top':this.savedPosition.top});
-			if(this.enable3d){
+			if(this.enable3d && this.enableZoom){
 				this.$bracketLayer.css('translateZ', this.savedPosition.translateZ);
-			}else{
+			}else if (this.enableZoom){
 				this.$bracketLayer.css('scale', this.savedPosition.scale);
 			}
 		},
@@ -365,8 +374,9 @@ var IPLBracketApp;
 			}
 			$Layer.width((this.matches.length * (match.$element.width()*horizontalSpacing)) - (match.$element.width()*horizontalSpacing)+match.$element.width());
 			$Layer.height(this.matches[0].length * (match.$element.height() + verticalSpacing) - verticalSpacing);
-
-			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
+			if(Modernizr.csstransforms){
+				that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
+			}
 		},
 		connectMatches:function($Layer, Node){
 			$Layer.css({'position':'absolute','top':-10});
