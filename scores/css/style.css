@@ -166,4 +166,5 @@
   #scores .COMING {
     color: #555;
     background: #ccc;
+    cursor: default;
     /*text-shadow: 0px 1px 0px #d6d6d6;*/ }
