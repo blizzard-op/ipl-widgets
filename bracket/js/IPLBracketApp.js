@@ -150,7 +150,7 @@ var IPLBracketApp;
 				// correct where tree splits into loser bracket
 				var cl =this.loadedBracket.matches[this.loadedBracket.matches.length-2][0];
 				for(var a in cl.childLines){
-					if(cl.childMatches[a].status != MatchState.ready && cl.status != MatchState.ready){
+					if(cl.childMatches[a].status == MatchState.finished){
 						cl.childLines[a].removeClass('unplayed');
 					}
 					
@@ -459,9 +459,11 @@ var DoubleElimBracket = Bracket.extend({
 		});
 
 		// Draw lines
-		curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
-		curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
-		curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+		if(Modernizr.csstransforms == true){
+			curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
+			curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
+			curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+		}
 		//curMatch.childLines[1].css('border','2px solid blue');
 	},
 	getMatches:function(){
@@ -576,7 +578,13 @@ var DoubleElimBracket = Bracket.extend({
 					this.$element.addClass('live has-content');
 					$('<a href="http://www.ign.com/ipl/tv"><button class="btn btn-warning">Watch Live</button></a>').appendTo($addInfo);
 				}else if(this.status == MatchState.finished){
+					/*this.$element.addClass('has-content');
+					var $btnGroup = $('<p>VODs</p><div class="btn-group"></div>').appendTo($addInfo);
+					for(var a in this.games){
+						for(var b in this.games[a].VOD){
 
+						}
+					}*/
 				}
 
 			// If it is upcoming... 
@@ -687,9 +695,10 @@ var DoubleElimBracket = Bracket.extend({
 	// Contains information about an individual game within a match
 	var Game = Class.extend({
 		VOD:null,
-		commentators:[], 
+		commentators:null, 
 		init:function(){
-
+			this.VOD = [];
+			this.commentators = [];
 		}
 	});
 
@@ -774,8 +783,10 @@ var DoubleElimBracket = Bracket.extend({
 			
 			if(this.parent.enable3d){
 				// doesn't scale linearly, but this works for now
+
 				var targetHeight3d =  ($Target.height()+100) / this.$appContainer.height();
 				var targetWidth3d =  ($Target.width()+100) / this.$appContainer.width();
+
 				if(targetHeight3d>targetWidth3d){
 					$Target.css({'translateZ': -targetHeight3d*800});
 				}else{
@@ -811,13 +822,13 @@ var DoubleElimBracket = Bracket.extend({
 		hookDoubleClick:function($Layer){
 			var that = this;
 			$Layer.dblclick(function(){
-				var offX = that.parent.mouseX - that.$appContainer.width() * .5;
-				var offY = that.parent.mouseY - that.$appContainer.height() * .5;
+				var offX = (that.parent.mouseX-that.$appContainer.offset().left) - that.$appContainer.width() * .5;
+				var offY = (that.parent.mouseY-that.$appContainer.offset().top) - that.$appContainer.height() * .5;
 				var modX = 1;
 				var modY = 1;
 				if(that.parent.enable3d){
 					modX = $Layer.width()/$Layer[0].getBoundingClientRect().width; 
-					modY = $Layer.height()/$Layer[0].getBoundingClientRect().height; 
+					modY = $Layer.height()/$Layer[0].getBoundingClientRect().height;
 				}
 				$Layer.animate({'left': parseInt($Layer.css('left'))-(offX * modX), 'top':(parseInt($Layer.css('top'))-(offY*modY))},{duration:200,queue:false});
 			});
