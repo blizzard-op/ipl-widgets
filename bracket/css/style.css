@@ -109,11 +109,12 @@ transform-origin: 0 100%;
   -ms-transform-origin: 0 100%;
   height: 6px;
   background-color:#a00000;
+  z-index: 2;
 }
 
 div.line.unplayed{
 	background-color: #aaa;
-	z-index:-2;
+	z-index:0;
 }
 
 div.line.toLive{
@@ -173,6 +174,7 @@ div.bracket-match{
 	position: relative;
 	color:#fff;
 	overflow: hidden;
+	z-index: 10;
 }
 
 div.bracket-match.live{
@@ -189,7 +191,7 @@ div.bracket-match button.btn-warning{
 
 .no-zoom div.bracket-match{
 	width:160px;
-	height:40px;
+	height:70px;
 	font-size: 36%;
 	-webkit-box-shadow:3px 3px 0px #a00000;
     -moz-box-shadow:3px 3px 0px #a00000;
@@ -323,11 +325,9 @@ div.lossLayer{
 }
 /* ugly fix for ie */
 .no-zoom div.lossLayer{
-	margin-top: 121px;
 	margin-left: 80px;
 }
 .no-zoom .loser-title{
-	margin-top: 100px;
 	margin-left: 80px;
 }
 

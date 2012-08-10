@@ -288,9 +288,9 @@ var IPLBracketApp;
 			this.bracketLoaded(Data);
 
 			this.$bracketLayer.css({'left':this.savedPosition.left,'top':this.savedPosition.top});
-			if(this.enable3d){
+			if(this.enable3d && this.enableZoom){
 				this.$bracketLayer.css('translateZ', this.savedPosition.translateZ);
-			}else{
+			}else if(this.enableZoom){
 				this.$bracketLayer.css('scale', this.savedPosition.scale);
 			}
 		},
