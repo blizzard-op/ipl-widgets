@@ -310,8 +310,7 @@ var IPLBracketApp;
 				this.$refreshBtn.prop('disabled',true);
 			}
 			
-		},
-
+		}
 	});
 
 	// Keeps track of matches and renders the graph 
