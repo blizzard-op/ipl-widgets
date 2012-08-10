@@ -296,7 +296,7 @@ var IPLBracketApp;
 			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			this.bracketLoaded(Data);
-
+			this.windowManager.hookDoubleClick(this.$bracketLayer);
 			this.$bracketLayer.css({'left':this.savedPosition.left,'top':this.savedPosition.top});
 			if(this.enable3d && this.enableZoom){
 				this.$bracketLayer.css('translateZ', this.savedPosition.translateZ);
@@ -310,7 +310,6 @@ var IPLBracketApp;
 			}else{
 				this.$refreshBtn.prop('disabled',true);
 			}
-			
 		}
 	});
 

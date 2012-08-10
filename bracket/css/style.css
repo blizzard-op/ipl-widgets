@@ -28,7 +28,7 @@
 }
 
 div.IPLBracketTools{
-	z-index: 1000;
+	z-index: 11;
 	position: absolute;
 	padding:4px;
 	-webkit-border-radius:8px;
