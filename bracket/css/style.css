@@ -178,6 +178,7 @@ div.bracket-match{
 	position: relative;
 	color:#fff;
 	overflow: hidden;
+	z-index:10;
 }
 
 div.bracket-match.live{
