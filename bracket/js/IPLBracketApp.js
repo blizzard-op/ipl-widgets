@@ -114,7 +114,7 @@ var IPLBracketApp;
 				this.windowManager.centerObject(this.$bracketLayer);
 				this.windowManager.setInitalZoom(this.$bracketLayer);
 			}else{
-				this.$bracketLayer.css({'left':0,'top':0});
+				this.$bracketLayer.css({'left':67,'top':0});
 			}
 			
 			$title.css('left',this.$bracketLayer.width()-$title.width());
@@ -173,18 +173,18 @@ var IPLBracketApp;
 		},
 		update:function(){
 			//stick drag code here
+
 			if(this.mouseIsDown){
 				var dragScaling = 1;
 				var xDist = this.mouseX - this.oldMouse.x;
 				var yDist = this.mouseY - this.oldMouse.y;
 				this.releaseAngle = Math.atan2(yDist, xDist);
-
 				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
 				if(this.enable3d){
-					var dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
+					dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
 					dragScaling = dragScaling<1?1:dragScaling;
 				}
-				console.log(this.$bracketLayer.css('left'));
+				
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (xDist*dragScaling), 'top':parseInt(this.$bracketLayer.css('top')) + (yDist*dragScaling)});
 			}else if(this.speed>.1){
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
@@ -234,7 +234,7 @@ var IPLBracketApp;
 					if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
 						this.highLOD = true;
 						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
-						console.log(mth.length);
+						
 						for(var a in mth){
 							mth[a].switchLOD(1);
 						}
@@ -705,7 +705,7 @@ var DoubleElimBracket = Bracket.extend({
 			this.parent = Options.parent;
 			this.$appContainer = Options.container;
 			this.$appContainer.addClass('IPLBracketWindow');
-			$(window).mousemove(function(event){
+			this.$appContainer.mousemove(function(event){
       			that.parent.mouseHandler(event);
       			
     		});
