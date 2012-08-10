@@ -774,8 +774,16 @@ var DoubleElimBracket = Bracket.extend({
 			
 			if(this.parent.enable3d){
 				// doesn't scale linearly, but this works for now
+				//var targetHeight3d =  ($Target.height()+100) / this.$appContainer.height();
+				//var targetWidth3d =  ($Target.width()+100) / this.$appContainer.width();
+
 				var targetHeight3d =  ($Target.height()+100) / this.$appContainer.height();
 				var targetWidth3d =  ($Target.width()+100) / this.$appContainer.width();
+				
+				//var targetWidth3d = this.$appContainer.width() / $Target.width()/$Target[0].getBoundingClientRect().width+100; 
+				//var targetHeight3d = this.$appContainer.height() / $Target.height()/$Target[0].getBoundingClientRect().height+100;
+
+
 				if(targetHeight3d>targetWidth3d){
 					$Target.css({'translateZ': -targetHeight3d*800});
 				}else{
