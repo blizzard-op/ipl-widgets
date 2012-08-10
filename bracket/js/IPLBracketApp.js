@@ -19,7 +19,7 @@ var IPLBracketApp;
 		autoRefreshId:0,
 		$refreshBtn:null,
 		refreshDelay:60000,
-		minRefresh:5000,
+		minRefresh:10000,
 		refreshEnableId:0,
 		savedPosition:null,
 		windowManager:null,
@@ -382,13 +382,13 @@ var IPLBracketApp;
 			$Layer.css({'position':'absolute','top':-10});
 			if(Node.childMatches.length>0){
 				for(var a in Node.childMatches){
-					Node.childLines[a] = this.createLine($Layer, Node.childMatches[a].left()+Node.$element.width() ,Node.childMatches[a].top()+(Node.childMatches[a].$element.height())*.5, Node.left()+4, Node.top()+(Node.$element.height()*.5));
+					Node.childLines[a] = this.createLine($Layer, Node.childMatches[a].left()+Node.$element.width() ,Node.childMatches[a].top()+(Node.childMatches[a].$element.height())*0.5, Node.left()+4, Node.top()+(Node.$element.height()*0.5));
 					this.connectMatches($Layer,Node.childMatches[a]);
 				}
 			}else{
 				return null;
 			}
-			
+			return null;
 		},
 		createLine:function($Layer,x1,y1, x2,y2){
     		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
@@ -442,7 +442,7 @@ var DoubleElimBracket = Bracket.extend({
 		$loss.css({'top':$Layer.outerHeight()+80, 'left':-80});
 		this.renderFinalMatches($Layer, $loss);
 
-		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*.5);
+		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*0.5);
 		$Layer.height($Layer.height()+$loss.height()+80);
 	},
 	renderFinalMatches:function($Layer, $LossLayer){
@@ -460,9 +460,9 @@ var DoubleElimBracket = Bracket.extend({
 
 		// Draw lines
 		if(Modernizr.csstransforms == true){
-			curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*.5+6)];
-			curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*.5+4);
-			curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*.5+6);
+			curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*0.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*0.5+6)];
+			curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*0.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*0.5+4);
+			curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*0.5+6);
 		}
 		//curMatch.childLines[1].css('border','2px solid blue');
 	},
@@ -477,7 +477,7 @@ var DoubleElimBracket = Bracket.extend({
 			this.matches = [];
 			this.totalCompetitors = NumPlayers;
 			this.matchDepth = (Math.ceil(Math.log(NumPlayers)/Math.log(2))-1)*2;
-			this.championshipMatch = new LoserMatch(null, this.matchDepth-1)
+			this.championshipMatch = new LoserMatch(null, this.matchDepth-1);
 			this.buildGraph(this.championshipMatch);
 		},
 		buildGraph:function(HeadNode){
@@ -526,7 +526,7 @@ var DoubleElimBracket = Bracket.extend({
 		},
 		//Put a recursive call to get children nodes here
 		getChildNodes:function(Ar){
-			Ar = Ar || [] 
+			Ar = Ar || [];
 			Ar.push(this);
 			if(this.childMatches.length>0){
 				for(var a in this.childMatches){
@@ -745,7 +745,7 @@ var DoubleElimBracket = Bracket.extend({
 			this.$appContainer.mouseenter(function(){
 				that.hasHover=true;
 				that.updateId = setInterval(function(){
-					that.parent.update.apply(that.parent)}, 1000/that.parent.fps);
+					that.parent.update.apply(that.parent);}, 1000/that.parent.fps);
 			}).mouseleave(function(){
 				that.hasHover=false;
 				clearInterval(that.updateId);
@@ -822,8 +822,8 @@ var DoubleElimBracket = Bracket.extend({
 		hookDoubleClick:function($Layer){
 			var that = this;
 			$Layer.dblclick(function(){
-				var offX = (that.parent.mouseX-that.$appContainer.offset().left) - that.$appContainer.width() * .5;
-				var offY = (that.parent.mouseY-that.$appContainer.offset().top) - that.$appContainer.height() * .5;
+				var offX = (that.parent.mouseX-that.$appContainer.offset().left) - that.$appContainer.width() * 0.5;
+				var offY = (that.parent.mouseY-that.$appContainer.offset().top) - that.$appContainer.height() * 0.5;
 				var modX = 1;
 				var modY = 1;
 				if(that.parent.enable3d){
