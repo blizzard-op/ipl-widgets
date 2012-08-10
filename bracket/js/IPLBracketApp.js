@@ -16,13 +16,21 @@ var IPLBracketApp;
 		max3dZoom:-82,
 		minZoom:.02,
 		fps:30,
+		autoRefreshId:0,
+		$refreshBtn:null,
+		refreshDelay:60000,
+		minRefresh:5000,
+		refreshEnableId:0,
+		savedPosition:null,
 		windowManager:null,
 		spoilers:true,
 		$appContainer:null,
 		$bracketLayer:null,
 		$toolbar:null,
+		bracketURL:null,
 		loadedBracket:null,
 		enable3d:false,
+		enable2d:true,
 		enableZoom:true,
 		enableSpoilers:false,
 		//Mouse drag variables
@@ -46,8 +54,10 @@ var IPLBracketApp;
 			var that = this;
 			var initalZoom;
 			this.enable3d = Modernizr.csstransforms3d;
+			this.enable2d = Modernizr.csstransforms;
+
 			this.$appContainer = Options.container;
-			
+			this.bracketURL = Options.url;
 			this.forceScrollbars = Options.scrollbars || false;
 
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
@@ -59,21 +69,12 @@ var IPLBracketApp;
 				'enable3d':this.enable3d,
 				'forceScrollbars':this.forceScrollbars
 			});
-
-			this.loadBracketJSON(Options.url, this.backetLoaded);
+			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that)}, this.refreshDelay);
+			this.loadBracketJSON(Options.url, this.bracketLoaded);
 			this.setupTools(this.$toolbar);
+			this.windowManager.hookDoubleClick(this.$bracketLayer);
 			//TODO move this somewhere thst makes more sense
-			this.$bracketLayer.dblclick(function(){
-				var offX = that.mouseX - that.$appContainer.width() * .5;
-				var offY = that.mouseY - that.$appContainer.height() * .5;
-				var modX = 1;
-				var modY = 1;
-				if(that.enable3d){
-					modX = that.$bracketLayer.width()/that.$bracketLayer[0].getBoundingClientRect().width; 
-					modY = that.$bracketLayer.height()/that.$bracketLayer[0].getBoundingClientRect().height; 
-				}
-				that.$bracketLayer.animate({'left': parseInt(that.$bracketLayer.css('left'))-(offX * modX), 'top':(parseInt(that.$bracketLayer.css('top'))-(offY*modY))},{duration:200,queue:false});
-			});
+			
 		},
 		
 		loadBracketJSON:function(JSONURI, Callback){
@@ -89,10 +90,11 @@ var IPLBracketApp;
 			});
 			// attach a preloader here
 		},
-
-		backetLoaded:function(Data){
+		bracketLoaded:function(Data){
 			//add title
-		 
+			 if(!this.enableZoom){
+				this.$bracketLayer.addClass('no-zoom');
+			}
 			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
 			$('<h1 class="bracket-title">').appendTo($title).text(Data.name.replace(/-/g,' '));
 			
@@ -111,6 +113,8 @@ var IPLBracketApp;
 			if(this.enableZoom){
 				this.windowManager.centerObject(this.$bracketLayer);
 				this.windowManager.setInitalZoom(this.$bracketLayer);
+			}else{
+				this.$bracketLayer.css({'left':67,'top':0});
 			}
 			
 			$title.css('left',this.$bracketLayer.width()-$title.width());
@@ -169,6 +173,7 @@ var IPLBracketApp;
 		},
 		update:function(){
 			//stick drag code here
+
 			if(this.mouseIsDown){
 				var dragScaling = 1;
 				var xDist = this.mouseX - this.oldMouse.x;
@@ -176,9 +181,10 @@ var IPLBracketApp;
 				this.releaseAngle = Math.atan2(yDist, xDist);
 				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
 				if(this.enable3d){
-					var dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
+					dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
 					dragScaling = dragScaling<1?1:dragScaling;
 				}
+				
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (xDist*dragScaling), 'top':parseInt(this.$bracketLayer.css('top')) + (yDist*dragScaling)});
 			}else if(this.speed>.1){
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
@@ -195,6 +201,10 @@ var IPLBracketApp;
 		setupTools:function($Layer){
 			var that = this;
 
+			this.$refreshBtn = $('<button class="btn"><i class="icon-refresh"></i>Refresh</button>').appendTo($Layer).click(function(){
+				if(!$(this).prop('disabled'))
+					that.refresh();
+			}); 
 			//zoom buttons
 			if(this.enableZoom){
 				this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
@@ -224,7 +234,7 @@ var IPLBracketApp;
 					if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
 						this.highLOD = true;
 						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
-						console.log(mth.length);
+						
 						for(var a in mth){
 							mth[a].switchLOD(1);
 						}
@@ -253,13 +263,55 @@ var IPLBracketApp;
 		mouseup:function(event){
 			this.mouseIsDown = false;
 		},
+		setupAutoRefresh:function(){
+
+		},
 		refresh:function(){
 			//save the zoom/bracket position
+			var that = this;
+			this.savedPosition = {
+				'left':parseFloat(this.$bracketLayer.css('left')), 
+				'top':parseFloat(this.$bracketLayer.css('top')), 
+				'translateZ':parseFloat(this.$bracketLayer.css('translateZ')), 
+				'scale':parseFloat(this.$bracketLayer.css('scale'))
+			};
 
+			clearTimeout(this.refreshEnableId);
+			clearTimeout(this.autoRefreshId);
+			that.enableRefresh(false);
+			that.$refreshBtn.html('Working...');
+			this.loadBracketJSON(this.bracketURL, this.refreshDataReady);
+			this.refreshEnableId = setTimeout(function(){
+				that.$refreshBtn.html('<i class="icon-refresh"></i>Refresh');
+				that.enableRefresh(true);
+			}, this.minRefresh);
+		},
+		refreshDataReady:function(Data){
 			//dump the current bracket
 			//call the load
+			var that=this;
+			this.$bracketLayer.remove();
+			that.$refreshBtn.html('Finished');
+			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that)}, this.refreshDelay);
+			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
+			this.bracketLoaded(Data);
 
-		}
+			this.$bracketLayer.css({'left':this.savedPosition.left,'top':this.savedPosition.top});
+			if(this.enable3d && this.enableZoom){
+				this.$bracketLayer.css('translateZ', this.savedPosition.translateZ);
+			}else if (this.enableZoom){
+				this.$bracketLayer.css('scale', this.savedPosition.scale);
+			}
+		},
+		enableRefresh:function(Enabled){
+			if(Enabled){
+				this.$refreshBtn.prop('disabled',false);
+			}else{
+				this.$refreshBtn.prop('disabled',true);
+			}
+			
+		},
+
 	});
 
 	// Keeps track of matches and renders the graph 
@@ -322,8 +374,9 @@ var IPLBracketApp;
 			}
 			$Layer.width((this.matches.length * (match.$element.width()*horizontalSpacing)) - (match.$element.width()*horizontalSpacing)+match.$element.width());
 			$Layer.height(this.matches[0].length * (match.$element.height() + verticalSpacing) - verticalSpacing);
-
-			that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
+			if(Modernizr.csstransforms){
+				that.connectMatches.apply(that,[$lineLayer,that.championshipMatch]);
+			}
 		},
 		connectMatches:function($Layer, Node){
 			$Layer.css({'position':'absolute','top':-10});
@@ -652,7 +705,7 @@ var DoubleElimBracket = Bracket.extend({
 			this.parent = Options.parent;
 			this.$appContainer = Options.container;
 			this.$appContainer.addClass('IPLBracketWindow');
-			$(window).mousemove(function(event){
+			this.$appContainer.mousemove(function(event){
       			that.parent.mouseHandler(event);
       			
     		});
@@ -754,6 +807,20 @@ var DoubleElimBracket = Bracket.extend({
 					top:parseInt(this.parent.$toolbar.css('top')) - this.parent.$zoomTip.height() - 16
 				});
 			}
+		},
+		hookDoubleClick:function($Layer){
+			var that = this;
+			$Layer.dblclick(function(){
+				var offX = that.parent.mouseX - that.$appContainer.width() * .5;
+				var offY = that.parent.mouseY - that.$appContainer.height() * .5;
+				var modX = 1;
+				var modY = 1;
+				if(that.parent.enable3d){
+					modX = $Layer.width()/$Layer[0].getBoundingClientRect().width; 
+					modY = $Layer.height()/$Layer[0].getBoundingClientRect().height; 
+				}
+				$Layer.animate({'left': parseInt($Layer.css('left'))-(offX * modX), 'top':(parseInt($Layer.css('top'))-(offY*modY))},{duration:200,queue:false});
+			});
 		}
 
 	});
