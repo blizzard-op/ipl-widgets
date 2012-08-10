@@ -11,10 +11,10 @@ var IPLBracketApp;
 	// Main application - responsible for initializing components and managing events  
 	IPLBracketApp = Class.extend({
 		isDoubleElim:false,
-		zoomLevel:.5,
+		zoomLevel:0.5,
 		maxZoom:2,
 		max3dZoom:-82,
-		minZoom:.02,
+		minZoom:0.02,
 		fps:30,
 		autoRefreshId:0,
 		$refreshBtn:null,
@@ -41,7 +41,7 @@ var IPLBracketApp;
 		oldMouse:{x:0,y:0},
 		releaseAngle:0,
 		speed:0,
-		drag:.6,
+		drag:0.6,
 		ZoomAmt3d:250,
 		ZoomAmt2d:450,
 		$zoomTip:null,
@@ -69,7 +69,7 @@ var IPLBracketApp;
 				'enable3d':this.enable3d,
 				'forceScrollbars':this.forceScrollbars
 			});
-			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that)}, this.refreshDelay);
+			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
 			this.loadBracketJSON(Options.url, this.bracketLoaded);
 			this.setupTools(this.$toolbar);
 			this.windowManager.hookDoubleClick(this.$bracketLayer);
@@ -95,7 +95,7 @@ var IPLBracketApp;
 			 if(!this.enableZoom){
 				this.$bracketLayer.addClass('no-zoom');
 			}
-			var $title = $('<div>').prependTo(this.$bracketLayer).css({float:'right', position:'absolute', display:'inline'})
+			var $title = $('<div>').prependTo(this.$bracketLayer).css({'float':'right', 'position':'absolute', 'display':'inline'});
 			$('<h1 class="bracket-title">').appendTo($title).text(Data.name.replace(/-/g,' '));
 			
 			// TODO put a fallback here if number of players is invalid		
@@ -149,9 +149,9 @@ var IPLBracketApp;
 				});
 				// correct where tree splits into loser bracket
 				var cl =this.loadedBracket.matches[this.loadedBracket.matches.length-2][0];
-				for(var a in cl.childLines){
-					if(cl.childMatches[a].status == MatchState.finished){
-						cl.childLines[a].removeClass('unplayed');
+				for(var d in cl.childLines){
+					if(cl.childMatches[d].status == MatchState.finished){
+						cl.childLines[d].removeClass('unplayed');
 					}
 					
 				}
@@ -179,14 +179,14 @@ var IPLBracketApp;
 				var xDist = this.mouseX - this.oldMouse.x;
 				var yDist = this.mouseY - this.oldMouse.y;
 				this.releaseAngle = Math.atan2(yDist, xDist);
-				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY))
+				this.speed = Math.sqrt((this.oldMouse.x - this.mouseX)*(this.oldMouse.x - this.mouseX) + (this.oldMouse.y-this.mouseY)*(this.oldMouse.y-this.mouseY));
 				if(this.enable3d){
-					dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -.001;
+					dragScaling = parseInt(this.$bracketLayer.css('translateZ')) * -0.001;
 					dragScaling = dragScaling<1?1:dragScaling;
 				}
 				
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (xDist*dragScaling), 'top':parseInt(this.$bracketLayer.css('top')) + (yDist*dragScaling)});
-			}else if(this.speed>.1){
+			}else if(this.speed>0.1){
 				this.$bracketLayer.css({'left':parseInt(this.$bracketLayer.css('left')) + (Math.cos(this.releaseAngle)*this.speed), 'top':parseInt(this.$bracketLayer.css('top')) + (Math.sin(this.releaseAngle)*this.speed)});
 				this.speed *= this.drag;
 			}
@@ -231,9 +231,10 @@ var IPLBracketApp;
 					this.$bracketLayer.animate({'translateZ':'+='+ZoomAmt},{duration:300,queue:false});
 				}
 				if(this.enableLOD){
+					var mth;
 					if(!this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt>-1300){
 						this.highLOD = true;
-						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+						mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
 						
 						for(var a in mth){
 							mth[a].switchLOD(1);
@@ -241,14 +242,14 @@ var IPLBracketApp;
 						
 					}else if(this.highLOD && parseFloat(this.$bracketLayer.css('translateZ'))+ZoomAmt<-1300){
 						this.highLOD = false;
-						var mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
+						mth = this.loadedBracket.getMatches.apply(this.loadedBracket);
 						for(var b in mth){
 							mth[b].switchLOD(0);
 						}
 					}
 				}
 			}else if(this.enableZoom){
-				this.zoomLevel += ZoomAmt*.00005; // factor out
+				this.zoomLevel += ZoomAmt*0.00005; // factor out
 				if(this.zoomLevel>0){
 					this.zoomLevel = Math.min(this.zoomLevel, this.maxZoom);
 				}else{
@@ -292,7 +293,7 @@ var IPLBracketApp;
 			var that=this;
 			this.$bracketLayer.remove();
 			that.$refreshBtn.html('Finished');
-			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that)}, this.refreshDelay);
+			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			this.bracketLoaded(Data);
 
@@ -360,7 +361,7 @@ var IPLBracketApp;
 				for(var j=0;j<this.matches[i].length;++j){
 					match = this.matches[i][j];
 					match.$element = $('<div class="bracket-match">').appendTo($round).css('position','absolute');
-					if(match.depth==0){
+					if(match.depth===0){
 						match.$element.css('top', j*(match.$element.height()+verticalSpacing));
 					}else if(match.childMatches.length>1){
 						match.$element.css('top', (parseInt(match.childMatches[0].$element.css('top'))+parseInt(match.childMatches[1].$element.css('top')))/2);
