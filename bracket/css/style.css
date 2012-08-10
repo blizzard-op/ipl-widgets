@@ -14,6 +14,9 @@
 	overflow:hidden;
 	cursor: move;
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	-moz-user-select: none;
+	-ms-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 .no-zoom .IPLBracketWindow{
@@ -277,6 +280,9 @@ div.bracket-match .team-name h2{
 	padding-left:4%;
 	font-size: 2.4em;
 	font-weight: lighter;
+	-moz-user-select: none;
+	-ms-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 div.bracket-match .team-name.long-team-name{
@@ -289,6 +295,9 @@ div.additional-info{
 	display: block;
 	padding-left:4%;
 	font-size: 1.35em;
+	-moz-user-select: none;
+	-ms-user-select: none;
+ 	-webkit-user-select: none;
 }
 
 div.winLayer{
