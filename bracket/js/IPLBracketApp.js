@@ -59,6 +59,7 @@ var IPLBracketApp;
 			this.$appContainer = Options.container;
 			this.bracketURL = Options.url;
 			this.forceScrollbars = Options.scrollbars || false;
+			this.enableSpoilers = Options.spoilers || false;
 
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
@@ -153,7 +154,6 @@ var IPLBracketApp;
 					if(cl.childMatches[d].status == MatchState.finished){
 						cl.childLines[d].removeClass('unplayed');
 					}
-					
 				}
 			}
 			// Add spoilers
@@ -218,25 +218,25 @@ var IPLBracketApp;
 					that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
 				});
 			}
-
+			/*
 			if(this.enableSpoilers){
-				$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
-				.appendTo($Layer).find('input')
-				.change(function(data){
 				
-				//WARN this will spoil outside of scope if there is more than one BracketApp on the page
-				//TODO fix above problem using find()
-				if($(this).prop('checked')){
-						that.$appContainer.find('.match-pos-spoiler .match-content.score-tip').css('opacity',1).fadeIn();
-						that.$appContainer.find('.match-hide-score').hide();
-						$('.match-pos-spoiler').addClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeOut();
-					}else{
-						$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeIn();
-						that.$appContainer.find('.match-content.score-tip').css('opacity',1).fadeOut();
-						that.$appContainer.find('.match-hide-score').show();
+				$('<button class="btn btn-inverse">Show Spoilers</button>')
+				.appendTo($Layer)
+				.toggle(function(event){
+					$(this).text("Hide Spoilers");
+					var allMatches = that.loadedBracket.getMatches();
+					for(var a in allMatches){
+						allMatches[a].spoil(2);
+					}
+				},function(event){
+					$(this).text("Show Spoilers");
+					var allMatches = that.loadedBracket.getMatches();
+					for(var a in allMatches){
+						allMatches[a].spoil(0);
 					}
 				});
-			}
+			}*/
 			
 			this.windowManager.positionToolbar();
 
@@ -285,9 +285,6 @@ var IPLBracketApp;
 		mouseup:function(event){
 			this.mouseIsDown = false;
 		},
-		setupAutoRefresh:function(){
-
-		},
 		refresh:function(){
 			//save the zoom/bracket position
 			var that = this;
@@ -335,7 +332,13 @@ var IPLBracketApp;
 		setupSpoilers:function(Matches){
 			var matches = this.loadedBracket.getMatches();
 			for(var a in matches){
-
+				matches[a].setupSpoiler();
+			}
+		},
+		removeSpoilers:function(Matches){
+			var matches = this.loadedBracket.getMatches();
+			for(var a in matches){
+				matches[a].spoil(2);
 			}
 		}
 	});
@@ -551,12 +554,14 @@ var DoubleElimBracket = Bracket.extend({
 			this.populateMatch();
 		},
 		//Put a recursive call to get children nodes here
-		getChildNodes:function(Ar){
-			Ar = Ar || [];
+		getChildNodes:function(Ar, GoIfEmpty){
+			Ar = Ar || []; 
 			Ar.push(this);
 			if(this.childMatches.length>0){
 				for(var a in this.childMatches){
-					this.childMatches[a].getChildNodes(Ar);
+					if((this.status != MatchState.ready) || GoIfEmpty){
+						this.childMatches[a].getChildNodes(Ar, GoIfEmpty);
+					}
 				}
 			}
 			return Ar;
@@ -624,16 +629,63 @@ var DoubleElimBracket = Bracket.extend({
 			//add spoiler classes
 		},
 		setupSpoiler:function(){
+			var that = this;
 			if(this.depth > 0 || this instanceof LoserMatch){
-
 				this.$element.addClass('match-pos-spoiler match-spoiler');
-				this.$element.find('.players').hide();
-
+				//this.spoil(2);
+				this.$element.find('.players .team-name').css('opacity',0);
+				this.$element.find('.score-slidein').css('opacity',0);
 				// add rev content
-				if(this.status != MatchState.underway && this.players.length>0){
-					$('<div class="score-tip">').prependTo(this.$element.find('.match-content-container').first()).append('<p>click to show winner</p>')
+				if(this.players.length>0){
+					var $spoilerTip =$('<div class="score-tip">').prependTo(this.$element.find('.match-content-container').first())
 					.height(this.$element.height());
+
+					if(this.status == MatchState.finished){	
+						$spoilerTip.append('<p>Click to show winner</p>');
+					}else if(this.status == MatchState.underway){
+						$spoilerTip.append('<p>Click to show scores</p>');
+					}else{
+						$spoilerTip.append('<p>Mouseover to show teams</p>');
+					}
 				}
+
+				this.$element.mouseenter(function(event){
+					that.onMouseEnter.apply(that,[event]);
+				}).mouseleave(function(event){
+					that.onMouseLeave.apply(that,[event]);
+				}).click(function(event){
+					that.onClick.apply(that,[event]);
+				});
+			}else{
+				this.$element.addClass('always-show');
+				this.$element.find('.score-slidein').css('opacity',0);
+				this.$element.click(function(event){
+					that.onClick.apply(that,[event]);
+				});
+			}
+		},
+		spoil:function(SpoilLevel){
+			switch(SpoilLevel){
+				// no spoiler info
+				case 0:
+					this.$element.find('.players .team-name').animate({'opacity':0},{'duration':250,'queue':false});
+					this.$element.find('.score-slidein').animate({'opacity':0},{'duration':250,'queue':false});
+					this.$element.find('.score-tip').animate({'opacity':1},{'duration':250,'queue':false});
+					break;
+				//show players only
+				case 1:
+					this.$element.find('.players .team-name').animate({'opacity':1},{'duration':250,'queue':false});
+					this.$element.find('.score-slidein').animate({'opacity':0},{'duration':250,'queue':false});
+					this.$element.find('.score-tip').animate({'opacity':0},{'duration':250,'queue':false});
+					break;
+				//show everything
+				case 2:
+					this.$element.find('.players .team-name').animate({'opacity':1},{'duration':250,'queue':false});
+					this.$element.find('.score-slidein').animate({'opacity':1},{'duration':250,'queue':false});
+					this.$element.find('.score-tip').animate({'opacity':0},{'duration':250,'queue':false});
+					break;
+				default:
+					break;
 			}
 		},
 		addBranch:function(){
@@ -654,40 +706,45 @@ var DoubleElimBracket = Bracket.extend({
 		},
 		onMouseEnter:function(event){
 			if(this.$element.hasClass('match-spoiler')){
-				//this.$element.removeClass('match-spoiler');
-				this.$element.find('.match-content.players').show().css('opacity',0).animate({'opacity':1},{duration:400,queue:false});
-				this.$element.find('.match-content.score-tip').animate({'opacity':0},{duration:400,queue:false});
-				//unspoil behind
-				
+				this.spoil(1);
 			}
-			var trailers = this.getChildNodes([]);
+			var trailers = this.getChildNodes([],false);
 			for(var i=1;i<trailers.length;++i){
-				trailers[i].showScores();
+				if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
+					trailers[i].spoil(2);
+
+				}
+				
 			}
 		},
 		onMouseLeave:function(event){
 			if(this.$element.hasClass('match-spoiler')){
-				//this.$element.addClass('match-spoiler');
-				this.$element.find('.match-content.players').animate({'opacity':0},{duration:400,queue:false});
-				this.$element.find('.match-content.score-tip').show().css('opacity',0).animate({'opacity':1},{duration:400,queue:false});
-				
+				this.spoil(0);
 			}
 
-			var trailers = this.getChildNodes([]);
+			var trailers = this.getChildNodes([],false);
 			for(var i=1;i<trailers.length;++i){
-				trailers[i].hideScores();
+				if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
+					if(trailers[i].$element.hasClass('always-show')){
+						trailers[i].spoil(1);
+					}else{
+						trailers[i].spoil(0);
+					}
+				}
+				
 			}
 		},
 		onClick:function(){
 			if(this.$element.hasClass('match-pos-spoiler')){
 				this.$element.removeClass('match-spoiler');
-				this.$element.removeClass('match-pos-spoiler');
+				//this.$element.removeClass('match-pos-spoiler');
 				//this.showScores();
 			}
-			this.$element.find('.match-hide-score').show();
-			var trailers = this.getChildNodes([]);
+			this.spoil(2);
+			var trailers = this.getChildNodes([],false);
 			for(var i=1;i<trailers.length;++i){
-				trailers[i].$element.find('.score-slidein').removeClass('.match-hide-score');
+				trailers[i].$element.removeClass('match-spoiler always-show');
+				trailers[i].spoil(2);
 			}
 		},
 		getMatchTime:function(){
