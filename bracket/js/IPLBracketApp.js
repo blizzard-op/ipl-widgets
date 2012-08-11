@@ -310,6 +310,12 @@ var IPLBracketApp;
 			}else{
 				this.$refreshBtn.prop('disabled',true);
 			}
+		},
+		setupSpoilers:function(Matches){
+			var matches = this.loadedBracket.getMatches();
+			for(var a in matches){
+
+			}
 		}
 	});
 
@@ -595,19 +601,19 @@ var DoubleElimBracket = Bracket.extend({
 			}
 
 			//add spoiler classes
-			/*
-			if(this.childMatches.length > 0){
+		},
+		setupSpoiler:function(){
+			if(this.depth > 0 || this instanceof LoserMatch){
+
 				this.$element.addClass('match-pos-spoiler match-spoiler');
-				$content.find('.players').hide();
+				this.$element.find('.players').hide();
 
 				// add rev content
 				if(this.status != MatchState.underway && this.players.length>0){
-					$('<div class="match-content score-tip">').appendTo($content).append('<div class="score-tip-padding"><p>click to show winner</p></div>')
+					$('<div class="score-tip">').prependTo(this.$element.find('.match-content-container').first()).append('<p>click to show winner</p>')
 					.height(this.$element.height());
-				//.css('margin-top', -parseInt(this.$element.height()));
 				}
 			}
-			*/
 		},
 		addBranch:function(){
 			this.childMatches = [new Match(this,this.depth-1), new Match(this,this.depth-1)];
@@ -713,6 +719,8 @@ var DoubleElimBracket = Bracket.extend({
 			this.parent = Options.parent;
 			this.$appContainer = Options.container;
 			this.$appContainer.addClass('IPLBracketWindow');
+			this.updateId = setInterval(function(){
+					that.parent.update.apply(that.parent);}, 1000/that.parent.fps);
 			this.$appContainer.mousemove(function(event){
       			that.parent.mouseHandler(event);
       			
@@ -743,6 +751,7 @@ var DoubleElimBracket = Bracket.extend({
 			//Enable Update function on mouse enter
 			this.$appContainer.mouseenter(function(){
 				that.hasHover=true;
+				clearInterval(that.updateId);
 				that.updateId = setInterval(function(){
 					that.parent.update.apply(that.parent);}, 1000/that.parent.fps);
 			}).mouseleave(function(){
