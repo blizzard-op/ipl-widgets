@@ -156,8 +156,10 @@ var IPLBracketApp;
 					
 				}
 			}
-			// Add times to each match
-
+			// Add spoilers
+			if(this.enableSpoilers){
+				this.setupSpoilers(this.loadedBracket);
+			}
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
 			
@@ -214,6 +216,25 @@ var IPLBracketApp;
 				});
 				$('<button class="btn btn-danger">').appendTo($btnGrp).text("+").css('translateZ',4000).click(function(){
 					that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
+				});
+			}
+
+			if(this.enableSpoilers){
+				$('<div class="toolbar-spoiler-box"><label class="checkbox inline">Hide Spoilers<input type="checkbox" checked="checked"></label></div>')
+				.appendTo($Layer).find('input')
+				.change(function(data){
+				
+				//WARN this will spoil outside of scope if there is more than one BracketApp on the page
+				//TODO fix above problem using find()
+				if($(this).prop('checked')){
+						that.$appContainer.find('.match-pos-spoiler .match-content.score-tip').css('opacity',1).fadeIn();
+						that.$appContainer.find('.match-hide-score').hide();
+						$('.match-pos-spoiler').addClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeOut();
+					}else{
+						$('.match-pos-spoiler').removeClass('match-spoiler').find('.match-content.players').css('opacity',1).fadeIn();
+						that.$appContainer.find('.match-content.score-tip').css('opacity',1).fadeOut();
+						that.$appContainer.find('.match-hide-score').show();
+					}
 				});
 			}
 			
