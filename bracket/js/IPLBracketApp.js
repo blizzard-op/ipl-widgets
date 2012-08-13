@@ -33,6 +33,7 @@ var IPLBracketApp;
 		enable2d:true,
 		enableZoom:true,
 		enableSpoilers:false,
+		forceExtGrandFinals:false,
 		//Mouse drag variables
 		mouseIsDown:false,
 		isDragging:false,
@@ -59,7 +60,7 @@ var IPLBracketApp;
 			this.$appContainer = Options.container;
 			this.bracketURL = Options.url;
 			this.forceScrollbars = Options.scrollbars || false;
-			this.enableSpoilers = Options.spoilers || false;
+			this.enableSpoilers = Options.hideSpoilers || false;
 
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
@@ -74,8 +75,6 @@ var IPLBracketApp;
 			this.loadBracketJSON(Options.url, this.bracketLoaded);
 			this.setupTools(this.$toolbar);
 			this.windowManager.hookDoubleClick(this.$bracketLayer);
-			//TODO move this somewhere thst makes more sense
-			
 		},
 		
 		loadBracketJSON:function(JSONURI, Callback){
@@ -136,7 +135,6 @@ var IPLBracketApp;
 					for(var c in Data.rounds[a].matches){
 						this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length][c].parseData(Data.rounds[a].matches[c].match);
 					}
-					
 				}
 			}
 			//Correct titles for Double Elim Brackets
@@ -162,7 +160,6 @@ var IPLBracketApp;
 			}
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
-			
 			$('<h2>').appendTo(this.$bracketLayer)
 					.addClass('round-title')
 					.text(Title)
@@ -218,7 +215,7 @@ var IPLBracketApp;
 					that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
 				});
 			}
-			/*
+			
 			if(this.enableSpoilers){
 				
 				$('<button class="btn btn-inverse">Show Spoilers</button>')
@@ -236,7 +233,7 @@ var IPLBracketApp;
 						allMatches[a].spoil(0);
 					}
 				});
-			}*/
+			}
 			
 			this.windowManager.positionToolbar();
 
@@ -276,6 +273,14 @@ var IPLBracketApp;
 				}else{
 					this.zoomLevel = Math.max(this.zoomLevel, this.minZoom);
 				}
+				this.$bracketLayer.animate({'scale':this.zoomLevel},{duration:300,queue:false});
+			}
+		},
+		setZoom:function(ZoomAmt){
+			if(enable3d){
+				this.$bracketLayer.animate({'translateZ':ZoomAmt},{duration:300,queue:false});
+			}else{
+				this.zoomLevel = 0.8;
 				this.$bracketLayer.animate({'scale':this.zoomLevel},{duration:300,queue:false});
 			}
 		},
@@ -559,7 +564,7 @@ var DoubleElimBracket = Bracket.extend({
 			Ar.push(this);
 			if(this.childMatches.length>0){
 				for(var a in this.childMatches){
-					if((this.status != MatchState.ready) || GoIfEmpty){
+					if((this.players.length>0) || GoIfEmpty){
 						this.childMatches[a].getChildNodes(Ar, GoIfEmpty);
 					}
 				}
@@ -712,7 +717,6 @@ var DoubleElimBracket = Bracket.extend({
 			for(var i=1;i<trailers.length;++i){
 				if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
 					trailers[i].spoil(2);
-
 				}
 				
 			}
