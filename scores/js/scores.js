@@ -69,7 +69,7 @@
 					url: this.url,
 					dataType: "jsonp",
 					cache: true,
-				jsonpCallback: "getCachedScores",
+				jsonpCallback: "getCached",
 
 					success: function(data) {
 							self.matchUps = [];
