@@ -1,7 +1,7 @@
 (function($) {
 	var basepath = "";
 	if (typeof local === "undefined") {
-		basepath = "http://esports.ign.com/addons/ipl-widgets/scores/";
+		basepath = "http://test.ign.com/addons/ipl-widgets/scores/";
 	}
 	var ipl = {
 		init: function(config) {
@@ -56,12 +56,8 @@
 		getURLs: function(url, status, franchiseSlug){
 			if (status == 'underway') {
 				return 'http://ign.com/ipl/' + franchiseSlug;
-			} else if (status == 'finished') {
-				if(url === null) {
-					return '#';
-				} else {
-					return 'http://ign.com' + url;
-				}
+			} else if (status == 'finished' && url !== null) {
+				return 'http://ign.com' + url;
 			} else {
 				return '#';
 			}
@@ -86,11 +82,7 @@
 										status: self.getStatus(match.match_score.match.status, match.match_score.match.url),
 										url: self.getURLs(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 									};
-									var i = 1;
-									var team1Score,
-										team2Score,
-										team1Class,
-										team2Class;
+									var i = 1, team1Score, team2Score, team1Class, team2Class;
 									$.map(match.match_score.card, function(teamScore) {
 										if (i == 1) team1Score = teamScore.points;
 										if (i == 2) team2Score = teamScore.points;
