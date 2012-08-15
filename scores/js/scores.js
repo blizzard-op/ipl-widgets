@@ -1,7 +1,7 @@
 (function($) {
 	var basepath = "";
 	if (typeof local === "undefined") {
-		basepath = "http://test.ign.com/addons/ipl-widgets/scores/";
+		basepath = "http://esports.ign.com/addons/ipl-widgets/scores/";
 	}
 	var ipl = {
 		init: function(config) {
