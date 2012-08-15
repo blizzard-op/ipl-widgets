@@ -10,6 +10,7 @@
     line-height: 15px;
     background: url(http://esports.ign.com/addons/ipl-widgets/scores/images/video.png) 5px center no-repeat;
     text-align: center;
+    text-transform: uppercase;
   }
   #scores .controls {
     width: 955px;
@@ -61,6 +62,7 @@
     margin: 0;
     color: #555;
     background: #ccc;
+    text-transform: uppercase;
   }
   #scores .team-name {
     float: left;
@@ -94,6 +96,6 @@
     cursor: pointer;
     margin: 25.5px 0;
     margin-left: -5px; }
-  #scores .LIVE {
+  #scores .live {
     color: #efefef;
     background: #b21b00;}

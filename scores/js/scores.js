@@ -1,7 +1,7 @@
 (function($) {
 	var basepath = "";
 	if (typeof local === "undefined") {
-		basepath = "http://test.ign.com/addons/ipl-widgets/scores/";
+		basepath = "http://esports.ign.com/addons/ipl-widgets/scores/";
 	}
 	var ipl = {
 		init: function(config) {
@@ -35,29 +35,22 @@
 		attachTemplate: function(){
 			this.container.append(this.scoresTmpl());
 		},
-		getTitle: function(title) {
-			if(title === "") {
-				return "&nbsp;";
-			} else {
-				return title;
-			}
-		},
 		getStatus: function(status, url){
 			switch (status)
 			{
 			case 'finished':
 				if(url === null) {
-					return "COMING SOON";
+					return "coming soon";
 				} else {
-					return "WATCH VOD";
+					return "watch vod";
 				}
 					break;
 			case 'underway':
-				return "LIVE NOW";
+				return "live now";
 			case 'ready':
-				return "COMING SOON";
+				return "coming soon";
 			default:
-				return "FINISHED";
+				return "finished";
 			}
 		},
 		getURLs: function(url, status, franchiseSlug){
@@ -84,11 +77,12 @@
 
 					success: function(data) {
 							self.matchUps = [];
+							var vodTitle = '';
 							$.map(data, function(data, date) {
 								$.map(data, function(match) {
 									var game = {
 										date: moment(date, "YYYY-MM-DD").format("MMM D, YYYY"),
-										title: self.getTitle(match.match_score.title),
+										title: vodTitle = match.match_score.title ? match.match_score.title : "&nbsp;",
 										status: self.getStatus(match.match_score.match.status, match.match_score.match.url),
 										url: self.getURLs(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 									};
