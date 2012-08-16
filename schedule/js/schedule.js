@@ -114,12 +114,14 @@
 							}
 
 							for(var matches in match_Obj.metadata.matches) {
-								match_Arr = match_Obj.metadata.matches[matches];
-								for (var rebroadcast in match_Arr) {
-									matches_Obj = match_Arr[rebroadcast];
-									var vod = matches_Obj.games[0].game.video;
-									if(vod) {
-										var vodLink = matches_Obj.games[0].game.video.url;
+								if (match_Obj.metadata.matches.hasOwnProperty(matches)){
+									match_Arr = match_Obj.metadata.matches[matches];
+									for (var rebroadcast in match_Arr) {
+										matches_Obj = match_Arr[rebroadcast];
+										var vod = matches_Obj.games[0].game.video;
+										if(vod) {
+											var vodLink = matches_Obj.games[0].game.video.url;
+										}
 									}
 								}
 							}
@@ -223,17 +225,21 @@
 								}
 							}
 						for(var gameTitle in data) {
+							
+							if (data.hasOwnProperty(gameTitle)){
 
-							game_Arr = data[gameTitle];
+								game_Arr = data[gameTitle];
 
-							for (var i = 0; i < game_Arr.length; i++) {
-								
-							match_Obj = game_Arr[i];
-								getGameTitle(match_Obj);
-								getMatchDate(match_Obj);
-								getSubtitles(match_Obj);
-								setSchedule(match_Obj);
-						}
+								for (var i = 0; i < game_Arr.length; i++) {
+									match_Obj = game_Arr[i];
+									getGameTitle(match_Obj);
+									getMatchDate(match_Obj);
+									getSubtitles(match_Obj);
+									setSchedule(match_Obj);
+								}
+
+							}
+							
 						}
 					},
 					error: function(jqXHR, textStatus, errorThrown) {

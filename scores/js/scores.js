@@ -13,7 +13,7 @@
 		},
 		scoresTmpl: function(){
 			var html = "";
-			html += "<div class='controls'><div class='left-control'><img src='http://esports.ign.com/addons/ipl-widgets/scores/images/left.png' class='left-button' /></div><div class='container'><div class='box-scores'>";
+			html += "<div class='controls clearfix'><div class='left-control'><img src='http://esports.ign.com/addons/ipl-widgets/scores/images/left.png' class='left-button' /></div><div class='container'><div class='box-scores'>";
 			for (var i = this.matchUps.length - 1; i >= 0; i--) {
 				console.log();
 				html += "<div class='match'>";
