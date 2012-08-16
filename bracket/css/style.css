@@ -65,7 +65,7 @@ div.IPLBracketTools .toolbar-spoiler-box{
 	color:#fff;
 	border-radius: 4px;
 	padding: 0 4px 5px 4px;
-	margin: 0 2px 2px 2px;
+	margin: 2px 2px 2px 2px;
 	width:auto;
 	white-space: nowrap;
 }
@@ -147,7 +147,7 @@ div.match-content.players{
 div.score-tip{
 	height:100%;
 	position: absolute;
-	width: 85%;
+	width: 100%;
 	display:table;
 	text-align:center;
 	margin: auto;
