@@ -18,9 +18,10 @@ var IPLBracketApp;
 		fps:30,
 		autoRefreshId:0,
 		$refreshBtn:null,
-		refreshDelay:60000,
+		refreshDelay:900000,
 		minRefresh:10000,
 		refreshEnableId:0,
+		enableRefresh:false,
 		savedPosition:null,
 		windowManager:null,
 		spoilers:true,
@@ -33,6 +34,7 @@ var IPLBracketApp;
 		enable2d:true,
 		enableZoom:true,
 		enableSpoilers:false,
+		forceExtGrandFinals:false,
 		//Mouse drag variables
 		mouseIsDown:false,
 		isDragging:false,
@@ -59,9 +61,11 @@ var IPLBracketApp;
 			this.$appContainer = Options.container;
 			this.bracketURL = Options.url;
 			this.forceScrollbars = Options.scrollbars || false;
-			this.enableSpoilers = Options.spoilers || false;
+			this.enableSpoilers = this.spoilers = Options.hideSpoilers || false;
+			this.enableRefresh = Options.refresh || false;
 
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
+			//this.$bracketLayer.css('rotateY',-.2);
 			this.$toolbar = $('<div class="IPLBracketTools">').appendTo(this.$appContainer);
 
 			this.windowManager = new WindowManager({
@@ -70,12 +74,13 @@ var IPLBracketApp;
 				'enable3d':this.enable3d,
 				'forceScrollbars':this.forceScrollbars
 			});
-			this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
+			if(this.enableRefresh){
+				this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
+			}
+			
 			this.loadBracketJSON(Options.url, this.bracketLoaded);
 			this.setupTools(this.$toolbar);
 			this.windowManager.hookDoubleClick(this.$bracketLayer);
-			//TODO move this somewhere thst makes more sense
-			
 		},
 		
 		loadBracketJSON:function(JSONURI, Callback){
@@ -109,16 +114,7 @@ var IPLBracketApp;
 			}
 		
 			this.loadedBracket.render(this.$bracketLayer);
-			//this.$bracketLayer.hide().fadeIn('slow');
 
-			if(this.enableZoom){
-				this.windowManager.centerObject(this.$bracketLayer);
-				this.windowManager.setInitalZoom(this.$bracketLayer);
-			}else{
-				this.$bracketLayer.css({'left':67,'top':0});
-			}
-			
-			$title.css('left',this.$bracketLayer.width()-$title.width());
 			// begin populating tree
 			var mappedRound=0;
 			for(var a in Data.rounds){
@@ -136,7 +132,6 @@ var IPLBracketApp;
 					for(var c in Data.rounds[a].matches){
 						this.loadedBracket.losersBracket.matches[a-this.loadedBracket.matches.length][c].parseData(Data.rounds[a].matches[c].match);
 					}
-					
 				}
 			}
 			//Correct titles for Double Elim Brackets
@@ -155,14 +150,28 @@ var IPLBracketApp;
 						cl.childLines[d].removeClass('unplayed');
 					}
 				}
+				// hide the title for the grand finals extended if there are no players in it
+				if(this.loadedBracket.matches[this.loadedBracket.matches.length-1][0].players.length<1){
+					this.loadedBracket.hideGrandFinalsExt(this.$bracketLayer);
+					this.$bracketLayer.find('.round-title.winner-title').last().hide();
+				}
 			}
+			//place the title
+			$title.css('left',this.$bracketLayer.width()-$title.width());
+
+			if(this.enableZoom){
+				this.windowManager.centerObject(this.$bracketLayer);
+				this.windowManager.setInitalZoom(this.$bracketLayer);
+			}else{
+				this.$bracketLayer.css({'left':67,'top':0});
+			}
+
 			// Add spoilers
 			if(this.enableSpoilers){
 				this.setupSpoilers(this.loadedBracket);
 			}
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
-			
 			$('<h2>').appendTo(this.$bracketLayer)
 					.addClass('round-title')
 					.text(Title)
@@ -202,11 +211,12 @@ var IPLBracketApp;
   		},
 		setupTools:function($Layer){
 			var that = this;
-
-			this.$refreshBtn = $('<button class="btn"><i class="icon-refresh"></i>Refresh</button>').appendTo($Layer).click(function(){
-				if(!$(this).prop('disabled'))
-					that.refresh();
-			}); 
+			if(this.enableRefresh){
+				this.$refreshBtn = $('<button class="btn"><i class="icon-refresh"></i>Refresh</button>').appendTo($Layer).click(function(){
+					if(!$(this).prop('disabled'))
+						that.refresh();
+				}); 
+			}
 			//zoom buttons
 			if(this.enableZoom){
 				this.$zoomTip = this.windowManager.getZoomTooltip().insertBefore($Layer);
@@ -218,25 +228,37 @@ var IPLBracketApp;
 					that.changeZoom.apply(that,[(that.enable3d?that.ZoomAmt3d*4:that.ZoomAmt2d*3)]);
 				});
 			}
-			/*
+			
 			if(this.enableSpoilers){
 				
 				$('<button class="btn btn-inverse">Show Spoilers</button>')
 				.appendTo($Layer)
 				.toggle(function(event){
+					//Show the spoilers
+					var allMatches = that.loadedBracket.getMatches();
+				
+					that.$bracketLayer.find('.match-pos-spoiler').removeClass('match-spoiler');
+					for(var a in allMatches){
+							allMatches[a].spoil(2);
+					}
+					
 					$(this).text("Hide Spoilers");
-					var allMatches = that.loadedBracket.getMatches();
-					for(var a in allMatches){
-						allMatches[a].spoil(2);
-					}
 				},function(event){
-					$(this).text("Show Spoilers");
+					//Hide the spoilers
 					var allMatches = that.loadedBracket.getMatches();
+			
+					that.$bracketLayer.find('.match-pos-spoiler').addClass('match-spoiler');
 					for(var a in allMatches){
-						allMatches[a].spoil(0);
+						if(allMatches[a].$element.hasClass('always-show')){
+							allMatches[a].spoil(1);
+						}else{
+							allMatches[a].spoil(0);
+						}
 					}
+
+					$(this).text("Show Spoilers");
 				});
-			}*/
+			}
 			
 			this.windowManager.positionToolbar();
 
@@ -276,6 +298,14 @@ var IPLBracketApp;
 				}else{
 					this.zoomLevel = Math.max(this.zoomLevel, this.minZoom);
 				}
+				this.$bracketLayer.animate({'scale':this.zoomLevel},{duration:300,queue:false});
+			}
+		},
+		setZoom:function(ZoomAmt){
+			if(enable3d){
+				this.$bracketLayer.animate({'translateZ':ZoomAmt},{duration:300,queue:false});
+			}else{
+				this.zoomLevel = 0.8;
 				this.$bracketLayer.animate({'scale':this.zoomLevel},{duration:300,queue:false});
 			}
 		},
@@ -340,6 +370,9 @@ var IPLBracketApp;
 			for(var a in matches){
 				matches[a].spoil(2);
 			}
+		},
+		traceTeam:function(TeamName){
+			
 		}
 	});
 
@@ -469,9 +502,10 @@ var DoubleElimBracket = Bracket.extend({
 		this.losersBracket.render($loss, 1.1, 14);
 		this._super($Layer, XSpacing, YSpacing);
 		$loss.css({'top':$Layer.outerHeight()+80, 'left':-80});
-		this.renderFinalMatches($Layer, $loss);
 
+		this.renderFinalMatches($Layer, $loss);
 		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*0.5);
+		
 		$Layer.height($Layer.height()+$loss.height()+80);
 	},
 	renderFinalMatches:function($Layer, $LossLayer){
@@ -493,7 +527,14 @@ var DoubleElimBracket = Bracket.extend({
 			curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*0.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*0.5+4);
 			curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*0.5+6);
 		}
-		//curMatch.childLines[1].css('border','2px solid blue');
+	},
+	hideGrandFinalsExt:function($Layer){
+		var curMatch = this.matches[this.matches.length-1][0];
+		if(Modernizr.csstransforms == true){
+			curMatch.childLines[0].hide();
+			curMatch.$element.hide();
+		}
+		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*1.3);
 	},
 	getMatches:function(){
 		var rei = this._super();
@@ -559,7 +600,7 @@ var DoubleElimBracket = Bracket.extend({
 			Ar.push(this);
 			if(this.childMatches.length>0){
 				for(var a in this.childMatches){
-					if((this.status != MatchState.ready) || GoIfEmpty){
+					if((this.players.length>0) || GoIfEmpty){
 						this.childMatches[a].getChildNodes(Ar, GoIfEmpty);
 					}
 				}
@@ -616,6 +657,13 @@ var DoubleElimBracket = Bracket.extend({
 
 						}
 					}*/
+					//shade the loser of this match
+					if(parseInt($scoreContainer.find('.score').first().text())>parseInt($scoreContainer.find('.score').last().text())){
+						$playersContain.find('.team-name').last().addClass('loser-shade');
+					}else{
+						$playersContain.find('.team-name').first().addClass('loser-shade');
+					}
+
 				}
 
 			// If it is upcoming... 
@@ -671,18 +719,21 @@ var DoubleElimBracket = Bracket.extend({
 					this.$element.find('.players .team-name').animate({'opacity':0},{'duration':250,'queue':false});
 					this.$element.find('.score-slidein').animate({'opacity':0},{'duration':250,'queue':false});
 					this.$element.find('.score-tip').animate({'opacity':1},{'duration':250,'queue':false});
+					this.$element.find('.loser-shade').css('color','#fff');
 					break;
 				//show players only
 				case 1:
 					this.$element.find('.players .team-name').animate({'opacity':1},{'duration':250,'queue':false});
 					this.$element.find('.score-slidein').animate({'opacity':0},{'duration':250,'queue':false});
 					this.$element.find('.score-tip').animate({'opacity':0},{'duration':250,'queue':false});
+					this.$element.find('.loser-shade').css('color','#fff');
 					break;
 				//show everything
 				case 2:
 					this.$element.find('.players .team-name').animate({'opacity':1},{'duration':250,'queue':false});
 					this.$element.find('.score-slidein').animate({'opacity':1},{'duration':250,'queue':false});
 					this.$element.find('.score-tip').animate({'opacity':0},{'duration':250,'queue':false});
+					this.$element.find('.loser-shade').css('color','#888');
 					break;
 				default:
 					break;
@@ -705,45 +756,45 @@ var DoubleElimBracket = Bracket.extend({
 			this.$element.find('.match-hide-score').hide();
 		},
 		onMouseEnter:function(event){
-			if(this.$element.hasClass('match-spoiler')){
-				this.spoil(1);
-			}
-			var trailers = this.getChildNodes([],false);
-			for(var i=1;i<trailers.length;++i){
-				if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
-					trailers[i].spoil(2);
-
-				}
+			
+				if(this.$element.hasClass('match-spoiler')){
+					this.spoil(1);
 				
-			}
-		},
-		onMouseLeave:function(event){
-			if(this.$element.hasClass('match-spoiler')){
-				this.spoil(0);
-			}
-
-			var trailers = this.getChildNodes([],false);
-			for(var i=1;i<trailers.length;++i){
-				if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
-					if(trailers[i].$element.hasClass('always-show')){
-						trailers[i].spoil(1);
-					}else{
-						trailers[i].spoil(0);
+				var trailers = this.getChildNodes([],false);
+				for(var i=1;i<trailers.length;++i){
+					if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
+						trailers[i].spoil(2);
 					}
 				}
+				}
+			
+		},
+		onMouseLeave:function(event){
+				if(this.$element.hasClass('match-spoiler')){
+					this.spoil(0);
 				
-			}
+
+				var trailers = this.getChildNodes([],false);
+				for(var i=1;i<trailers.length;++i){
+					if(trailers[i].$element.hasClass('match-spoiler') || trailers[i].$element.hasClass('always-show')){
+						if(trailers[i].$element.hasClass('always-show')){
+							trailers[i].spoil(1);
+						}else{
+							trailers[i].spoil(0);
+						}
+					}
+				}
+				}
+			
 		},
 		onClick:function(){
 			if(this.$element.hasClass('match-pos-spoiler')){
 				this.$element.removeClass('match-spoiler');
-				//this.$element.removeClass('match-pos-spoiler');
-				//this.showScores();
 			}
 			this.spoil(2);
 			var trailers = this.getChildNodes([],false);
 			for(var i=1;i<trailers.length;++i){
-				trailers[i].$element.removeClass('match-spoiler always-show');
+				trailers[i].$element.removeClass('match-spoiler');
 				trailers[i].spoil(2);
 			}
 		},
