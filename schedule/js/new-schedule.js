@@ -13,7 +13,6 @@
     init: function(config) {
       var fetchingFranchises, fetchingSchedule,
         _this = this;
-      this.loadStyleSheet();
       fetchingSchedule = this.fetchUrl("schedule");
       fetchingFranchises = this.fetchUrl("franchises");
       fetchingSchedule.fail(function(a, b, c) {
@@ -23,21 +22,21 @@
         return console.log(a, b, c);
       });
       return $.when(fetchingSchedule, fetchingFranchises).done(function(scheduleData, franchiseData) {
-        var date, games, schedule;
+        var allSchedules, date, games, schedule;
         schedule = _this.buildSchedule(scheduleData[0], franchiseData[0]);
         date = _this.buildDates();
         games = _this.buildGames(scheduleData[0], franchiseData[0]);
-        return $("#schedule").html(date + games);
+        allSchedules = schedule.join("");
+        $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length);
+        return _this.balanceGuide();
       });
     },
-    getGameTitle: function(matchObj) {
-      var title;
-      return title = match_Obj.title;
-    },
-    getMatchDate: function(matchObj) {
-      var matchEnd, matchStart;
-      matchStart = matchObj.starts_at;
-      return matchEnd = matchObj.ends_at;
+    getBroadcastDate: function(broadcast) {
+      var broadcastDate;
+      return broadcastDate = {
+        starts_at: new Date(broadcast.starts_at),
+        ends_at: new Date(broadcast.ends_at)
+      };
     },
     fetchUrl: function(type) {
       return $.ajax({
@@ -71,7 +70,7 @@
     },
     buildDates: function() {
       var dateList, day, dayText, i, monthDateText, monthText, today;
-      dateList = "<ul>";
+      dateList = "<ul class='dates'>";
       i = 0;
       while (i < 7) {
         day = moment().local().add("days", i);
@@ -85,34 +84,56 @@
       return dateList += "</ul>";
     },
     buildSchedule: function(scheduleData, franchiseData) {
-      var broadcastList, day, franchise, game, value, _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
-        franchise = franchiseData[_i];
-        _results.push((function() {
-          var _results1;
-          _results1 = [];
-          for (game in scheduleData) {
-            if (!__hasProp.call(scheduleData, game)) continue;
-            value = scheduleData[game];
-            if (game === franchise.slug) {
-              broadcastList = "<ul class='" + franchise.slug(+" schedule'>");
-              while (i < 7) {
-                day = moment().local().eod().add("days", i);
-                broadcastList += "<li><ul>";
-                broadcastList += day;
-                broadcastList += "</ul></li>";
-                i++;
+      var broadcast, broadcastDate, broadcastList, broadcasts, day, franchise, game, i, index, _i, _j, _len, _len1, _ref;
+      broadcastList = [];
+      for (index = _i = 0, _len = franchiseData.length; _i < _len; index = ++_i) {
+        franchise = franchiseData[index];
+        for (game in scheduleData) {
+          if (!__hasProp.call(scheduleData, game)) continue;
+          broadcasts = scheduleData[game];
+          if (game === franchise.slug) {
+            i = 0;
+            broadcastList[index] = "<ul class='" + franchise.slug + " schedule'>";
+            while (i < 7) {
+              day = moment().local().eod().add("days", i);
+              if (i === 0) {
+                broadcastList[index] += "<li class='today " + day.format('dddd').toLowerCase() + "'><ul>";
+              } else {
+                broadcastList[index] += "<li class='" + day.format('dddd').toLowerCase() + "'><ul>";
               }
-              _results1.push(broadcastList += "</li></ul>");
-            } else {
-              _results1.push(void 0);
+              for (_j = 0, _len1 = broadcasts.length; _j < _len1; _j++) {
+                broadcast = broadcasts[_j];
+                broadcastDate = iplSchedule.getBroadcastDate(broadcast);
+                if (broadcastDate.starts_at.getDate() === day.date() && broadcastDate.ends_at > moment()) {
+                  broadcastList[index] += "<li class='clearfix'><p><time>" + moment(broadcastDate.starts_at).format("h:mma") + "</time> - <span class='title'>" + broadcast.title + "</span>";
+                  if (broadcast.subtitle_1 || broadcast.subtitle_2) {
+                    broadcastList[index] += "<br />";
+                    if (broadcast.subtitle_1) {
+                      broadcastList[index] += "<span>" + broadcast.subtitle_1 + "</span> ";
+                    }
+                    if (broadcast.subtitle_2) {
+                      broadcastList[index] += "<span>" + broadcast.subtitle_2 + "</span> ";
+                    }
+                  }
+                  if (broadcast.metadata.rebroadcast) {
+                    broadcastList[index] += "<br /><span class='old'>Rebroadcast</span>";
+                  } else {
+                    broadcastList[index] += "<br /><span class='new'>All new</span>";
+                  }
+                  if ((broadcastDate.starts_at < (_ref = moment()) && _ref < broadcastDate.ends_at)) {
+                    broadcastList[index] += "<br /><a class='now' href= '/ipl/" + franchise.slug + "'>Watch now</a>";
+                  }
+                  broadcastList[index] += "</p></li>";
+                }
+              }
+              broadcastList[index] += "</ul></li>";
+              i++;
             }
+            broadcastList[index] += "</li></ul>";
           }
-          return _results1;
-        })());
+        }
       }
-      return _results;
+      return broadcastList;
     },
     loadStyleSheet: function() {
       var head, link;
@@ -121,6 +142,38 @@
       link.setAttribute('href', basepath + 'css/schedule.css');
       link.setAttribute('rel', 'stylesheet');
       return head.appendChild(link);
+    },
+    balanceGuide: function() {
+      var days, i, _results;
+      days = [];
+      i = 0;
+      _results = [];
+      while (i < moment.weekdays.length) {
+        days.push($(".guide li." + moment.weekdays[i].toLowerCase()));
+        this.equalizeDays(days);
+        _results.push(i++);
+      }
+      return _results;
+    },
+    equalizeDays: function(days) {
+      var i, maxHeight, _results;
+      i = 0;
+      _results = [];
+      while (i < days.length) {
+        maxHeight = 0;
+        days[i].each(function() {
+          var itemHeight;
+          itemHeight = $(this).outerHeight();
+          if (maxHeight < itemHeight) {
+            return maxHeight = itemHeight;
+          }
+        });
+        days[i].each(function() {
+          return $(this).height(maxHeight);
+        });
+        _results.push(i++);
+      }
+      return _results;
     }
   };
 

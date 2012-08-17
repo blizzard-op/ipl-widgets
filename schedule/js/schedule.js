@@ -58,8 +58,8 @@
 								add_day = moment().local().add('days', i);
 								day = moment(add_day).local().format('dddd');
 								date = moment(add_day).local().format('MMMM Do');
-								$('#day-' + i).html(day);
-								$('#date-' + i).html(date);
+								$('#day-' + (i+1)).html(day);
+								$('#date-' + (i+1)).html(date);
 								i++;
 							}
 						}

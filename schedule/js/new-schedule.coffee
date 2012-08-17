@@ -3,7 +3,6 @@ basepath = "http://esports.ign.com/addons/ipl-widgets/schedule/" if local?
 
 iplSchedule =
   init: (config) ->
-    this.loadStyleSheet()
     fetchingSchedule = this.fetchUrl "schedule"
     fetchingFranchises = this.fetchUrl "franchises"
 
@@ -17,15 +16,15 @@ iplSchedule =
       schedule = this.buildSchedule scheduleData[0], franchiseData[0]
       date = this.buildDates()
       games = this.buildGames scheduleData[0], franchiseData[0]
+      allSchedules = schedule.join("")
+      $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length)
 
-      $("#schedule").html(date + games)
+      this.balanceGuide()
 
-  getGameTitle: (matchObj) ->
-    title = match_Obj.title;
-
-  getMatchDate: (matchObj) ->
-    matchStart = matchObj.starts_at
-    matchEnd = matchObj.ends_at
+  getBroadcastDate: (broadcast) ->
+    broadcastDate =
+      starts_at: new Date broadcast.starts_at
+      ends_at: new Date broadcast.ends_at
 
   fetchUrl: (type) ->
     $.ajax({
@@ -47,7 +46,7 @@ iplSchedule =
     gameList += "</ul>"
 
   buildDates: () ->
-    dateList = "<ul>"
+    dateList = "<ul class='dates'>"
     i = 0
     while i < 7
       day = moment().local().add("days", i)
@@ -61,24 +60,66 @@ iplSchedule =
     dateList += "</ul>"
 
   buildSchedule: (scheduleData, franchiseData) ->
-    for franchise in franchiseData
-      for own game, value of scheduleData
+    broadcastList = []
+    for franchise, index in franchiseData
+      for own game, broadcasts of scheduleData
         if game is franchise.slug
-          broadcastList = "<ul class='" + franchise.slug +" schedule'>"
+          i = 0
+          broadcastList[index] = "<ul class='" + franchise.slug + " schedule'>"
           while i < 7
             day = moment().local().eod().add("days", i)
-            broadcastList += "<li><ul>"
-            broadcastList += day
-            broadcastList += "</ul></li>"
-            i++
-          broadcastList += "</li></ul>"
+            if i is 0
+              broadcastList[index] += "<li class='today " + day.format('dddd').toLowerCase() + "'><ul>"
+            else
+              broadcastList[index] += "<li class='" + day.format('dddd').toLowerCase() + "'><ul>"
 
+            for broadcast in broadcasts
+              broadcastDate = iplSchedule.getBroadcastDate broadcast
+              if broadcastDate.starts_at.getDate() is day.date() and broadcastDate.ends_at > moment()
+                broadcastList[index] += "<li class='clearfix'><p><time>" + moment(broadcastDate.starts_at).format("h:mma") + "</time> - <span class='title'>" + broadcast.title + "</span>"
+                if broadcast.subtitle_1 || broadcast.subtitle_2
+                  broadcastList[index] += "<br />" 
+                  broadcastList[index] += "<span>" + broadcast.subtitle_1 + "</span> " if broadcast.subtitle_1
+                  broadcastList[index] += "<span>" + broadcast.subtitle_2 + "</span> " if broadcast.subtitle_2
+                if broadcast.metadata.rebroadcast
+                  broadcastList[index] += "<br /><span class='old'>Rebroadcast</span>"
+                else
+                  broadcastList[index] += "<br /><span class='new'>All new</span>"
+
+                broadcastList[index] += "<br /><a class='now' href= '/ipl/" + franchise.slug + "'>Watch now</a>" if broadcastDate.starts_at < moment() < broadcastDate.ends_at
+                broadcastList[index] += "</p></li>"
+
+            broadcastList[index] += "</ul></li>"
+            i++
+          broadcastList[index] += "</li></ul>"
+    broadcastList
   loadStyleSheet: () ->
     head = document.getElementsByTagName( 'head' )[0]
     link = document.createElement 'link' 
     link.setAttribute 'href', basepath + 'css/schedule.css'
     link.setAttribute 'rel', 'stylesheet' 
     head.appendChild link
+
+  balanceGuide: ->
+    days = []
+    i = 0
+    while i < moment.weekdays.length
+      days.push($(".guide li." + moment.weekdays[i].toLowerCase()))
+      this.equalizeDays(days);
+      i++
+
+  equalizeDays: (days) ->
+    i = 0
+    while i < days.length
+      maxHeight = 0;
+      days[i].each ->
+        itemHeight = $(this).outerHeight()
+        maxHeight = itemHeight if maxHeight < itemHeight
+      
+      days[i].each ->
+        $(this).height(maxHeight)
+      i++
+
 
 if scheduleConfig?
   iplSchedule.init scheduleConfig
