@@ -13,6 +13,11 @@
     init: function(config) {
       var fetchingFranchises, fetchingSchedule,
         _this = this;
+      if (config == null) {
+        config = {
+          franchise: "all"
+        };
+      }
       fetchingSchedule = this.fetchUrl("schedule");
       fetchingFranchises = this.fetchUrl("franchises");
       fetchingSchedule.fail(function(a, b, c) {
@@ -24,10 +29,12 @@
       return $.when(fetchingSchedule, fetchingFranchises).done(function(scheduleData, franchiseData) {
         var allSchedules, date, games, schedule;
         schedule = _this.buildSchedule(scheduleData[0], franchiseData[0], config.franchise);
-        date = _this.buildDates();
         games = _this.buildGames(scheduleData[0], franchiseData[0], config.franchise);
+        date = _this.buildDates();
         allSchedules = schedule.join("");
-        $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length);
+        if (schedule.length) {
+          $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length);
+        }
         return _this.balanceGuide();
       });
     },
@@ -72,7 +79,7 @@
       return gameList += "</ul>";
     },
     buildDates: function() {
-      var dateList, day, dayText, i, monthDateText, monthText, today;
+      var dateList, day, dayText, i, monthDateText, monthText;
       dateList = "<ul class='dates'>";
       i = 0;
       while (i < 7) {
@@ -80,8 +87,7 @@
         dayText = day.format("dddd");
         monthText = day.format("MMMM");
         monthDateText = day.format("Do");
-        today = i === 0 ? "today" : "";
-        dateList += "<li class='" + dayText.toLowerCase() + " clearfix " + today + "'><time><span>" + dayText + "</span><br />" + monthText + ", " + monthDateText + "</time></li>";
+        dateList += "<li class='" + dayText.toLowerCase() + " clearfix " + (i === 0 ? 'today' : '') + "'><time><span>" + dayText + "</span><br />" + monthText + ", " + monthDateText + "</time></li>";
         i++;
       }
       return dateList += "</ul>";

@@ -3,6 +3,10 @@ basepath = "http://esports.ign.com/addons/ipl-widgets/schedule/" if local?
 
 iplSchedule =
   init: (config) ->
+    unless config?
+      config =
+        franchise: "all"
+
     fetchingSchedule = this.fetchUrl "schedule"
     fetchingFranchises = this.fetchUrl "franchises"
 
@@ -14,10 +18,10 @@ iplSchedule =
 
     $.when(fetchingSchedule, fetchingFranchises).done (scheduleData, franchiseData) =>
       schedule = this.buildSchedule scheduleData[0], franchiseData[0], config.franchise
-      date = this.buildDates()
       games = this.buildGames scheduleData[0], franchiseData[0], config.franchise
+      date = this.buildDates()
       allSchedules = schedule.join("")
-      $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length)
+      $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length) if schedule.length
 
       this.balanceGuide()
 
@@ -53,8 +57,7 @@ iplSchedule =
       dayText = day.format("dddd")
       monthText = day.format("MMMM")
       monthDateText = day.format("Do")
-      today = if i is 0 then "today" else ""
-      dateList += "<li class='" + dayText.toLowerCase() + " clearfix " + today + "'><time><span>" + dayText + "</span><br />" + monthText + ", " + monthDateText + "</time></li>"
+      dateList += "<li class='" + dayText.toLowerCase() + " clearfix " + (if i is 0 then 'today' else '') + "'><time><span>" + dayText + "</span><br />" + monthText + ", " + monthDateText + "</time></li>"
       i++
 
     dateList += "</ul>"
