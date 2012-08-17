@@ -26,7 +26,10 @@
 		},
 
 		attachTemplate: function() {
-			$("<table class='schedule-container'><tr class='header'><th><div class='date-header'>Date</div></th><th><div class='sc-header'><p><a href='http://www.ign.com/ipl/starcraft-2'>StarCraft II</a></p><p class='schedule'><a href='https://www.google.com/calendar/embed?src=1u5m1559a5rlih3tr8jqp4kgac%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p></div></th><th><div class='lol-header'><p><a href='http://www.ign.com/ipl/league-of-legends'>League of Legends</a></p><p class='schedule'><a href='https://www.google.com/calendar/embed?src=igpia9kc2fst1ijkde1avplkq0%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p></div></th></tr><tr><td id='date-today' class='date'><p id='day-1'></p><p id='date-1'></p><span id='tag' class='tag'>TODAY</span></td><td id='sc-today' class='sc2'></td><td id='lol-today' class='lol'></td></tr><tr><td id='date-tomorrow' class='date'><p id='day-2'></p><p id='date-2'></p></td><td id='sc-tomorrow' class='sc2'></td><td id='lol-tomorrow' class='lol'></td></tr><tr><td class='date'><p id='day-3'></p><p id='date-3'></p></td><td id='sc-3' class='sc2'></td><td id='lol-3' class='lol'></td></tr><tr><td class='date'><p id='day-4'></p><p id='date-4'></p></td><td id='sc-4' class='sc2'></td><td id='lol-4' class='lol'></td></tr><tr><td class='date'><p id='day-5'></p><p id='date-5'></p></td><td id='sc-5' class='sc2'></td><td id='lol-5' class='lol'></td></tr><tr><td class='date'><p id='day-6'></p><p id='date-6'></p></td><td id='sc-6' class='sc2'></td><td id='lol-6' class='lol'></td></tr><tr><td class='date'><p id='day-7'></p><p id='date-7'></p></td><td id='sc-7' class='sc2'></td><td id='lol-7' class='lol'></td></tr></table>").appendTo('#schedule');
+			var tableHTML = "<table class='schedule-container'><tr class='header'>";
+			tableHTML += "<th><div class='date-header'>Date</div></th><th><div class='sc-header'><p><a href='http://www.ign.com/ipl/starcraft-2'>StarCraft II</a></p><p class='schedule'><a href='https://www.google.com/calendar/embed?src=1u5m1559a5rlih3tr8jqp4kgac%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p></div></th><th><div class='lol-header'><p><a href='http://www.ign.com/ipl/league-of-legends'>League of Legends</a></p><p class='schedule'><a href='https://www.google.com/calendar/embed?src=igpia9kc2fst1ijkde1avplkq0%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p></div></th></tr>";
+			tableHTML += "<tr><td id='date-today' class='date'><p id='day-1'></p><p id='date-1'></p><span id='tag' class='tag'>TODAY</span></td><td id='sc-today' class='sc2'></td><td id='lol-today' class='lol'></td></tr><tr><td id='date-tomorrow' class='date'><p id='day-2'></p><p id='date-2'></p></td><td id='sc-tomorrow' class='sc2'></td><td id='lol-tomorrow' class='lol'></td></tr><tr><td class='date'><p id='day-3'></p><p id='date-3'></p></td><td id='sc-3' class='sc2'></td><td id='lol-3' class='lol'></td></tr><tr><td class='date'><p id='day-4'></p><p id='date-4'></p></td><td id='sc-4' class='sc2'></td><td id='lol-4' class='lol'></td></tr><tr><td class='date'><p id='day-5'></p><p id='date-5'></p></td><td id='sc-5' class='sc2'></td><td id='lol-5' class='lol'></td></tr><tr><td class='date'><p id='day-6'></p><p id='date-6'></p></td><td id='sc-6' class='sc2'></td><td id='lol-6' class='lol'></td></tr><tr><td class='date'><p id='day-7'></p><p id='date-7'></p></td><td id='sc-7' class='sc2'></td><td id='lol-7' class='lol'></td></tr></table>";
+			$('#schedule').append(tableHTML);
 		},
 
 		fetch: function() {
@@ -39,6 +42,8 @@
 					jsonpCallback: "getCachedSchedule",
 
 					success: function(data) {
+						var tableHTML = "<table class='schedule-container'>";
+
 						var title, match_start, match_end;
 						function getGameTitle(match_Obj) {
 							title = match_Obj.title;
@@ -58,7 +63,10 @@
 								i++;
 							}
 						}
+						var setupTableHeader = function(franchise_slug) {
 
+							tableHTML += "<th><div class='" + franchise_slug + "-header'><p><a href='http://www.ign.com/ipl/" + franchise_slug + "'>StarCraft II</a></p><p class='schedule'><a href='https://www.google.com/calendar/embed?src=1u5m1559a5rlih3tr8jqp4kgac%40group.calendar.google.com' class='schedule-link'>Full Schedule</a></p></div></th>";
+						};
 						function getSubtitles(match_Obj) {
 							subtitle_1 = match_Obj.subtitle_1;
 							if (subtitle_1 === null || subtitle_1 === 'NA') subtitle_1 = '&nbsp';
@@ -196,13 +204,14 @@
 									}
 								}
 							}
+						tableHTML += "<tr class='header'><th><div class='date-header'>Date</div></th>";
 						for(var gameTitle in data) {
 							
 							if (data.hasOwnProperty(gameTitle)){
-
 								game_Arr = data[gameTitle];
-
+								setupTableHeader(game_Arr);
 								for (var i = 0; i < game_Arr.length; i++) {
+
 									match_Obj = game_Arr[i];
 									getGameTitle(match_Obj);
 									getMatchDate(match_Obj);
