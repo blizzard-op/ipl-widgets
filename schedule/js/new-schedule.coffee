@@ -13,9 +13,9 @@ iplSchedule =
       console.log a, b, c
 
     $.when(fetchingSchedule, fetchingFranchises).done (scheduleData, franchiseData) =>
-      schedule = this.buildSchedule scheduleData[0], franchiseData[0]
+      schedule = this.buildSchedule scheduleData[0], franchiseData[0], config.franchise
       date = this.buildDates()
-      games = this.buildGames scheduleData[0], franchiseData[0]
+      games = this.buildGames scheduleData[0], franchiseData[0], config.franchise
       allSchedules = schedule.join("")
       $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length)
 
@@ -34,12 +34,12 @@ iplSchedule =
       jsonpCallback: "getCached" + type
     })
 
-  buildGames: (scheduleData, franchiseData) ->
+  buildGames: (scheduleData, franchiseData, currentFranchiseSlug = all) ->
     gameList = "<ul class='games'>"
     gameList += "<li class='times'><p>Times for your time zone</p></li>"
     for franchise in franchiseData
       for own game, value of scheduleData
-        if game is franchise.slug
+        if game is franchise.slug && (currentFranchiseSlug is "all" || currentFranchiseSlug is game)
           calid = "1u5m1559a5rlih3tr8jqp4kgac" if game is "starcraft-2"
           calid = "igpia9kc2fst1ijkde1avplkq0" if game is "league-of-legends"
           gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>"
@@ -59,11 +59,11 @@ iplSchedule =
 
     dateList += "</ul>"
 
-  buildSchedule: (scheduleData, franchiseData) ->
+  buildSchedule: (scheduleData, franchiseData, currentFranchiseSlug = all) ->
     broadcastList = []
     for franchise, index in franchiseData
       for own game, broadcasts of scheduleData
-        if game is franchise.slug
+        if game is franchise.slug && (currentFranchiseSlug is "all" || currentFranchiseSlug is game)
           i = 0
           broadcastList[index] = "<ul class='" + franchise.slug + " schedule'>"
           while i < 7

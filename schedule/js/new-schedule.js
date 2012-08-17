@@ -23,9 +23,9 @@
       });
       return $.when(fetchingSchedule, fetchingFranchises).done(function(scheduleData, franchiseData) {
         var allSchedules, date, games, schedule;
-        schedule = _this.buildSchedule(scheduleData[0], franchiseData[0]);
+        schedule = _this.buildSchedule(scheduleData[0], franchiseData[0], config.franchise);
         date = _this.buildDates();
-        games = _this.buildGames(scheduleData[0], franchiseData[0]);
+        games = _this.buildGames(scheduleData[0], franchiseData[0], config.franchise);
         allSchedules = schedule.join("");
         $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length);
         return _this.balanceGuide();
@@ -46,8 +46,11 @@
         jsonpCallback: "getCached" + type
       });
     },
-    buildGames: function(scheduleData, franchiseData) {
+    buildGames: function(scheduleData, franchiseData, currentFranchiseSlug) {
       var calid, franchise, game, gameList, value, _i, _len;
+      if (currentFranchiseSlug == null) {
+        currentFranchiseSlug = all;
+      }
       gameList = "<ul class='games'>";
       gameList += "<li class='times'><p>Times for your time zone</p></li>";
       for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
@@ -55,7 +58,7 @@
         for (game in scheduleData) {
           if (!__hasProp.call(scheduleData, game)) continue;
           value = scheduleData[game];
-          if (game === franchise.slug) {
+          if (game === franchise.slug && (currentFranchiseSlug === "all" || currentFranchiseSlug === game)) {
             if (game === "starcraft-2") {
               calid = "1u5m1559a5rlih3tr8jqp4kgac";
             }
@@ -83,15 +86,18 @@
       }
       return dateList += "</ul>";
     },
-    buildSchedule: function(scheduleData, franchiseData) {
+    buildSchedule: function(scheduleData, franchiseData, currentFranchiseSlug) {
       var broadcast, broadcastDate, broadcastList, broadcasts, day, franchise, game, i, index, _i, _j, _len, _len1, _ref;
+      if (currentFranchiseSlug == null) {
+        currentFranchiseSlug = all;
+      }
       broadcastList = [];
       for (index = _i = 0, _len = franchiseData.length; _i < _len; index = ++_i) {
         franchise = franchiseData[index];
         for (game in scheduleData) {
           if (!__hasProp.call(scheduleData, game)) continue;
           broadcasts = scheduleData[game];
-          if (game === franchise.slug) {
+          if (game === franchise.slug && (currentFranchiseSlug === "all" || currentFranchiseSlug === game)) {
             i = 0;
             broadcastList[index] = "<ul class='" + franchise.slug + " schedule'>";
             while (i < 7) {
