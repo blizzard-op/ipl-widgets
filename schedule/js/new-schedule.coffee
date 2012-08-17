@@ -41,7 +41,9 @@ iplSchedule =
     for franchise in franchiseData
       for own game, value of scheduleData
         if game is franchise.slug
-          gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3></li>"
+          calid = "1u5m1559a5rlih3tr8jqp4kgac" if game is "starcraft-2"
+          calid = "igpia9kc2fst1ijkde1avplkq0" if game is "league-of-legends"
+          gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>"
     gameList += "</ul>"
 
   buildDates: () ->
@@ -62,9 +64,14 @@ iplSchedule =
     for franchise in franchiseData
       for own game, value of scheduleData
         if game is franchise.slug
-          calid = "1u5m1559a5rlih3tr8jqp4kgac" if game is "starcraft-2"
-          calid = "igpia9kc2fst1ijkde1avplkq0" if game is "league-of-legends"
-  
+          broadcastList = "<ul class='" + franchise.slug +" schedule'>"
+          while i < 7
+            day = moment().local().eod().add("days", i)
+            broadcastList += "<li><ul>"
+            broadcastList += day
+            broadcastList += "</ul></li>"
+            i++
+          broadcastList += "</li></ul>"
 
   loadStyleSheet: () ->
     head = document.getElementsByTagName( 'head' )[0]

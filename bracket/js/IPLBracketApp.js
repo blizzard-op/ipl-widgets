@@ -533,7 +533,7 @@ var DoubleElimBracket = Bracket.extend({
 	hideGrandFinalsExt:function($Layer){
 		var curMatch = this.matches[this.matches.length-1][0];
 		if(Modernizr.csstransforms == true){
-			curMatch.childLines[0].hide();
+			//curMatch.childLines[0].hide();
 			curMatch.$element.hide();
 		}
 		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*1.3);

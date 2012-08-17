@@ -48,7 +48,7 @@
       });
     },
     buildGames: function(scheduleData, franchiseData) {
-      var franchise, game, gameList, value, _i, _len;
+      var calid, franchise, game, gameList, value, _i, _len;
       gameList = "<ul class='games'>";
       gameList += "<li class='times'><p>Times for your time zone</p></li>";
       for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
@@ -57,7 +57,13 @@
           if (!__hasProp.call(scheduleData, game)) continue;
           value = scheduleData[game];
           if (game === franchise.slug) {
-            gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3></li>";
+            if (game === "starcraft-2") {
+              calid = "1u5m1559a5rlih3tr8jqp4kgac";
+            }
+            if (game === "league-of-legends") {
+              calid = "igpia9kc2fst1ijkde1avplkq0";
+            }
+            gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>";
           }
         }
       }
@@ -79,7 +85,7 @@
       return dateList += "</ul>";
     },
     buildSchedule: function(scheduleData, franchiseData) {
-      var calid, franchise, game, value, _i, _len, _results;
+      var broadcastList, day, franchise, game, value, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
         franchise = franchiseData[_i];
@@ -90,14 +96,15 @@
             if (!__hasProp.call(scheduleData, game)) continue;
             value = scheduleData[game];
             if (game === franchise.slug) {
-              if (game === "starcraft-2") {
-                calid = "1u5m1559a5rlih3tr8jqp4kgac";
+              broadcastList = "<ul class='" + franchise.slug(+" schedule'>");
+              while (i < 7) {
+                day = moment().local().eod().add("days", i);
+                broadcastList += "<li><ul>";
+                broadcastList += day;
+                broadcastList += "</ul></li>";
+                i++;
               }
-              if (game === "league-of-legends") {
-                _results1.push(calid = "igpia9kc2fst1ijkde1avplkq0");
-              } else {
-                _results1.push(void 0);
-              }
+              _results1.push(broadcastList += "</li></ul>");
             } else {
               _results1.push(void 0);
             }

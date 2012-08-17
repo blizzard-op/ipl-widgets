@@ -69,7 +69,7 @@
 					url: this.url,
 					dataType: "jsonp",
 					cache: true,
-				jsonpCallback: "getCached",
+				jsonpCallback: "getCachedScores",
 
 					success: function(data) {
 							self.matchUps = [];
@@ -119,7 +119,7 @@
 									textStatus: textStatus,
 									errorThrown: errorThrown
 							};
-							callback.call(this, data);
+							console.log(data);
 					}
 			});
 		},
