@@ -46,6 +46,7 @@ iplSchedule =
         if game is franchise.slug && (currentFranchiseSlug is "all" || currentFranchiseSlug is game)
           calid = "1u5m1559a5rlih3tr8jqp4kgac" if game is "starcraft-2"
           calid = "igpia9kc2fst1ijkde1avplkq0" if game is "league-of-legends"
+          calid = "2o0bovmq3heeq255o98ajkoffc" if game is "shootmania"
           gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>"
     gameList += "</ul>"
 

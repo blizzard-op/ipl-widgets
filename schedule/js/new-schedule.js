@@ -72,6 +72,9 @@
             if (game === "league-of-legends") {
               calid = "igpia9kc2fst1ijkde1avplkq0";
             }
+            if (game === "shootmania") {
+              calid = "2o0bovmq3heeq255o98ajkoffc";
+            }
             gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>";
           }
         }
