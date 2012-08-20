@@ -27,16 +27,10 @@
         return console.log(a, b, c);
       });
       return $.when(fetchingSchedule, fetchingFranchises).done(function(scheduleData, franchiseData) {
-        var allSchedules, date, games, index, sched, schedule, _i, _len;
+        var allSchedules, date, games, schedule;
         schedule = _this.buildSchedule(scheduleData[0], franchiseData[0], config.franchise);
         games = _this.buildGames(scheduleData[0], franchiseData[0], config.franchise);
         date = _this.buildDates();
-        for (index = _i = 0, _len = schedule.length; _i < _len; index = ++_i) {
-          sched = schedule[index];
-          if (sched == null) {
-            schedule.splice(index, 1);
-          }
-        }
         allSchedules = schedule.join("");
         if (schedule.length) {
           $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length);
@@ -107,8 +101,9 @@
         currentFranchiseSlug = all;
       }
       broadcastList = [];
-      for (index = _i = 0, _len = franchiseData.length; _i < _len; index = ++_i) {
-        franchise = franchiseData[index];
+      index = 0;
+      for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
+        franchise = franchiseData[_i];
         for (game in scheduleData) {
           if (!__hasProp.call(scheduleData, game)) continue;
           broadcasts = scheduleData[game];
@@ -151,6 +146,7 @@
               i++;
             }
             broadcastList[index] += "</li></ul>";
+            index++;
           }
         }
       }

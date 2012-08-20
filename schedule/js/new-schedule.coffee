@@ -20,9 +20,6 @@ iplSchedule =
       schedule = this.buildSchedule scheduleData[0], franchiseData[0], config.franchise
       games = this.buildGames scheduleData[0], franchiseData[0], config.franchise
       date = this.buildDates()
-      for sched, index in schedule
-        unless sched?
-          schedule.splice index, 1
       allSchedules = schedule.join("")
       $("#schedule").html("<section class='guide'>" + games + date + allSchedules + "</section>").addClass("games-" + schedule.length) if schedule.length
 
@@ -68,7 +65,8 @@ iplSchedule =
 
   buildSchedule: (scheduleData, franchiseData, currentFranchiseSlug = all) ->
     broadcastList = []
-    for franchise, index in franchiseData
+    index = 0
+    for franchise in franchiseData
       for own game, broadcasts of scheduleData
         if game is franchise.slug && (currentFranchiseSlug is "all" || currentFranchiseSlug is game)
           i = 0
@@ -99,6 +97,7 @@ iplSchedule =
             broadcastList[index] += "</ul></li>"
             i++
           broadcastList[index] += "</li></ul>"
+          index++
     broadcastList
   loadStyleSheet: () ->
     head = document.getElementsByTagName( 'head' )[0]
