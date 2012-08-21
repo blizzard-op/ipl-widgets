@@ -54,28 +54,19 @@
       });
     },
     buildGames: function(scheduleData, franchiseData, currentFranchiseSlug) {
-      var calid, franchise, game, gameList, value, _i, _len;
+      var franchise, game, gameList, value, _i, _len;
       if (currentFranchiseSlug == null) {
         currentFranchiseSlug = all;
       }
       gameList = "<ul class='games'>";
-      gameList += "<li class='times'><p>Times for your time zone</p></li>";
+      gameList += "<li class='times'><p>Times for your time zone</p><a href='/ipl/all/schedule'>Full Schedule</a></li>";
       for (_i = 0, _len = franchiseData.length; _i < _len; _i++) {
         franchise = franchiseData[_i];
         for (game in scheduleData) {
           if (!__hasProp.call(scheduleData, game)) continue;
           value = scheduleData[game];
           if (game === franchise.slug && (currentFranchiseSlug === "all" || currentFranchiseSlug === game)) {
-            if (game === "starcraft-2") {
-              calid = "1u5m1559a5rlih3tr8jqp4kgac";
-            }
-            if (game === "league-of-legends") {
-              calid = "igpia9kc2fst1ijkde1avplkq0";
-            }
-            if (game === "shootmania") {
-              calid = "2o0bovmq3heeq255o98ajkoffc";
-            }
-            gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3><a href='https://www.google.com/calendar/embed?src=" + calid + "%40group.calendar.google.com' class='outbound-link fullCal'>Full Calendar</a></li>";
+            gameList += "<li class='gameHeader " + franchise.slug + "'><h3><a href='/ipl/" + franchise.slug + "'>" + franchise.name + "</a></h3></li>";
           }
         }
       }
@@ -151,14 +142,6 @@
         }
       }
       return broadcastList;
-    },
-    loadStyleSheet: function() {
-      var head, link;
-      head = document.getElementsByTagName('head')[0];
-      link = document.createElement('link');
-      link.setAttribute('href', basepath + 'css/schedule.css');
-      link.setAttribute('rel', 'stylesheet');
-      return head.appendChild(link);
     },
     balanceGuide: function() {
       var days, i, _results;
