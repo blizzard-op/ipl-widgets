@@ -233,6 +233,7 @@ var IPLBracketApp;
 
 		},
 		addRoundTitle:function(Title, Element, TitleClass){
+			if(Title=="Grand Finals Extended"){return false;}
 			$('<h2>').appendTo(this.$bracketLayer)
 					.addClass('round-title')
 					.text(Title)
@@ -617,12 +618,13 @@ var DoubleElimBracket = Bracket.extend({
 		});
 		curMatch.parentMatch.$element.css({
 			'top': tTop,
-			'left': tLeft + (curMatch.$element.width() * 1.3) 
+			'left': tLeft + (curMatch.$element.width() * 1.3),
+			'display':'none'
 		});
 
 		// Draw lines
 		if(Modernizr.csstransforms == true){
-			curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*0.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*0.5+6)];
+			//curMatch.parentMatch.childLines = [ this.createLine($Layer.find('.line-layer').last(), curMatch.left()+curMatch.$element.width(), curMatch.top()+curMatch.$element.height()*0.5+6, curMatch.parentMatch.left(), curMatch.parentMatch.top()+curMatch.$element.height()*0.5+6)];
 			curMatch.childLines[0] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[0].left()+curMatch.$element.width(), curMatch.childMatches[0].top()+curMatch.$element.height()*0.5+4, curMatch.left(), curMatch.top()+curMatch.$element.height()*0.5+4);
 			curMatch.childLines[1] = this.createLine($Layer.find('.line-layer').last(), curMatch.childMatches[1].left()+8+curMatch.$element.width()+parseInt($LossLayer.css('left')), curMatch.childMatches[1].top()+$Layer.height()+(curMatch.$element.height())+18, curMatch.left()+5, curMatch.top()+curMatch.$element.height()*0.5+6);
 		}
@@ -630,7 +632,7 @@ var DoubleElimBracket = Bracket.extend({
 	hideGrandFinalsExt:function($Layer){
 		var curMatch = this.matches[this.matches.length-1][0];
 		if(Modernizr.csstransforms == true){
-			curMatch.childLines[0].hide();
+			//curMatch.childLines[0].hide();
 			curMatch.$element.hide();
 		}
 		$Layer.width($Layer.width()-this.matches[0][0].$element.width()*1.3);
