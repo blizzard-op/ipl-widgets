@@ -65,7 +65,6 @@
 		fetch: function(url, status, slug) {
 			var self = this;
 			$.ajax({
-					type: 'GET',
 					url: this.url,
 					dataType: "jsonp",
 					cache: true,
@@ -73,21 +72,33 @@
 
 					success: function(data) {
 							self.matchUps = [];
-							var vodTitle = '';
-							$.map(data, function(data, date) {
-								$.map(data, function(match) {
+							var keys = [];
+							for(var key in data) {
+								if(data.hasOwnProperty(key)){
+									keys.push(key);
+								}
+							}
+							keys = keys.sort().reverse();
+							for (var k = keys.length - 1; k >= 0; k--) {
+									match = data[keys[k]][0];
 									var game = {
-										date: moment(date, "YYYY-MM-DD").format("MMM D, YYYY"),
-										title: vodTitle = match.match_score.title ? match.match_score.title : "&nbsp;",
+										date: moment(keys[k], "YYYY-MM-DD").format("MMM D, YYYY"),
+										title: match.match_score.title ? match.match_score.title : "&nbsp;",
 										status: self.getStatus(match.match_score.match.status, match.match_score.match.url),
 										url: self.getURLs(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
 									};
 									var i = 1, team1Score, team2Score, team1Class, team2Class;
-									$.map(match.match_score.card, function(teamScore) {
-										if (i == 1) team1Score = teamScore.points;
-										if (i == 2) team2Score = teamScore.points;
-										i++;
-									});
+									var card = match.match_score.card;
+									for (var j in card){
+										if(card.hasOwnProperty(j)) {
+											if(i === 1) {
+												team1Score = card[j].points;
+											} else if (i === 2){
+												team2Score = card[j].points;
+											}
+											i += 1;
+										}
+									}
 									if (team1Score > team2Score) {
 										team1Class = 'winner';
 										team2Class = 'loser';
@@ -99,17 +110,18 @@
 										team2Class = 'draw';
 									}
 									i = 1;
-									$.map(match.match_score.card, function(teamScore) {
-										game['username' + i] = teamScore.username;
-										game['points' + i] = teamScore.points;
-										if (i === 1) game.team1Class = team1Class;
-										if (i === 2) game.team2Class = team2Class;
-										i++;
-									});
+									for (var m in card){
+										if(card.hasOwnProperty(m)) {
+											game['username' + i] = card[m].username;
+											game['points' + i] = card[m].points;
+											if (i === 1) game.team1Class = team1Class;
+											if (i === 2) game.team2Class = team2Class;
+											i++;
+										}
+									}
 
 									self.matchUps.push(game);
-								});
-					});
+							}
 					self.attachTemplate();
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
