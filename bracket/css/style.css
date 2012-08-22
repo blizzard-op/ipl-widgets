@@ -171,9 +171,11 @@ div.score-tip p{
 div.bracket-match{
 	width:400px;
 	height:140px;
+	
 	-webkit-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
     -moz-box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
     box-shadow:3px 3px 0px #a00000,  6px 6px 0px #a00000;
+	
 	background-color: #000;
 	-webkit-border-radius:0 8px 0 8px;
     -moz-border-radius:0 8px 0 8px;
