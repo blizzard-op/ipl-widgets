@@ -38,6 +38,7 @@ var IPLBracketApp;
 		enableSpoilers: false,
 		enableMiniMap: true,
 		forceExtGrandFinals: false,
+		forceClickFocus: false,
 		//Mouse drag variables
 		mouseIsDown: false,
 		isDragging: false,
@@ -69,6 +70,7 @@ var IPLBracketApp;
 			this.enableRefresh = Options.refresh || false;
 			this.enableMiniMap = Options.miniMap || false;
 			this.drawOnly = Options.drawOnly || false;
+			this.forceClickFocus = Options.clickFocus || false;
 
 			this.$bracketLayer = $('<div class="IPLBracketLayer">').appendTo(this.$appContainer);
 			//this.$bracketLayer.css('rotateY',-.2);
@@ -80,7 +82,8 @@ var IPLBracketApp;
 				'parent':this,
 				'container':this.$appContainer, 
 				'enable3d':this.enable3d,
-				'forceScrollbars':this.forceScrollbars
+				'forceScrollbars':this.forceScrollbars,
+				'forceClickFocus':this.forceClickFocus
 			});
 			if(this.enableRefresh){
 				this.autoRefreshId = setTimeout(function(){that.refresh.apply(that);}, this.refreshDelay);
@@ -88,7 +91,7 @@ var IPLBracketApp;
 			if(this.drawOnly){
 				//var bracketSize = Math.ceil(Math.log(Data.rounds[0].matches.length*2)/Math.log(2));
 				this.loadedBracket = new DoubleElimBracket({
-					'NumPlayers':32, 
+					'NumPlayers':Options.players, 
 					SplitFunction: function(depth){
 						if(depth==3){
 							return true;
@@ -98,7 +101,11 @@ var IPLBracketApp;
 					
 					},
 					LoserSplit: function(depth){
-						if(depth==6){
+						var td = depth<3?depth-1:depth;
+
+						if(td==3){
+							return true;
+						}else if(td%2==0){
 							return true;
 						}else{
 							return false;
@@ -159,7 +166,11 @@ var IPLBracketApp;
 					
 					},
 					LoserSplit: function(depth){
-						return false;
+						if(depth%2==0){
+							return false;
+						}else{
+							return true;
+						}
 					},
 					'ExtraRounds':0});
 			}else{
@@ -482,7 +493,7 @@ var IPLBracketApp;
 			this.totalCompetitors = Spec.NumPlayers;
 
 			this.matchDepth = Math.ceil(Math.log(Spec.NumPlayers)/Math.log(2)) + Spec.ExtraRounds;
-			console.log(this.matchDepth);
+		
 			this.championshipMatch = new Match(null, this.matchDepth-1);
 			this.buildGraph(this.championshipMatch, Spec.SplitFunction);
 		},
@@ -586,6 +597,7 @@ var DoubleElimBracket = Bracket.extend({
 	losersBracket:null,
 	init:function(Spec){
 		this._super(Spec);
+		//Spec.SplitFunction = Spec.LoserSplit
 		this.losersBracket = new LoserBracket(Spec);
 		
 		this.matches.push([new Match(null,this.matches.length)]);
@@ -649,41 +661,9 @@ var DoubleElimBracket = Bracket.extend({
 			//SplitFunction = SplitFunction || function(depth){return false};
 			Spec.LoserSplit = Spec.LoserSplit || function(depth){return false;};
 			this.totalCompetitors = Spec.NumPlayers;
-
-			this.matchDepth = (Math.ceil(Math.log(Spec.NumPlayers)/Math.log(2))-1)*2+Spec.ExtraRounds;
-			this.championshipMatch = new LoserMatch(null, this.matchDepth-1);
+			this.matchDepth = ((Math.ceil(Math.log(Spec.NumPlayers)/Math.log(2))-1)*2)+Spec.ExtraRounds;
+			this.championshipMatch = new Match(null, this.matchDepth-1);
 			this.buildGraph(this.championshipMatch, Spec.LoserSplit);
-		},
-		buildGraph:function(HeadNode, SplitFunction){
-			this._super(HeadNode, SplitFunction);
-		}
-	});
-
-	var FrankenFieldsBracket = DoubleElimBracket.extend({
-		init:function(NumPlayers){
-			//console.log(this.matches);
-			this._super(NumPlayers);
-		},
-		buildGraph:function(HeadNode, SplitFunction){
-			var seedMatch = HeadNode;
-			seedMatch.depth+=1;
-			this.matchDepth+=1;
-			this.matches = new Array(this.matchDepth);
-
-			this.matches[this.matchDepth-1] = [HeadNode]; //seedMatch.addBranch();
-			for(var i=0;i<this.matchDepth-1;++i){
-				this.matches[i] = [];
-			}
-			var newNodes;
-			// builds the tree and adds each layer of nodes to the matches Array
-			for(i=this.matchDepth-1;i>0;--i){
-				for(var j=0;j<this.matches[i].length;++j){
-					newNodes = this.matches[i][j].addBranch(i==3);
-					for(var k=0;k<newNodes.length;++k){
-						this.matches[i-1].push(newNodes[k]);
-					}
-				}
-			}
 		}
 	});
 
@@ -954,7 +934,7 @@ var DoubleElimBracket = Bracket.extend({
 		},
 		addBranch:function(NoSplit){
 			NoSplit = NoSplit || false;
-			if(this.depth%2==0 &&! NoSplit){
+			if(this.depth%2==0){
 				this.childMatches = [new LoserMatch(this,this.depth-1),new LoserMatch(this,this.depth-1)];
 			}else{
 				this.childMatches = [new LoserMatch(this,this.depth-1)];
@@ -1072,6 +1052,9 @@ var DoubleElimBracket = Bracket.extend({
 		$appContainer:null,
 		updateId:0,
 		hasHover:false,
+		movedWhileOver:false,
+		forceClickFocus:false,
+		clickFocus:false,
 		
 		init:function(Options){
 			var that = this;
@@ -1084,6 +1067,7 @@ var DoubleElimBracket = Bracket.extend({
       			that.parent.mouseHandler(event);
       			
     		});
+    		//Resize
     		$(window).resize(function(){
     			if(that.parent.enableZoom){
     				that.centerObject(that.parent.$bracketLayer);
@@ -1091,12 +1075,14 @@ var DoubleElimBracket = Bracket.extend({
     			that.positionToolbar.apply(that);
     		});
 			this.$appContainer.mousedown(function(event){
+				this.clickFocus = true;
 				that.parent.mousedown.apply(that.parent,[event]);
 			}).mouseup(function(event){
 				that.parent.mouseup.apply(that.parent,[event]);
 			});
-			
+			//Mousewheel
 			this.$appContainer.mousewheel(function(event, delta, deltaX, deltaY){
+				//if((that.forceClickFocus) )
 				if(that.hasHover){
 					event.preventDefault();
 				}
@@ -1105,7 +1091,6 @@ var DoubleElimBracket = Bracket.extend({
 					that.parent.$zoomTip.fadeOut();
 					that.parent.$zoomTip = null;
 				}
-
 			});
 			//Enable Update function on mouse enter
 			this.$appContainer.mouseenter(function(){
@@ -1140,7 +1125,6 @@ var DoubleElimBracket = Bracket.extend({
 			if(Options.forceScrollbars){
 				this.$appContainer.css('overflow','scroll');
 			}
-			
 		},
 		centerObject:function($Target){
 			$Target.css({'left':((this.$appContainer.width()/2) - ($Target.width()/2))});
