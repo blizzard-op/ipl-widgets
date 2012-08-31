@@ -82,7 +82,6 @@
 							for (var k = keys.length - 1; k >= 0; k--) {
 									match = data[keys[k]][0];
 									var franchiseSlug = match.match_score.match.show ? match.match_score.match.show.franchise.slug : "";
-									console.log(franchiseSlug);
 									var game = {
 										date: moment(keys[k], "YYYY-MM-DD").format("MMM D, YYYY"),
 										title: match.match_score.title ? match.match_score.title : "&nbsp;",
