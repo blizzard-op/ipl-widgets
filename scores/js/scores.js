@@ -81,11 +81,13 @@
 							keys = keys.sort().reverse();
 							for (var k = keys.length - 1; k >= 0; k--) {
 									match = data[keys[k]][0];
+									var franchiseSlug = match.match_score.match.show ? match.match_score.match.show.franchise.slug : "";
+									console.log(franchiseSlug);
 									var game = {
 										date: moment(keys[k], "YYYY-MM-DD").format("MMM D, YYYY"),
 										title: match.match_score.title ? match.match_score.title : "&nbsp;",
 										status: self.getStatus(match.match_score.match.status, match.match_score.match.url),
-										url: self.getURLs(match.match_score.match.url, match.match_score.match.status, match.match_score.match.show.franchise.slug)
+										url: self.getURLs(match.match_score.match.url, match.match_score.match.status, franchiseSlug)
 									};
 									var i = 1, team1Score, team2Score, team1Class, team2Class;
 									var card = match.match_score.card;
