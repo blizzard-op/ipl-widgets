@@ -58,7 +58,7 @@ iplSchedule =
     while i < 7
       day = moment().local().add("days", i)
       dayText = day.format("dddd")
-      monthText = day.format("MMMM")
+      monthText = day.format("MMM")
       monthDateText = day.format("Do")
       dateList += "<li class='" + dayText.toLowerCase() + " clearfix " + (if i is 0 then 'today' else '') + "'><time><span>" + dayText + "</span><br />" + monthText + ", " + monthDateText + "</time></li>"
       i++
