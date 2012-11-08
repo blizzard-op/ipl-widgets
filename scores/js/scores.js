@@ -6,18 +6,17 @@
 	var ipl = {
 		init: function(config) {
 			this.loadStyleSheet();
-			this.url = 'http://esports-varnish-prd-www-01.las1.colo.ignops.com:8080/content/v1/events.json?callback=getCachedEvents';
+			this.url = 'http://esports-varnish-prd-www-01.las1.colo.ignops.com/content/v1/events.json';
 			// this.url = 'http://esports.ign.com/scores.json';
 			this.container = $('#scores');
 			this.fetch();
 			this.buttons();
-
 		},
 		scoresTmpl: function(){
 			var html = "";
 			html += "<div class='controls clearfix'><div class='left-control'><img src='http://media.ign.com/ev/esports/ipl-static/ipl-site/addons/ipl-widgets/scores/images/left.png' class='left-button' /></div><div class='container'><div class='box-scores'>";
 			for (var i = 0;i<this.matchUps.length;++i) {
-				console.log(this.matchUps[i]);
+				
 				html += "<div class='match'>";
 				html += "<div class='date-container'><div class='date'>" + this.matchUps[i].date + "</div></div>";
 				html += "<div class='title'>" + this.matchUps[i].title + "</div>";
@@ -62,21 +61,33 @@
 		},
 		fetch: function(url, status, slug) {
 			var self = this;
+			var startDay = moment().subtract('days', 7).format();
+			var endDay = moment().add('days', 1).eod().format();
+			var sendD = {
+				'startDate':startDay,
+				'endDate':endDay
+			}
+
 			$.ajax({
 					url: this.url,
+					data: sendD,
 					dataType: "jsonp",
 					cache: true,
 					jsonpCallback: "getCachedEvents",
 					success: function(data) {
 						self.matchUps=[];
 						var game;
-						data = data.sort(function(a,b){return (new Date(a.starts_at.dateTime)).getTime()<(new Date(b.starts_at.dateTime)).getTime()?-1:1});
+						
+						data = data.reverse();
+						//data = data.sort(function(a,b){return (new Date(a.starts_at.dateTime)).getTime()<(new Date(b.starts_at.dateTime)).getTime()?-1:1});
 						self.getStatus(data[0]);
 						for(var i=0;i<10;++i){
+							if(data[i]==null)
+								break;
 							game = {
 								title:data[i].title,
 								status:self.getStatus(data[i]), // rewrite
-								url: self.getURLs("", self.getStatus(data[i]), data[i].franchise.slug),
+								url: self.getURLs("http://ign.com/ipl/videos", self.getStatus(data[i]), data[i].franchise.slug),
 								date:moment(data[i].starts_at.dateTime, "YYYY-MM-DD").format("MMM D, YYYY")
 							};
 							for(var j=0;j<data[i].matchup.teams.length;++j){
