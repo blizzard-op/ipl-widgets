@@ -61,7 +61,7 @@
 		},
 		fetch: function(url, status, slug) {
 			var self = this;
-			var startDay = moment().subtract('days', 7).format();
+			var startDay = moment().subtract('days', 7).eod().format();
 			var endDay = moment().add('days', 1).eod().format();
 			var sendD = {
 				'startDate':startDay,
