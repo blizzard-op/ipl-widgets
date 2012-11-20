@@ -53,7 +53,7 @@
     },
     fetchUrl: function(type) {
       return $.ajax({
-        url: "http://esports-varnish-prd-www-01.las1.colo.ignops.com/content/v1/" + type + ".json",
+        url: "http://esports.ign.com/content/v1/" + type + ".json",
         dataType: "jsonp",
         cache: true,
         jsonpCallback: "getCached" + type.charAt(0).toUpperCase() + type.slice(1)
